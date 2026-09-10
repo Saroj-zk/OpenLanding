@@ -11,6 +11,7 @@ import PricingSection from '@/components/PricingSection';
 import TokenOptimizationSection from '@/components/TokenOptimizationSection';
 import EnterpriseSection from '@/components/EnterpriseSection';
 import ApiSection from '@/components/ApiSection';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
         <TokenOptimizationSection />
         <ApiSection />
         <EnterpriseSection />
+        <Footer />
       </Box>
     </>
   );
