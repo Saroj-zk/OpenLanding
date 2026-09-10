@@ -485,46 +485,45 @@ export default function WhyAskMultipleModelsSection() {
           {/* Try Consensus Button */}
           <Box
             component="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer');
+              }
+            }}
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 1.2,
-              px: { xs: 3.5, md: 4 },
-              py: { xs: 1.2, md: 1.4 },
+              px: { xs: 4, sm: 5 },
+              py: { xs: 1.2, sm: 1.4 },
               borderRadius: '9999px',
-              backdropFilter: 'blur(12px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-              background: isDark
-                ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)'
-                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 243, 235, 0.85) 100%)',
-              border: isDark ? '1px solid rgba(255, 102, 0, 0.3)' : '1px solid rgba(255, 102, 0, 0.22)',
-              color: '#ff6600',
-              fontSize: { xs: '0.95rem', md: '1rem' },
-              fontWeight: 700,
+              backgroundColor: '#ff6600',
+              color: '#ffffff',
+              border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
               boxShadow: isDark
-                ? '0 2px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -1px 1px rgba(0, 0, 0, 0.3)'
-                : '0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04)',
+                ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+              fontSize: { xs: '0.95rem', md: '1.02rem' },
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+              textTransform: 'none',
               cursor: 'pointer',
-              transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+              outline: 'none',
+              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
               '&:hover': {
-                transform: 'translateY(-1px)',
-                background: isDark
-                  ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.24) 0%, rgba(255, 255, 255, 0.1) 100%)'
-                  : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                backdropFilter: 'blur(16px) saturate(200%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+                backgroundColor: '#e65c00',
+                transform: 'translateY(-2px)',
                 boxShadow: isDark
-                  ? '0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45), inset 0 0 0 0.5px rgba(255, 102, 0, 0.35)'
-                  : '0 4px 12px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.25)',
+                  ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                  : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
               },
               '&:active': {
-                transform: 'scale(0.95)',
+                transform: 'scale(0.96)',
               },
             }}
           >
             Try Consensus Now
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>

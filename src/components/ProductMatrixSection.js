@@ -240,40 +240,45 @@ export default function ProductMatrixSection() {
                 })}
               </Box>
 
-              <Box component="button" sx={{ 
-                mt: 4, width: '100%', py: 1.6, px: 3, 
-                borderRadius: '9999px', 
-                backdropFilter: 'blur(12px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                background: isDark
-                  ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)'
-                  : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 243, 235, 0.85) 100%)',
-                border: isDark ? '1px solid rgba(255, 102, 0, 0.3)' : '1px solid rgba(255, 102, 0, 0.22)',
-                color: '#ff6600',
-                boxShadow: isDark
-                  ? '0 2px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -1px 1px rgba(0, 0, 0, 0.3)'
-                  : '0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04)',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                cursor: 'pointer',
-                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                '&:hover': { 
-                  transform: 'translateY(-1px)',
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.24) 0%, rgba(255, 255, 255, 0.1) 100%)'
-                    : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                  borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                  backdropFilter: 'blur(16px) saturate(200%)',
-                  WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+              <Box 
+                component="button" 
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer');
+                  }
+                }}
+                sx={{ 
+                  mt: 4, 
+                  width: '100%', 
+                  py: 1.5, 
+                  px: 3, 
+                  borderRadius: '9999px', 
+                  backgroundColor: '#ff6600',
+                  color: '#ffffff',
+                  border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
                   boxShadow: isDark
-                    ? '0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45), inset 0 0 0 0.5px rgba(255, 102, 0, 0.35)'
-                    : '0 4px 12px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.25)',
-                },
-                '&:active': {
-                  transform: 'scale(0.95)',
-                }
-              }}>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 700 }}>Explore Platform</Typography>
-                <ArrowForwardRoundedIcon sx={{ fontSize: '1.2rem' }} />
+                    ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  '&:hover': { 
+                    backgroundColor: '#e65c00',
+                    transform: 'translateY(-2px)',
+                    boxShadow: isDark
+                      ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                      : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.96)',
+                  }
+                }}
+              >
+                <Typography sx={{ fontSize: '0.98rem', fontWeight: 700, letterSpacing: '0.02em', color: '#ffffff' }}>Explore Platform</Typography>
+                <ArrowForwardRoundedIcon sx={{ fontSize: '1.25rem', color: '#ffffff' }} />
               </Box>
             </GlassCard>
           </Grid>
