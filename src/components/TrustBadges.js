@@ -366,6 +366,7 @@ export default function TrustBadges({ onIosClick, onAndroidClick }) {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
                 <Button
                   fullWidth
+                  variant="contained"
                   onClick={() =>
                     handleSimulateAction(
                       activePlatform === 'ios'
@@ -376,36 +377,28 @@ export default function TrustBadges({ onIosClick, onAndroidClick }) {
                   startIcon={activePlatform === 'ios' ? <AppleIcon /> : <AndroidIcon />}
                   endIcon={<OpenInNewIcon sx={{ fontSize: 16 }} />}
                   sx={{
-                    py: 1.1,
+                    py: 1.3,
                     borderRadius: '9999px',
                     fontWeight: 700,
+                    letterSpacing: '0.02em',
                     textTransform: 'none',
-                    fontSize: '0.92rem',
-                    backdropFilter: 'blur(8px) saturate(180%)',
-                    WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                    background: isDark
-                      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 243, 235, 0.88) 100%)',
-                    border: isDark ? '1px solid rgba(255, 102, 0, 0.35)' : '1px solid rgba(255, 102, 0, 0.25)',
-                    color: '#ff6600',
+                    fontSize: '0.95rem',
+                    backgroundColor: '#ff6600',
+                    color: '#ffffff',
+                    border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
                     boxShadow: isDark
-                      ? '0 3px 12px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 0 0.5px rgba(255, 102, 0, 0.3)'
-                      : '0 2px 8px rgba(15, 23, 42, 0.08), inset 0 1.5px 1.5px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.2)',
-                    transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                      ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                      : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                     '&:hover': {
-                      transform: 'translateY(-1px)',
-                      background: isDark
-                        ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.28) 0%, rgba(255, 255, 255, 0.12) 100%)'
-                        : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                      borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                      backdropFilter: 'blur(16px) saturate(200%)',
-                      WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+                      backgroundColor: '#e65c00',
+                      transform: 'translateY(-2px)',
                       boxShadow: isDark
-                        ? '0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45), inset 0 0 0 0.5px rgba(255, 102, 0, 0.35)'
-                        : '0 4px 14px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.25)',
+                        ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                        : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
                     },
                     '&:active': {
-                      transform: 'scale(0.94)',
+                      transform: 'scale(0.96)',
                     },
                   }}
                 >
@@ -627,39 +620,32 @@ export default function TrustBadges({ onIosClick, onAndroidClick }) {
                 />
                 <Button
                   type="submit"
+                  variant="contained"
                   sx={{
                     whiteSpace: 'nowrap',
-                    px: 3,
-                    py: 1,
+                    px: 3.5,
+                    py: 1.1,
                     borderRadius: '9999px',
                     fontWeight: 700,
+                    letterSpacing: '0.02em',
                     textTransform: 'none',
-                    fontSize: '0.85rem',
-                    backdropFilter: 'blur(8px) saturate(180%)',
-                    WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                    background: isDark
-                      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 243, 235, 0.88) 100%)',
-                    border: isDark ? '1px solid rgba(255, 102, 0, 0.35)' : '1px solid rgba(255, 102, 0, 0.25)',
-                    color: '#ff6600',
+                    fontSize: '0.88rem',
+                    backgroundColor: '#ff6600',
+                    color: '#ffffff',
+                    border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
                     boxShadow: isDark
-                      ? '0 3px 12px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35)'
-                      : '0 2px 8px rgba(15, 23, 42, 0.08), inset 0 1.5px 1.5px rgba(255, 255, 255, 1)',
-                    transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                      ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                      : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                     '&:hover': {
-                      background: isDark
-                        ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.28) 0%, rgba(255, 255, 255, 0.12) 100%)'
-                        : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                      borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                      backdropFilter: 'blur(16px) saturate(200%)',
-                      WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+                      backgroundColor: '#e65c00',
+                      transform: 'translateY(-2px)',
                       boxShadow: isDark
-                        ? '0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45), inset 0 0 0 0.5px rgba(255, 102, 0, 0.35)'
-                        : '0 4px 14px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.25)',
-                      transform: 'translateY(-1px)',
+                        ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                        : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
                     },
                     '&:active': {
-                      transform: 'scale(0.94)',
+                      transform: 'scale(0.96)',
                     },
                   }}
                 >

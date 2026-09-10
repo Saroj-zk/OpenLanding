@@ -115,40 +115,37 @@ const response = await client.chat.completions.create({
 
             {/* Buttons */}
             <Box sx={{ display: 'flex', gap: 2, mb: 8 }}>
-              <Button sx={{ 
-                borderRadius: '9999px',
-                py: 1.2,
-                px: 3.5,
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                textTransform: 'none',
-                backdropFilter: 'blur(12px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                background: isDark
-                  ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)'
-                  : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 243, 235, 0.85) 100%)',
-                border: isDark ? '1px solid rgba(255, 102, 0, 0.3)' : '1px solid rgba(255, 102, 0, 0.22)',
-                color: '#ff6600',
-                boxShadow: isDark
-                  ? '0 2px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -1px 1px rgba(0, 0, 0, 0.3)'
-                  : '0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04)',
-                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                '&:hover': {
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.24) 0%, rgba(255, 255, 255, 0.1) 100%)'
-                    : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                  borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                  backdropFilter: 'blur(16px) saturate(200%)',
-                  WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+              <Button 
+                variant="contained"
+                sx={{ 
+                  display: 'inline-flex',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  borderRadius: '9999px',
+                  py: 1.2,
+                  px: 4,
+                  fontWeight: 700,
+                  letterSpacing: '0.02em',
+                  fontSize: { xs: '0.95rem', sm: '1.02rem' },
+                  textTransform: 'none',
+                  backgroundColor: '#ff6600',
+                  color: '#ffffff',
+                  border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
                   boxShadow: isDark
-                    ? '0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45), inset 0 0 0 0.5px rgba(255, 102, 0, 0.35)'
-                    : '0 4px 12px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.25)',
-                  transform: 'translateY(-1px)',
-                },
-                '&:active': {
-                  transform: 'scale(0.95)',
-                },
-              }}>
+                    ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  '&:hover': {
+                    backgroundColor: '#e65c00',
+                    transform: 'translateY(-2px)',
+                    boxShadow: isDark
+                      ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                      : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.96)',
+                  },
+                }}>
                 Get API Key
               </Button>
               <Button sx={{ 

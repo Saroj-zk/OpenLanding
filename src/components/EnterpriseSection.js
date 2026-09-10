@@ -404,29 +404,34 @@ export default function EnterpriseSection() {
           >
             {/* Primary & Secondary Buttons matching user's image */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-              {/* Talk to Sales (Solid pill button) */}
+              {/* Talk to Sales (Primary orange pill button) */}
               <Button
                 variant="contained"
                 onClick={() => setSalesModalOpen(true)}
                 sx={{
+                  display: 'inline-flex',
+                  cursor: 'pointer',
+                  userSelect: 'none',
                   borderRadius: '9999px',
                   py: 1.4,
-                  px: { xs: 3.5, sm: 4 },
-                  fontSize: '0.95rem',
+                  px: { xs: 4, sm: 5 },
+                  fontSize: { xs: '0.95rem', sm: '1.05rem' },
                   fontWeight: 700,
+                  letterSpacing: '0.02em',
                   textTransform: 'none',
-                  backgroundColor: isDark ? '#FFFFFF' : '#0F172A',
-                  color: isDark ? '#0A0C10' : '#FFFFFF',
+                  backgroundColor: '#ff6600',
+                  color: '#ffffff',
+                  border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
                   boxShadow: isDark
-                    ? '0 8px 24px rgba(255, 255, 255, 0.12)'
-                    : '0 8px 24px rgba(15, 23, 42, 0.2)',
-                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                    ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   '&:hover': {
-                    backgroundColor: isDark ? '#F1F5F9' : '#1E293B',
+                    backgroundColor: '#e65c00',
                     transform: 'translateY(-2px)',
                     boxShadow: isDark
-                      ? '0 12px 30px rgba(255, 255, 255, 0.22)'
-                      : '0 12px 30px rgba(15, 23, 42, 0.28)',
+                      ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                      : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
                   },
                   '&:active': {
                     transform: 'scale(0.96)',
@@ -655,14 +660,25 @@ export default function EnterpriseSection() {
                   py: 1.4,
                   borderRadius: '9999px',
                   fontWeight: 700,
+                  letterSpacing: '0.02em',
                   fontSize: '0.95rem',
                   textTransform: 'none',
                   backgroundColor: '#ff6600',
-                  color: '#FFFFFF',
-                  boxShadow: '0 8px 24px rgba(255, 102, 0, 0.35)',
+                  color: '#ffffff',
+                  border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
+                  boxShadow: isDark
+                    ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   '&:hover': {
                     backgroundColor: '#e65c00',
-                    boxShadow: '0 12px 30px rgba(255, 102, 0, 0.45)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: isDark
+                      ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                      : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.96)',
                   },
                 }}
               >
@@ -805,13 +821,29 @@ export default function EnterpriseSection() {
               }}
               sx={{
                 borderRadius: '9999px',
-                py: 1.2,
-                px: 3.5,
+                py: 1.3,
+                px: 4,
                 fontWeight: 700,
+                letterSpacing: '0.02em',
+                fontSize: '0.95rem',
                 textTransform: 'none',
                 backgroundColor: '#ff6600',
-                color: '#FFFFFF',
-                '&:hover': { backgroundColor: '#e65c00' },
+                color: '#ffffff',
+                border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
+                boxShadow: isDark
+                  ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                '&:hover': {
+                  backgroundColor: '#e65c00',
+                  transform: 'translateY(-2px)',
+                  boxShadow: isDark
+                    ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                    : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
+                },
+                '&:active': {
+                  transform: 'scale(0.96)',
+                },
               }}
             >
               Request Full Security Whitepaper
