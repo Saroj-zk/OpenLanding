@@ -9,6 +9,7 @@ import WhyAskMultipleModelsSection from '@/components/WhyAskMultipleModelsSectio
 import ProductMatrixSection from '@/components/ProductMatrixSection';
 import PricingSection from '@/components/PricingSection';
 import TokenOptimizationSection from '@/components/TokenOptimizationSection';
+import EnterpriseSection from '@/components/EnterpriseSection';
 import ApiSection from '@/components/ApiSection';
 
 export default function Home() {
@@ -33,6 +34,7 @@ export default function Home() {
         <ProductMatrixSection />
         <PricingSection />
         <TokenOptimizationSection />
+        <EnterpriseSection />
         <ApiSection />
       </Box>
     </>
