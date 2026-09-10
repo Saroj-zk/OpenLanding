@@ -34,8 +34,8 @@ export default function Home() {
         <ProductMatrixSection />
         <PricingSection />
         <TokenOptimizationSection />
-        <EnterpriseSection />
         <ApiSection />
+        <EnterpriseSection />
       </Box>
     </>
   );
