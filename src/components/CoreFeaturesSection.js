@@ -30,6 +30,7 @@ const TABS = [
     tagline: 'Private and uncensored, from the start.',
     description: 'Ask freely without your prompts being stored or used for training.',
     hasExplore: true,
+    exploreLink: '/private',
     tagLeft: 'ZERO RETENTION',
     tagRight: 'UNCENSORED',
   },
@@ -41,6 +42,8 @@ const TABS = [
     icon: AutoAwesomeIcon,
     tagline: 'More models. Fewer wasted tokens.',
     description: 'Access leading AI models from one place, with optimized token usage to reduce costs and keep every request efficient.',
+    hasExplore: true,
+    exploreLink: '/models',
     tagLeft: 'MULTI-MODEL',
     tagRight: 'TOKEN OPTIMIZED',
   },
@@ -52,6 +55,8 @@ const TABS = [
     icon: MemoryIcon,
     tagline: 'Say it once. Every model knows.',
     description: 'Your context stays consistent across models, so you never have to start over.',
+    hasExplore: true,
+    exploreLink: '/memory',
     tagLeft: 'ONE MEMORY',
     tagRight: 'SHARED CONTEXT',
   },
@@ -63,6 +68,8 @@ const TABS = [
     icon: SmartToyIcon,
     tagline: 'Connect once. Access any model.',
     description: 'Give agents direct access to leading AI models with x402, enabling seamless interactions across models without complex integrations.',
+    hasExplore: true,
+    exploreLink: '/capabilities',
     tagLeft: 'X402 ENABLED',
     tagRight: 'AGENT READY',
   },
@@ -1005,9 +1012,9 @@ export default function CoreFeaturesSection() {
                   {tab.hasExplore && (
                     <Box
                       component="a"
-                      href="#explore"
+                      href={tab.exploreLink || '/models'}
                       sx={{
-                        display: { xs: 'none', sm: 'inline-flex' },
+                        display: 'inline-flex',
                         alignItems: 'center',
                         gap: 0.6,
                         color: 'var(--text-heading)',
@@ -1018,8 +1025,8 @@ export default function CoreFeaturesSection() {
                         textDecoration: 'none',
                         pt: 0.5,
                         whiteSpace: 'nowrap',
-                        transition: 'opacity 0.2s',
-                        '&:hover': { opacity: 0.75 },
+                        transition: 'opacity 0.2s, transform 0.2s',
+                        '&:hover': { opacity: 0.8, transform: 'translateX(2px)' },
                       }}
                     >
                       EXPLORE &rarr;

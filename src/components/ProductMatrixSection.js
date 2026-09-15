@@ -241,13 +241,12 @@ export default function ProductMatrixSection() {
               </Box>
 
               <Box 
-                component="button" 
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer');
-                  }
-                }}
+                component="a" 
+                href="https://ais.openledger.xyz/chat"
+                target="_blank"
+                rel="noopener noreferrer"
                 sx={{ 
+                  textDecoration: 'none',
                   mt: 4, 
                   width: '100%', 
                   py: 1.5, 

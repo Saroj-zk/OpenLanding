@@ -116,28 +116,28 @@ export default function Footer() {
             py: { xs: 8, sm: 10, md: 12 },
             textAlign: 'center',
             mb: { xs: 8, sm: 10, md: 12 },
-            // Ambient deep blue and cyan light streaks inspired by Image 1
-            backgroundColor: '#070D1A',
+            // Ambient deep warm orange and amber light streaks matching OpenLedger brand
+            backgroundColor: '#120802',
             backgroundImage: `
-              radial-gradient(ellipse 85% 65% at 50% 35%, rgba(68, 140, 255, 0.48) 0%, rgba(30, 85, 215, 0.22) 50%, rgba(7, 13, 26, 0.95) 85%),
-              linear-gradient(180deg, rgba(20, 45, 95, 0.4) 0%, rgba(5, 10, 20, 0.98) 100%)
+              radial-gradient(ellipse 85% 65% at 50% 30%, rgba(255, 102, 0, 0.46) 0%, rgba(204, 75, 0, 0.22) 50%, rgba(18, 8, 2, 0.96) 85%),
+              linear-gradient(180deg, rgba(65, 25, 4, 0.42) 0%, rgba(10, 4, 1, 0.98) 100%)
             `,
             boxShadow: isDark
-              ? '0 24px 64px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-              : '0 24px 64px -12px rgba(10, 30, 70, 0.25), 0 0 0 1px rgba(30, 85, 215, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+              ? '0 24px 64px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 102, 0, 0.22), 0 0 40px rgba(255, 102, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
+              : '0 24px 64px -12px rgba(255, 102, 0, 0.25), 0 0 0 1px rgba(255, 102, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
           }}
         >
-          {/* Subtle directional cyan/blue rays effect */}
+          {/* Subtle directional warm orange rays effect */}
           <Box
             sx={{
               position: 'absolute',
               inset: 0,
               pointerEvents: 'none',
               backgroundImage: `
-                radial-gradient(circle at 50% 20%, rgba(120, 195, 255, 0.35) 0%, transparent 45%),
-                conic-gradient(from 225deg at 50% 30%, transparent 0deg, rgba(90, 170, 255, 0.14) 40deg, transparent 80deg, rgba(140, 210, 255, 0.18) 130deg, transparent 180deg)
+                radial-gradient(circle at 50% 20%, rgba(255, 145, 50, 0.42) 0%, transparent 48%),
+                conic-gradient(from 225deg at 50% 30%, transparent 0deg, rgba(255, 120, 20, 0.18) 40deg, transparent 80deg, rgba(255, 165, 50, 0.22) 130deg, transparent 180deg)
               `,
-              opacity: 0.85,
+              opacity: 0.9,
               mixBlendMode: 'screen',
             }}
           />
@@ -148,7 +148,7 @@ export default function Footer() {
               position: 'absolute',
               inset: 0,
               pointerEvents: 'none',
-              background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(4, 8, 18, 0.8) 100%)',
+              background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(12, 5, 2, 0.85) 100%)',
             }}
           />
 
@@ -164,8 +164,8 @@ export default function Footer() {
                 py: 0.6,
                 mb: 3,
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
+                backgroundColor: 'rgba(255, 102, 0, 0.12)',
+                border: '1px solid rgba(255, 102, 0, 0.35)',
                 backdropFilter: 'blur(10px)',
               }}
             >
@@ -175,7 +175,7 @@ export default function Footer() {
                   height: 7,
                   borderRadius: '50%',
                   backgroundColor: '#FF6600',
-                  boxShadow: '0 0 8px #FF6600',
+                  boxShadow: '0 0 10px #FF6600',
                 }}
               />
               <Typography
@@ -213,7 +213,7 @@ export default function Footer() {
                 fontSize: { xs: '1.4rem', sm: '1.9rem', md: '2.4rem' },
                 fontFamily: 'serif',
                 fontStyle: 'italic',
-                color: 'rgba(215, 230, 255, 0.85)',
+                color: 'rgba(255, 225, 200, 0.9)',
                 mb: { xs: 4, sm: 5 },
                 fontWeight: 400,
               }}
@@ -231,14 +231,14 @@ export default function Footer() {
                 gap: 2,
               }}
             >
-              {/* Primary White Pill Button matching Image 1 */}
+              {/* Primary White Pill Button with warm orange glow */}
               <Button
                 variant="contained"
                 onClick={() => window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer')}
                 endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: '1.1rem !important' }} />}
                 sx={{
                   backgroundColor: '#FFFFFF',
-                  color: '#070D1A',
+                  color: '#120802',
                   fontSize: { xs: '0.95rem', sm: '1.05rem' },
                   fontWeight: 700,
                   py: 1.5,
@@ -246,12 +246,12 @@ export default function Footer() {
                   borderRadius: '9999px',
                   textTransform: 'none',
                   letterSpacing: '0.01em',
-                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(255, 255, 255, 0.25)',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 102, 0, 0.42)',
                   transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                   '&:hover': {
-                    backgroundColor: '#F3F6FA',
+                    backgroundColor: '#FFF7F2',
                     transform: 'translateY(-2px) scale(1.02)',
-                    boxShadow: '0 12px 35px rgba(0, 0, 0, 0.45), 0 0 28px rgba(255, 255, 255, 0.4)',
+                    boxShadow: '0 12px 35px rgba(0, 0, 0, 0.5), 0 0 32px rgba(255, 102, 0, 0.65)',
                   },
                   '&:active': {
                     transform: 'scale(0.97)',
@@ -278,8 +278,9 @@ export default function Footer() {
                   textTransform: 'none',
                   transition: 'all 0.25s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.16)',
-                    borderColor: 'rgba(255, 255, 255, 0.45)',
+                    backgroundColor: 'rgba(255, 102, 0, 0.14)',
+                    borderColor: 'rgba(255, 102, 0, 0.55)',
+                    color: '#FF8833',
                     transform: 'translateY(-2px)',
                   },
                 }}
