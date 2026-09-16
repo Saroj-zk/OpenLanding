@@ -41,11 +41,6 @@ const MODEL_NAMES = {
   DS: 'DeepSeek',
 };
 
-/* =====================================================================
-   /memory - Unified Memory
-   Rebuilt according to the master design specifications and reference.
-   ===================================================================== */
-
 const REMEMBERS = [
   {
     glyph: 'sliders',
@@ -180,20 +175,22 @@ function CatGlyph({ name }) {
       )}
       {name === 'layers' && (
         <>
-          <path d="M10 2.6 17.4 6.5 10 10.4 2.6 6.5z" {...s} />
-          <path d="M2.6 10.5 10 14.4l7.4-3.9" {...s} />
+          <path d="M10 2.5L2.5 6.5L10 10.5L17.5 6.5L10 2.5Z" {...s} />
+          <path d="M2.5 10.5L10 14.5L17.5 10.5" {...s} />
+          <path d="M2.5 14L10 18L17.5 14" {...s} />
         </>
       )}
       {name === 'note' && (
         <>
-          <rect x="4" y="2.8" width="12" height="14.4" rx="2.2" {...s} />
-          <path d="M7.2 7h5.6M7.2 10.4h5.6M7.2 13.8h3.2" {...s} />
+          <path d="M4 2.5h8.5L16 6v11.5H4V2.5z" {...s} />
+          <path d="M12.5 2.5V6H16" {...s} />
+          <path d="M6.5 9.5h7M6.5 12.5h5" {...s} />
         </>
       )}
       {name === 'check' && (
         <>
-          <circle cx="10" cy="10" r="7.4" {...s} />
-          <path d="m6.6 10.2 2.3 2.3 4.5-4.7" {...s} />
+          <circle cx="10" cy="10" r="7.5" {...s} />
+          <path d="M7 10.2l2.2 2.2 4.1-4.4" {...s} />
         </>
       )}
     </svg>
@@ -274,7 +271,7 @@ function MemoryStack() {
             fontWeight: 700,
           }}
         >
-          You
+          You (Local Device)
         </Box>
 
         <Drop height={26} />
@@ -295,10 +292,10 @@ function MemoryStack() {
         >
           <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 2 }}>
             <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: '#FF6600' }}>
-              Your Unified Memory
+              Your Unified Memory Layer
             </Typography>
             <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-              Encrypted & Yours
+              Encrypted & Local
             </Typography>
           </Box>
 
@@ -339,7 +336,7 @@ function MemoryStack() {
           }}
         >
           <Typography sx={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-            Relevant Context (Filtered Slice)
+            Relevant Context (Only what prompt needs)
           </Typography>
         </Box>
 
@@ -390,63 +387,217 @@ export default function MemoryPage() {
   const { isDark } = useThemeMode();
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>Unified Memory - OpenLedger</title>
+        <title>Unified Memory — One Context Across Every AI Model | OpenLedger</title>
         <meta
           name="description"
-          content="One memory across every model. Your preferences, projects, decisions, and context live in one private memory, independent of the model you choose."
+          content="Say it once, every model knows. Your preferences, active projects, and decisions live in one private memory layer, independent of which model you chat with."
         />
       </Head>
 
       <PageHeader />
 
-      <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 } }}>
-        {/* =================================================================
-            01 INTRO SECTION
-            ================================================================= */}
-        <Box component="section" sx={{ py: { xs: 8, md: 12 } }}>
-          <Reveal>
-            <Eyebrow>Unified Memory</Eyebrow>
-            <Typography
-              component="h1"
-              sx={{
-                maxWidth: '18ch',
-                fontSize: { xs: '2.4rem', sm: '3.4rem', md: '4.2rem' },
-                fontWeight: 700,
-                lineHeight: 1.1,
-                letterSpacing: '-0.03em',
-                color: 'var(--text-heading)',
-                mb: 3,
-              }}
-            >
-              One memory across every model.
-            </Typography>
-            <Typography
-              sx={{
-                maxWidth: '60ch',
-                fontSize: { xs: '1.05rem', sm: '1.15rem' },
-                lineHeight: 1.6,
-                color: 'var(--text-secondary)',
-              }}
-            >
-              Your preferences, projects, decisions, and context live in one private memory, independent of the model
-              you choose. Switch models without starting over.
-            </Typography>
-          </Reveal>
+      {/* Ambient background glow streak */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100%',
+          maxWidth: 1400,
+          height: 650,
+          background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255, 102, 0, 0.12) 0%, rgba(255, 102, 0, 0.02) 60%, transparent 80%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
 
-          <Reveal delay={140}>
-            <SpecLine
-              items={['User controlled', 'Cross-model', 'Private']}
-              sx={{ mt: 5, pt: 4, borderTop: '1px solid var(--border-subtle)' }}
-            />
-          </Reveal>
+      <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
+        {/* ── Section 1: Hero Showcase with Portable Memory Image ─ */}
+        <Box sx={{ pt: { xs: 14, sm: 16, md: 18 }, pb: { xs: 8, md: 12 } }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gap: { xs: 6, lg: 8 },
+              gridTemplateColumns: { lg: 'minmax(0,1.1fr) minmax(0,0.9fr)' },
+              alignItems: 'center',
+            }}
+          >
+            {/* Left Copy */}
+            <Reveal>
+              <Eyebrow>Universal Context Layer</Eyebrow>
+              <Typography
+                component="h1"
+                sx={{
+                  fontSize: { xs: '2.4rem', sm: '3.4rem', md: '4.2rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.08,
+                  letterSpacing: '-0.035em',
+                  color: 'var(--text-heading)',
+                  mb: 3,
+                }}
+              >
+                Say it once.{' '}
+                <Box component="span" sx={{ color: '#FF6600' }}>
+                  Every model knows.
+                </Box>
+              </Typography>
+
+              <Typography
+                sx={{
+                  maxWidth: '56ch',
+                  fontSize: { xs: '1.05rem', md: '1.15rem' },
+                  lineHeight: 1.65,
+                  color: 'var(--text-secondary)',
+                  mb: 4,
+                }}
+              >
+                Your preferences, active projects, technical constraints, and decisions live in one private memory layer, independent of the model. Switch from Claude to DeepSeek to GPT-4o without repeating yourself.
+              </Typography>
+
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2.5, mb: 5 }}>
+                <Box
+                  component="a"
+                  href="#demo"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#FF6600',
+                    color: '#FFFFFF',
+                    px: 4.5,
+                    py: 1.8,
+                    borderRadius: '9999px',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    letterSpacing: '0.02em',
+                    boxShadow: '0 8px 32px rgba(255,102,0,0.38), inset 0 1px 0 rgba(255,255,255,0.25)',
+                    border: '1px solid rgba(255,102,0,0.4)',
+                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+                    '&:hover': {
+                      backgroundColor: '#e65c00',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 14px 40px rgba(255,102,0,0.52)',
+                    },
+                    '&:active': { transform: 'scale(0.98)' },
+                  }}
+                >
+                  Try Interactive Demo ↓
+                </Box>
+
+                <Box
+                  component="a"
+                  href="https://ais.openledger.xyz/chat"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    color: 'var(--text-secondary)',
+                    px: 3.5,
+                    py: 1.8,
+                    borderRadius: '9999px',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    border: '1px solid var(--border-normal)',
+                    backgroundColor: 'var(--bg-glass)',
+                    backdropFilter: 'blur(12px)',
+                    transition: 'all 0.25s ease',
+                    '&:hover': {
+                      borderColor: '#FF6600',
+                      color: '#FF6600',
+                      transform: 'translateY(-2px)',
+                    },
+                  }}
+                >
+                  Start Live Chat →
+                </Box>
+              </Box>
+
+              <SpecLine
+                items={['Zero-Retention Backing', 'Cross-Model Persistence', 'User Wiped Anytime']}
+                sx={{ pt: 3, borderTop: '1px solid var(--border-subtle)' }}
+              />
+            </Reveal>
+
+            {/* Right Visual Image Card Showcase */}
+            <Reveal delay={120}>
+              <Box
+                sx={{
+                  position: 'relative',
+                  borderRadius: { xs: 4, md: 5 },
+                  overflow: 'hidden',
+                  border: '1px solid var(--border-normal)',
+                  boxShadow: isDark
+                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(255,102,0,0.15)'
+                    : '0 20px 45px -12px rgba(15,23,42,0.12)',
+                  backgroundColor: 'var(--bg-card)',
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/images/Portable memory.jpg"
+                  alt="OpenLedger Portable Context and Unified Memory"
+                  sx={{
+                    width: '100%',
+                    height: { xs: 280, sm: 340, md: 380 },
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+
+                {/* Floating telemetry HUD over image */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    left: 16,
+                    right: 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 1.2,
+                    borderRadius: '9999px',
+                    backgroundColor: isDark ? 'rgba(10,12,16,0.85)' : 'rgba(255,255,255,0.9)',
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid var(--border-normal)',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 1 }}>
+                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 8px #FF6600' }} />
+                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-heading)' }}>
+                      PORTABLE MEMORY VAULT
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      px: 1.5,
+                      py: 0.4,
+                      borderRadius: '9999px',
+                      backgroundColor: 'rgba(255,102,0,0.15)',
+                      color: '#FF6600',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    Encrypted on Device
+                  </Box>
+                </Box>
+              </Box>
+            </Reveal>
+          </Box>
         </Box>
 
-        {/* =================================================================
-            02 IN ACTION SECTION (INTERACTIVE DEMO)
-            ================================================================= */}
-        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 10, md: 14 } }}>
+        {/* ── Section 2: Interactive Demo ───────────────────────── */}
+        <Box component="section" id="demo" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
@@ -479,10 +630,8 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* =================================================================
-            03 WHAT IT REMEMBERS SECTION (4 CATEGORY CARDS)
-            ================================================================= */}
-        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 10, md: 14 } }}>
+        {/* ── Section 3: What It Remembers Bento ─────────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
@@ -510,8 +659,7 @@ export default function MemoryPage() {
                   mb: 6,
                 }}
               >
-                Unified Memory builds a private understanding of the context you choose to carry across conversations
-                and models.
+                Unified Memory builds a private understanding of the context you choose to carry across conversations and models.
               </Typography>
             </Reveal>
 
@@ -524,23 +672,23 @@ export default function MemoryPage() {
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
-                        p: 3,
+                        p: 3.5,
                         borderRadius: '20px',
-                        backgroundColor: isDark ? 'rgba(14, 16, 21, 0.6)' : '#FFFFFF',
-                        border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border-normal)',
                         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                         '&:hover': {
                           transform: 'translateY(-4px)',
-                          borderColor: 'rgba(255, 102, 0, 0.4)',
-                          boxShadow: '0 12px 30px -10px rgba(255, 102, 0, 0.25)',
+                          borderColor: '#FF6600',
+                          boxShadow: '0 12px 30px rgba(255, 102, 0, 0.15)',
                         },
                       }}
                     >
                       <Box
                         sx={{
-                          width: 38,
-                          height: 38,
-                          borderRadius: '10px',
+                          width: 42,
+                          height: 42,
+                          borderRadius: '12px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -593,19 +741,11 @@ export default function MemoryPage() {
                 </Grid>
               ))}
             </Grid>
-
-            <Reveal delay={140} sx={{ mt: 4 }}>
-              <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: '#FF6600' }}>
-                Less repeating. More relevant responses.
-              </Typography>
-            </Reveal>
           </Box>
         </Box>
 
-        {/* =================================================================
-            04 UNDER THE HOOD SECTION (ARCHITECTURE & MECHANICS)
-            ================================================================= */}
-        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 12, md: 16 } }}>
+        {/* ── Section 4: Architecture & Mechanics ───────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
@@ -648,8 +788,8 @@ export default function MemoryPage() {
               <Box
                 sx={{
                   borderRadius: { xs: '20px', md: '24px' },
-                  backgroundColor: isDark ? 'rgba(14, 16, 21, 0.7)' : '#FFFFFF',
-                  border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
+                  backgroundColor: 'var(--bg-card)',
+                  border: '1px solid var(--border-normal)',
                   overflow: 'hidden',
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
@@ -702,64 +842,162 @@ export default function MemoryPage() {
                 ))}
               </Box>
             </Reveal>
+          </Box>
+        </Box>
 
-            {/* CTA Buttons Row */}
-            <Reveal delay={180} sx={{ mt: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
-              <Button
-                component="a"
-                href="#demo"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: 400, behavior: 'smooth' });
-                }}
+        {/* ── Section 5: Bottom Cinematic CTA Banner ─────────────── */}
+        <Rule />
+        <Box sx={{ py: { xs: 8, md: 14 } }}>
+          <Reveal>
+            <Box
+              sx={{
+                position: 'relative',
+                borderRadius: { xs: 4, md: 6 },
+                p: { xs: 4, sm: 6, md: 8 },
+                overflow: 'hidden',
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-normal)',
+                boxShadow: isDark
+                  ? '0 25px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,102,0,0.15)'
+                  : '0 20px 45px rgba(15,23,42,0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+              }}
+            >
+              <Box
                 sx={{
-                  px: 4,
-                  py: 1.6,
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255, 102, 0, 0.16) 0%, rgba(255, 102, 0, 0.02) 70%, transparent 100%)',
+                  pointerEvents: 'none',
+                }}
+              />
+
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1.2,
+                  px: 2,
+                  py: 0.6,
                   borderRadius: '9999px',
-                  backgroundColor: '#FF6600',
-                  color: '#FFFFFF',
+                  backgroundColor: 'rgba(255, 102, 0, 0.1)',
+                  border: '1px solid rgba(255, 102, 0, 0.3)',
+                  color: '#FF6600',
+                  fontSize: '0.8rem',
                   fontWeight: 700,
-                  fontSize: '0.92rem',
-                  textTransform: 'none',
-                  letterSpacing: '0.02em',
-                  boxShadow: '0 8px 28px rgba(255, 102, 0, 0.35)',
-                  '&:hover': {
-                    backgroundColor: '#e65c00',
-                    transform: 'translateY(-2px)',
-                  },
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  mb: 3,
+                  position: 'relative',
+                  zIndex: 1,
                 }}
               >
-                Try Interactive Demo
-              </Button>
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
+                Cross-Model Memory • Complete User Control
+              </Box>
 
-              <Link href="/models" passHref style={{ textDecoration: 'none' }}>
-                <Button
+              <Typography
+                component="h2"
+                sx={{
+                  fontSize: { xs: '2.2rem', sm: '3rem', md: '3.6rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.03em',
+                  color: 'var(--text-heading)',
+                  maxWidth: '22ch',
+                  mb: 2.5,
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
+                Never re-explain your project to AI again.
+              </Typography>
+
+              <Typography
+                sx={{
+                  maxWidth: '54ch',
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  lineHeight: 1.65,
+                  color: 'var(--text-secondary)',
+                  mb: 4.5,
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
+                Carry your preferences, coding guidelines, and active task context across 50+ models seamlessly.
+              </Typography>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 2.5,
+                  justifyContent: 'center',
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
+                <Box
+                  component="a"
+                  href="https://ais.openledger.xyz/chat"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   sx={{
-                    px: 3.5,
-                    py: 1.6,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    backgroundColor: '#FF6600',
+                    color: '#FFFFFF',
+                    px: 5,
+                    py: 1.8,
                     borderRadius: '9999px',
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
-                    border: '1px solid var(--border-normal)',
-                    color: 'var(--text-primary)',
-                    fontWeight: 600,
-                    fontSize: '0.92rem',
-                    textTransform: 'none',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    letterSpacing: '0.02em',
+                    boxShadow: '0 8px 32px rgba(255,102,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25)',
+                    border: '1px solid rgba(255,102,0,0.45)',
+                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
                     '&:hover': {
-                      backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+                      backgroundColor: '#e65c00',
                       transform: 'translateY(-2px)',
+                      boxShadow: '0 14px 44px rgba(255,102,0,0.55)',
                     },
                   }}
                 >
-                  See every model
-                </Button>
-              </Link>
-
-              <SpecLine
-                items={['Remember', 'Unify', 'Retrieve', 'Control']}
-                sx={{ ml: { xs: 0, lg: 'auto' }, display: { xs: 'none', md: 'flex' } }}
-              />
-            </Reveal>
-          </Box>
+                  Start Chatting with Memory →
+                </Box>
+                <Link href="/capabilities" passHref style={{ textDecoration: 'none' }}>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: 'var(--text-primary)',
+                      px: 4,
+                      py: 1.8,
+                      borderRadius: '9999px',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      border: '1px solid var(--border-normal)',
+                      backgroundColor: 'var(--bg-glass)',
+                      backdropFilter: 'blur(12px)',
+                      transition: 'all 0.25s ease',
+                      '&:hover': {
+                        borderColor: '#FF6600',
+                        color: '#FF6600',
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    Explore All Capabilities
+                  </Box>
+                </Link>
+              </Box>
+            </Box>
+          </Reveal>
         </Box>
       </Container>
 
