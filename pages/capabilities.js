@@ -35,8 +35,9 @@ export default function CapabilitiesPage() {
 
       <PageHeader />
 
-      {/* Ambient background glow streak */}
+      {/* Ambient background glow streak — dual layer */}
       <Box
+        data-ambient-blur
         sx={{
           position: 'absolute',
           top: 0,
@@ -44,8 +45,23 @@ export default function CapabilitiesPage() {
           transform: 'translateX(-50%)',
           width: '100%',
           maxWidth: 1400,
-          height: 650,
-          background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255, 102, 0, 0.12) 0%, rgba(255, 102, 0, 0.02) 60%, transparent 80%)',
+          height: 750,
+          background: 'radial-gradient(ellipse 80% 55% at 50% 0%, rgba(255, 102, 0, 0.18) 0%, rgba(255, 60, 0, 0.06) 55%, transparent 80%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+      {/* Secondary soft blue-purple ambient accent */}
+      <Box
+        data-ambient-blur
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%) translateX(-300px)',
+          width: 600,
+          height: 400,
+          background: 'radial-gradient(ellipse 60% 60% at 50% 0%, rgba(100, 120, 255, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -108,13 +124,13 @@ export default function CapabilitiesPage() {
             </Typography>
 
             {/* Quick jump pills */}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mb: 4 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mb: 5 }}>
               {[
-                { label: 'Image Synthesis', href: '#image', count: '10+ models' },
-                { label: 'Chat & Reasoning', href: '#text', count: '28+ models' },
-                { label: 'Voice & Audio', href: '#audio', count: '8+ models' },
-                { label: 'Cinematic Video', href: '#video', count: '6+ models' },
-                { label: 'Autonomous Agents', href: '#agents', count: 'x402 Ready' },
+                { label: 'Image Synthesis', href: '#image', count: '10+ models', emoji: '🖼' },
+                { label: 'Chat & Reasoning', href: '#text', count: '28+ models', emoji: '💬' },
+                { label: 'Voice & Audio', href: '#audio', count: '8+ models', emoji: '🎙' },
+                { label: 'Cinematic Video', href: '#video', count: '6+ models', emoji: '🎬' },
+                { label: 'Autonomous Agents', href: '#agents', count: 'x402 Ready', emoji: '⚡' },
               ].map((item) => (
                 <Box
                   key={item.label}
@@ -133,18 +149,99 @@ export default function CapabilitiesPage() {
                     textDecoration: 'none',
                     fontSize: '0.84rem',
                     fontWeight: 600,
-                    transition: 'all 0.25s ease',
+                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                     '&:hover': {
                       borderColor: '#FF6600',
                       color: '#FF6600',
+                      backgroundColor: 'rgba(255, 102, 0, 0.06)',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 16px rgba(255,102,0,0.2)',
+                      boxShadow: '0 6px 20px rgba(255,102,0,0.18)',
                     },
                   }}
                 >
                   <span>{item.label}</span>
-                  <Typography sx={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                  <Typography sx={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 500 }}>
                     {item.count}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+
+            {/* Primary CTA + secondary */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2.5, mb: 4 }}>
+              <Box
+                component="a"
+                href="https://ais.openledger.xyz/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#FF6600',
+                  color: '#FFFFFF',
+                  px: 4.5,
+                  py: 1.8,
+                  borderRadius: '9999px',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  letterSpacing: '0.02em',
+                  boxShadow: '0 8px 32px rgba(255,102,0,0.38), inset 0 1px 0 rgba(255,255,255,0.25)',
+                  border: '1px solid rgba(255,102,0,0.4)',
+                  transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+                  '&:hover': {
+                    backgroundColor: '#e65c00',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 14px 40px rgba(255,102,0,0.52)',
+                  },
+                  '&:active': { transform: 'scale(0.98)' },
+                }}
+              >
+                Start Creating &#8594;
+              </Box>
+              <Box
+                component="a"
+                href="#image"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  color: 'var(--text-secondary)',
+                  px: 3.5,
+                  py: 1.8,
+                  borderRadius: '9999px',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  border: '1px solid var(--border-normal)',
+                  backgroundColor: 'var(--bg-glass)',
+                  backdropFilter: 'blur(12px)',
+                  transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)',
+                  '&:hover': {
+                    borderColor: '#FF6600',
+                    color: '#FF6600',
+                    transform: 'translateY(-2px)',
+                  },
+                }}
+              >
+                Explore Capabilities &#8595;
+              </Box>
+            </Box>
+
+            {/* Stat badges row */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3.5, pt: 2.5, borderTop: '1px solid var(--border-subtle)' }}>
+              {[
+                { value: '50+', label: 'Frontier Models' },
+                { value: '1', label: 'Subscription' },
+                { value: '0s', label: 'Data Retention' },
+                { value: '∞', label: 'Modalities' },
+              ].map(({ value, label }) => (
+                <Box key={label}>
+                  <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-heading)', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                    {value}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)', mt: 0.4, fontWeight: 500 }}>
+                    {label}
                   </Typography>
                 </Box>
               ))}

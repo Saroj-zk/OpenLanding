@@ -286,7 +286,7 @@ export default function ProductMatrixSection() {
           <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
             
             {/* Image Display */}
-            <Box sx={{ position: 'relative', flexGrow: 1, minHeight: { xs: '300px', md: '350px' }, borderRadius: '32px', overflow: 'hidden', backgroundColor: '#000' }}>
+            <Box sx={{ position: 'relative', flexGrow: 1, minHeight: { xs: '300px', md: '350px' }, borderRadius: '32px', overflow: 'hidden', backgroundColor: 'var(--bg-page)' }}>
               {OPTIONS.map((opt, idx) => (
                 <Box
                   key={opt.id}

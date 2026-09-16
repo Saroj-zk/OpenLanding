@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule } from '@/components/ui/LedgerUI';
-import { GlyphTile, PrivacyPanel } from '@/components/PrivacyVisuals';
+import { GlyphTile } from '@/components/PrivacyVisuals';
 import { useThemeMode } from '@/context/ThemeContext';
 
 /* ─────────────────────────────────────────────────────────────────
@@ -467,8 +467,9 @@ export default function PrivatePage() {
 
       <PageHeader />
 
-      {/* Ambient background glow streaks */}
+      {/* Ambient background glow streaks — deep dark security aesthetic */}
       <Box
+        data-ambient-blur
         sx={{
           position: 'absolute',
           top: 0,
@@ -476,8 +477,22 @@ export default function PrivatePage() {
           transform: 'translateX(-50%)',
           width: '100%',
           maxWidth: 1400,
-          height: 650,
-          background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255, 102, 0, 0.12) 0%, rgba(255, 102, 0, 0.02) 60%, transparent 80%)',
+          height: 750,
+          background: 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(255, 102, 0, 0.14) 0%, rgba(255, 60, 0, 0.04) 55%, transparent 80%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+      {/* Cool security tint — right side */}
+      <Box
+        data-ambient-blur
+        sx={{
+          position: 'absolute',
+          top: '5%',
+          right: 0,
+          width: { xs: 300, md: 500 },
+          height: 500,
+          background: 'radial-gradient(ellipse 80% 70% at 100% 0%, rgba(80, 120, 255, 0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -490,7 +505,7 @@ export default function PrivatePage() {
             sx={{
               display: 'grid',
               gap: { xs: 6, lg: 8 },
-              gridTemplateColumns: { lg: 'minmax(0,1.1fr) minmax(0,0.9fr)' },
+              gridTemplateColumns: { lg: 'minmax(0,1.15fr) minmax(0,0.85fr)' },
               alignItems: 'center',
             }}
           >
@@ -521,9 +536,9 @@ export default function PrivatePage() {
               <Typography
                 component="h1"
                 sx={{
-                  fontSize: { xs: '2.4rem', sm: '3.2rem', md: '4rem' },
+                  fontSize: { xs: '2.5rem', sm: '3.4rem', md: '4.2rem' },
                   fontWeight: 700,
-                  lineHeight: 1.08,
+                  lineHeight: 1.06,
                   letterSpacing: '-0.035em',
                   color: 'var(--text-heading)',
                   mb: 3,
@@ -537,7 +552,7 @@ export default function PrivatePage() {
 
               <Typography
                 sx={{
-                  maxWidth: '56ch',
+                  maxWidth: '52ch',
                   fontSize: { xs: '1.05rem', md: '1.15rem' },
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
@@ -597,11 +612,12 @@ export default function PrivatePage() {
                     border: '1px solid var(--border-normal)',
                     backgroundColor: 'var(--bg-glass)',
                     backdropFilter: 'blur(12px)',
-                    transition: 'all 0.25s ease',
+                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                     '&:hover': {
                       borderColor: '#FF6600',
                       color: '#FF6600',
                       transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(255,102,0,0.12)',
                     },
                   }}
                 >
@@ -610,18 +626,32 @@ export default function PrivatePage() {
               </Box>
 
               {/* Quick telemetry badges */}
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3.5, pt: 2, borderTop: '1px solid var(--border-subtle)' }}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: { xs: 2, sm: 3 },
+                  pt: 3.5,
+                  borderTop: '1px solid var(--border-subtle)',
+                }}
+              >
                 {[
-                  ['0 Seconds', 'Data Retention'],
-                  ['100% Client-Side', 'Encrypted Vault'],
-                  ['Zero', 'Model Training'],
-                ].map(([stat, label]) => (
-                  <Box key={label}>
-                    <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-heading)', lineHeight: 1 }}>
-                      {stat}
+                  { stat: '0 Seconds', label: 'Data Retention', color: '#FF6600' },
+                  { stat: '100% Client-Side', label: 'Encrypted Vault', color: 'var(--text-heading)' },
+                  { stat: 'Zero', label: 'Model Training', color: '#10B981' },
+                ].map((item, idx) => (
+                  <Box
+                    key={item.label}
+                    sx={{
+                      pl: idx > 0 ? { xs: 1.5, sm: 3 } : 0,
+                      borderLeft: idx > 0 ? '1px solid var(--border-subtle)' : 'none',
+                    }}
+                  >
+                    <Typography sx={{ fontSize: { xs: '1.15rem', sm: '1.35rem' }, fontWeight: 800, color: item.color, lineHeight: 1 }}>
+                      {item.stat}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.75rem', color: 'var(--text-muted)', mt: 0.4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {label}
+                    <Typography sx={{ fontSize: '0.72rem', color: 'var(--text-muted)', mt: 0.6, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
+                      {item.label}
                     </Typography>
                   </Box>
                 ))}
@@ -637,66 +667,136 @@ export default function PrivatePage() {
                   overflow: 'hidden',
                   border: '1px solid var(--border-normal)',
                   boxShadow: isDark
-                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(255,102,0,0.15)'
-                    : '0 20px 45px -12px rgba(15,23,42,0.12)',
+                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 40px rgba(255,102,0,0.18)'
+                    : '0 20px 45px -12px rgba(15,23,42,0.14)',
                   backgroundColor: 'var(--bg-card)',
+                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    borderColor: 'rgba(255,102,0,0.4)',
+                    boxShadow: isDark
+                      ? '0 30px 70px -15px rgba(0,0,0,0.85), 0 0 50px rgba(255,102,0,0.25)'
+                      : '0 24px 50px -10px rgba(15,23,42,0.18)',
+                  },
                 }}
               >
-                {/* Hero Image */}
-                <Box
-                  component="img"
-                  src="/images/Privacy.jpg"
-                  alt="OpenLedger Private AI Enclave"
-                  sx={{
-                    width: '100%',
-                    height: { xs: 260, sm: 320, md: 360 },
-                    objectFit: 'cover',
-                    display: 'block',
-                    filter: isDark ? 'brightness(0.92) contrast(1.05)' : 'none',
-                  }}
-                />
+                {/* Top Media Container */}
+                <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+                  {/* Hero Image */}
+                  <Box
+                    component="img"
+                    src="/images/Privacy.jpg"
+                    alt="OpenLedger Private AI Enclave"
+                    sx={{
+                      width: '100%',
+                      height: { xs: 260, sm: 300, md: 340 },
+                      objectFit: 'cover',
+                      display: 'block',
+                      filter: isDark ? 'brightness(0.92) contrast(1.05)' : 'none',
+                    }}
+                  />
 
-                {/* Floating telemetry HUD over image */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    right: 16,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    p: 1.2,
-                    borderRadius: '9999px',
-                    backgroundColor: isDark ? 'rgba(10,12,16,0.75)' : 'rgba(255,255,255,0.85)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid var(--border-normal)',
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 1 }}>
-                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#10B981', boxShadow: '0 0 8px #10B981' }} />
-                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-                      ENCLAVE ACTIVE
-                    </Typography>
-                  </Box>
+                  {/* Subtle Gradient Scrim at Bottom of Image */}
                   <Box
                     sx={{
-                      px: 1.5,
-                      py: 0.4,
+                      position: 'absolute',
+                      inset: 0,
+                      background: isDark
+                        ? 'linear-gradient(to top, rgba(14, 16, 21, 0.9) 0%, rgba(14, 16, 21, 0.15) 35%, transparent 65%)'
+                        : 'linear-gradient(to top, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) 35%, transparent 65%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+
+                  {/* Floating telemetry HUD over image */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: { xs: 12, sm: 16 },
+                      left: { xs: 12, sm: 16 },
+                      right: { xs: 12, sm: 16 },
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      px: 1.8,
+                      py: 1,
                       borderRadius: '9999px',
-                      backgroundColor: 'rgba(255,102,0,0.15)',
-                      color: '#FF6600',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
+                      backgroundColor: isDark ? 'rgba(10,12,16,0.82)' : 'rgba(255,255,255,0.9)',
+                      backdropFilter: 'blur(16px)',
+                      border: '1px solid var(--border-normal)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
                     }}
                   >
-                    Zero Disk Write
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: '#10B981',
+                          boxShadow: '0 0 10px #10B981',
+                        }}
+                      />
+                      <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '0.04em' }}>
+                        ENCLAVE ACTIVE
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.8,
+                        px: 1.4,
+                        py: 0.35,
+                        borderRadius: '9999px',
+                        backgroundColor: 'rgba(255,102,0,0.12)',
+                        border: '1px solid rgba(255,102,0,0.3)',
+                        color: '#FF6600',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Zero Disk Write
+                    </Box>
                   </Box>
                 </Box>
 
-                {/* Bottom integrated interactive widget */}
-                <Box sx={{ p: { xs: 2.5, sm: 3 }, backgroundColor: 'var(--bg-card)' }}>
-                  <PrivacyPanel />
+                {/* Integrated Glass Telemetry Strip at Bottom of Image Card */}
+                <Box
+                  sx={{
+                    p: { xs: 2.2, sm: 2.8 },
+                    backgroundColor: 'var(--bg-card)',
+                    borderTop: '1px solid var(--border-subtle)',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: 1.5,
+                    textAlign: 'center',
+                  }}
+                >
+                  <Box>
+                    <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
+                      Buffer Purge
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, fontWeight: 800, color: '#FF6600', mt: 0.4 }}>
+                      0s Ephemeral
+                    </Typography>
+                  </Box>
+                  <Box sx={{ borderLeft: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)' }}>
+                    <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
+                      Transport
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, fontWeight: 800, color: 'var(--text-heading)', mt: 0.4 }}>
+                      ZK-Relay
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
+                      Inference
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, fontWeight: 800, color: '#10B981', mt: 0.4 }}>
+                      Volatile RAM
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </Reveal>

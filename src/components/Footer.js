@@ -276,11 +276,11 @@ export default function Footer() {
                   px: { xs: 3.5, sm: 4.5 },
                   borderRadius: '9999px',
                   textTransform: 'none',
-                  transition: 'all 0.25s ease',
+                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                   '&:hover': {
                     backgroundColor: 'rgba(255, 102, 0, 0.14)',
                     borderColor: 'rgba(255, 102, 0, 0.55)',
-                    color: '#FF8833',
+                    color: '#FF6600',
                     transform: 'translateY(-2px)',
                   },
                 }}

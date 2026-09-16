@@ -398,8 +398,9 @@ export default function MemoryPage() {
 
       <PageHeader />
 
-      {/* Ambient background glow streak */}
+      {/* Ambient background glow streak — warm memory layer */}
       <Box
+        data-ambient-blur
         sx={{
           position: 'absolute',
           top: 0,
@@ -407,8 +408,22 @@ export default function MemoryPage() {
           transform: 'translateX(-50%)',
           width: '100%',
           maxWidth: 1400,
-          height: 650,
-          background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255, 102, 0, 0.12) 0%, rgba(255, 102, 0, 0.02) 60%, transparent 80%)',
+          height: 720,
+          background: 'radial-gradient(ellipse 80% 55% at 50% 0%, rgba(255, 102, 0, 0.15) 0%, rgba(255, 80, 0, 0.04) 55%, transparent 80%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+      {/* Warm left accent */}
+      <Box
+        data-ambient-blur
+        sx={{
+          position: 'absolute',
+          top: '10%',
+          left: 0,
+          width: { xs: 250, md: 400 },
+          height: 400,
+          background: 'radial-gradient(ellipse 80% 70% at 0% 0%, rgba(255, 140, 0, 0.06) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -510,11 +525,12 @@ export default function MemoryPage() {
                     border: '1px solid var(--border-normal)',
                     backgroundColor: 'var(--bg-glass)',
                     backdropFilter: 'blur(12px)',
-                    transition: 'all 0.25s ease',
+                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                     '&:hover': {
                       borderColor: '#FF6600',
                       color: '#FF6600',
                       transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(255,102,0,0.12)',
                     },
                   }}
                 >

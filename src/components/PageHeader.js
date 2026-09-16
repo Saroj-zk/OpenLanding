@@ -81,6 +81,7 @@ export default function PageHeader() {
           {/* Center — Nav links */}
           <Box
             component="nav"
+            aria-label="Main navigation"
             sx={{
               display: { xs: 'none', md: 'flex' },
               alignItems: 'center',
@@ -231,6 +232,7 @@ export default function PageHeader() {
             {/* Theme toggle */}
             <Tooltip title={isDark ? 'Switch to light theme' : 'Switch to dark theme'} arrow>
               <IconButton
+                aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
                 onClick={toggleTheme}
                 sx={{
                   display: { xs: 'none', sm: 'flex' },
@@ -254,6 +256,8 @@ export default function PageHeader() {
             {/* Mobile hamburger */}
             <IconButton
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileOpen}
               sx={{
                 display: { xs: 'flex', md: 'none' },
                 color: isDark ? '#FFFFFF' : '#0F172A',

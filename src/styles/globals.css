@@ -179,11 +179,89 @@ html[data-theme="dark"] #center-hub-logo {
 
 /* Smooth color transitions on all interactive UI */
 button, a, input, select {
-  transition-property: background-color, border-color, color, box-shadow;
+  transition-property: background-color, border-color, color, box-shadow, outline;
   transition-duration: 0.25s;
   transition-timing-function: ease;
 }
 
 canvas, img, video, svg {
   transition: none !important;
+}
+
+/* ── Brand accent variable ──────────────────────────────────────── */
+:root {
+  --brand-accent: #FF6600;
+  --brand-accent-glow: rgba(255, 102, 0, 0.35);
+  --brand-accent-subtle: rgba(255, 102, 0, 0.08);
+}
+
+/* ── Focus indicators (WCAG 2.1 AA keyboard accessibility) ─────── */
+:focus-visible {
+  outline: 2px solid var(--brand-accent) !important;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* MUI buttons and icon buttons override */
+.MuiButtonBase-root:focus-visible,
+.MuiIconButton-root:focus-visible {
+  outline: 2px solid var(--brand-accent) !important;
+  outline-offset: 2px;
+}
+
+/* ── Text selection highlight ──────────────────────────────────── */
+::selection {
+  background-color: rgba(255, 102, 0, 0.22);
+  color: inherit;
+}
+
+/* ── Smooth anchor scroll with offset for sticky header ────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Anchor target offset so sections don't hide under fixed header */
+[id] {
+  scroll-margin-top: 90px;
+}
+
+/* ── Reduced motion for accessibility ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable GSAP-driven elements gracefully */
+  #hero-headline,
+  #hero-subtitle,
+  #hero-chat-container,
+  #hero-suggestion-chips button,
+  #hero-trust-badges {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── Screen-reader only utility ────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Word break safety for mobile ──────────────────────────────── */
+p, li, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }

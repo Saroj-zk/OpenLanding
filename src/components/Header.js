@@ -47,8 +47,6 @@ export default function Header() {
     window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer');
   };
 
-  const orangeColor = '#D06038';
-
   return (
     <>
       <Box

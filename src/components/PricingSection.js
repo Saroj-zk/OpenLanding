@@ -12,8 +12,6 @@ export default function PricingSection() {
   // Progress from 0 (Left / $90 / 4 apps) to 100 (Right / $20 / 1 app)
   const [progress, setProgress] = React.useState(0);
 
-  const orangeColor = '#D06038';
-
   // Theme-adaptive colors
   const primaryText = isDark ? '#FFFFFF' : '#111111';
   const secondaryText = isDark ? '#9CA3AF' : '#667085';
@@ -288,7 +286,7 @@ export default function PricingSection() {
                   border: innerBorder,
                   boxShadow: isDark ? '0 10px 40px rgba(0,0,0,0.3)' : '0 10px 40px rgba(0,0,0,0.05)'
                 }}>
-                  <Typography sx={{ fontSize: '0.85rem', fontWeight: 800, color: orangeColor, letterSpacing: '0.1em', mb: 2 }}>⚡ OPENLEDGER PRO</Typography>
+                  <Typography sx={{ fontSize: '0.85rem', fontWeight: 800, color: '#FF6600', letterSpacing: '0.1em', mb: 2 }}>⚡ OPENLEDGER PRO</Typography>
                   <Typography sx={{ fontSize: '1.4rem', fontWeight: 700, color: primaryText, lineHeight: 1.3, mb: 3 }}>
                     Every model.<br/>One workspace.<br/>One memory.
                   </Typography>
@@ -334,7 +332,7 @@ export default function PricingSection() {
             }} aria-live="polite">
               <Typography sx={{ 
                 fontSize: progress === 100 ? { xs: '2rem', md: '2.5rem' } : '1.25rem', 
-                fontWeight: 800, color: progress === 100 ? orangeColor : secondaryText, 
+                fontWeight: 800, color: progress === 100 ? '#FF6600' : secondaryText, 
                 lineHeight: 1.1, mb: progress === 100 ? 1 : 0,
                 transition: 'all 0.3s ease'
               }}>

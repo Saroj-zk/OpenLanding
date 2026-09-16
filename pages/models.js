@@ -252,10 +252,10 @@ export default function ModelsPage() {
                 }}
               >
                 {[
-                  { value: `${MODEL_TOTAL}+`, label: 'Active Models', desc: 'Frontier reasoning, vision & media' },
-                  { value: `${PROVIDERS.length}`, label: 'Compute Providers', desc: 'OpenAI, Anthropic, Google & more' },
-                  { value: '1M+', label: 'Max Context', desc: 'Ingest massive codebases & books' },
-                  { value: '0s', label: 'Data Retention', desc: 'Stateless execution in RAM only' },
+                  { value: `${MODEL_TOTAL}+`, label: 'Active Models', desc: 'Frontier reasoning, vision & media', accent: true },
+                  { value: `${PROVIDERS.length}`, label: 'Compute Providers', desc: 'OpenAI, Anthropic, Google & more', accent: false },
+                  { value: '1M+', label: 'Max Context', desc: 'Ingest massive codebases & books', accent: false },
+                  { value: '0s', label: 'Data Retention', desc: 'Stateless execution in RAM only', accent: false },
                 ].map((stat, i) => (
                   <Box
                     key={stat.label}
@@ -266,6 +266,24 @@ export default function ModelsPage() {
                       backgroundColor: 'var(--bg-card)',
                       backdropFilter: 'blur(16px)',
                       boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.4)' : '0 10px 25px rgba(15,23,42,0.06)',
+                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&:hover': {
+                        borderColor: 'rgba(255, 102, 0, 0.4)',
+                        transform: 'translateY(-3px)',
+                        boxShadow: isDark
+                          ? '0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,102,0,0.15)'
+                          : '0 16px 36px rgba(15,23,42,0.1), 0 0 0 1px rgba(255,102,0,0.1)',
+                      },
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0, left: 0, right: 0,
+                        height: '2px',
+                        background: i === 0 ? 'linear-gradient(90deg, #FF6600, rgba(255,102,0,0))' : 'transparent',
+                        borderRadius: '3.5px 3.5px 0 0',
+                      },
                     }}
                   >
                     <Typography
