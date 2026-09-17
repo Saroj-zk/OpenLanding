@@ -1,21 +1,21 @@
 import * as React from 'react';
 
 export const ThemeContext = React.createContext({
-  isDark: true,
+  isDark: false,
   toggleTheme: () => {},
 });
 
 export function ThemeProvider({ children }) {
-  const [isDark, setIsDark] = React.useState(true);
+  const [isDark, setIsDark] = React.useState(false);
 
   React.useEffect(() => {
     // Persist preference across reloads
     const saved = localStorage.getItem('ol-theme');
-    if (saved === 'light') {
-      setIsDark(false);
-      document.documentElement.setAttribute('data-theme', 'light');
-    } else {
+    if (saved === 'dark') {
+      setIsDark(true);
       document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
     }
   }, []);
 

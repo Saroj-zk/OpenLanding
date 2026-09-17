@@ -11,7 +11,7 @@ import { useThemeMode } from '@/context/ThemeContext';
 
 const NAV_ITEMS = [
   { label: 'Models', href: '#models' },
-  { label: 'Council', href: '#council' },
+  { label: 'Consensus', href: '#consensus' },
   { label: 'Privacy', href: '#privacy' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'API', href: '#api' },
@@ -91,7 +91,7 @@ export default function Header() {
           }}
         >
           {/* Left: Logo & Input Box */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: { xs: 1, md: 'none' } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
             {/* Optional Logo */}
             <Box
               component="a"
@@ -217,7 +217,7 @@ export default function Header() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: { md: 2.5, lg: 3.5 },
-              flex: 1,
+              flex: 'none',
             }}
           >
             {NAV_ITEMS.map((item) => (
@@ -248,7 +248,7 @@ export default function Header() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-end',
-              flex: { xs: 'none', md: 1 },
+              flex: 1,
               gap: { xs: 1, sm: 2 },
             }}
           >
@@ -291,7 +291,7 @@ export default function Header() {
                 },
               }}
             >
-              $OPEN
+              Token
             </Button>
 
             {/* Log in Link */}
