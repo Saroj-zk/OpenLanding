@@ -100,7 +100,7 @@ const response = await client.chat.completions.create({
           
           {/* Left Column: Content */}
           <Grid item xs={12} md={5}>
-            <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase', mb: 3 }}>
+            <Typography component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase', mb: 3 }}>
               <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#ff6600' }} /> API
             </Typography>
 
