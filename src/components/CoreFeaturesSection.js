@@ -412,19 +412,19 @@ export default function CoreFeaturesSection() {
                   background: isPressing
                     ? (isDark ? 'rgba(255, 102, 0, 0.08)' : 'rgba(255, 102, 0, 0.1)')
                     : (isDark
-                        ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                        : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)'),
+                      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%)'
+                      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)'),
                   backdropFilter: 'blur(16px)',
                   border: isDark
                     ? '1px solid rgba(255, 102, 0, 0.28)'
                     : '1px solid rgba(255, 102, 0, 0.2)',
                   boxShadow: isPressing
                     ? (isDark
-                        ? '0 6px 18px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.25)'
-                        : '0 4px 12px rgba(15, 23, 42, 0.08), inset 0 2px 3px rgba(255, 255, 255, 0.95)')
+                      ? '0 6px 18px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.25)'
+                      : '0 4px 12px rgba(15, 23, 42, 0.08), inset 0 2px 3px rgba(255, 255, 255, 0.95)')
                     : (isDark
-                        ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.3), inset 0 -0.5px 1px rgba(0, 0, 0, 0.3)'
-                        : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)'),
+                      ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.3), inset 0 -0.5px 1px rgba(0, 0, 0, 0.3)'
+                      : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)'),
                   transform: isPressing ? 'scale(1.02, 1.15)' : 'scale(1, 1)',
                   transition: 'background 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                   willChange: 'transform, left',

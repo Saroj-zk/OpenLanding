@@ -7,27 +7,27 @@
 /* ---- DARK THEME (default) ---- */
 :root,
 html[data-theme="dark"] {
-  --bg-page:        #0A0C10;
-  --bg-section:     #0A0C10;
+  --bg-page: #0A0C10;
+  --bg-section: #0A0C10;
   --bg-section-alt: #0E1015;
-  --bg-card:        #0E1015;
-  --bg-card-hover:  #141820;
+  --bg-card: #0E1015;
+  --bg-card-hover: #141820;
   --bg-card-active: #1A1F2B;
-  --bg-glass:       rgba(255, 255, 255, 0.05);
+  --bg-glass: rgba(255, 255, 255, 0.05);
   --bg-glass-hover: rgba(255, 255, 255, 0.09);
-  --bg-pill:        rgba(255, 255, 255, 0.06);
+  --bg-pill: rgba(255, 255, 255, 0.06);
 
-  --text-primary:   #F1F5F9;
+  --text-primary: #F1F5F9;
   --text-secondary: rgba(255, 255, 255, 0.65);
-  --text-muted:     rgba(255, 255, 255, 0.42);
-  --text-heading:   #FFFFFF;
+  --text-muted: rgba(255, 255, 255, 0.42);
+  --text-heading: #FFFFFF;
 
-  --border-subtle:  rgba(255, 255, 255, 0.08);
-  --border-normal:  rgba(255, 255, 255, 0.13);
-  --border-strong:  rgba(255, 255, 255, 0.24);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-normal: rgba(255, 255, 255, 0.13);
+  --border-strong: rgba(255, 255, 255, 0.24);
 
-  --shadow-card:    0 16px 40px rgba(0, 0, 0, 0.65);
-  --shadow-popup:   0 24px 60px rgba(0, 0, 0, 0.85);
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.65);
+  --shadow-popup: 0 24px 60px rgba(0, 0, 0, 0.85);
 
   --scrollbar-track: #0A0C10;
   --scrollbar-thumb: rgba(255, 255, 255, 0.18);
@@ -68,27 +68,27 @@ html[data-theme="dark"] {
 
 /* ---- LIGHT THEME ---- */
 html[data-theme="light"] {
-  --bg-page:        #F8F9FA;
-  --bg-section:     #F3F5F8;
+  --bg-page: #F8F9FA;
+  --bg-section: #F3F5F8;
   --bg-section-alt: #EBF0F5;
-  --bg-card:        #FFFFFF;
-  --bg-card-hover:  #F7F9FC;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F7F9FC;
   --bg-card-active: #EEF2F6;
-  --bg-glass:       rgba(0, 0, 0, 0.035);
+  --bg-glass: rgba(0, 0, 0, 0.035);
   --bg-glass-hover: rgba(0, 0, 0, 0.065);
-  --bg-pill:        rgba(0, 0, 0, 0.05);
+  --bg-pill: rgba(0, 0, 0, 0.05);
 
-  --text-primary:   #0F172A;
+  --text-primary: #0F172A;
   --text-secondary: #475569;
-  --text-muted:     #64748B;
-  --text-heading:   #0F172A;
+  --text-muted: #64748B;
+  --text-heading: #0F172A;
 
-  --border-subtle:  rgba(0, 0, 0, 0.07);
-  --border-normal:  rgba(0, 0, 0, 0.12);
-  --border-strong:  rgba(0, 0, 0, 0.22);
+  --border-subtle: rgba(0, 0, 0, 0.07);
+  --border-normal: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.22);
 
-  --shadow-card:    0 10px 30px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --shadow-popup:   0 20px 48px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-popup: 0 20px 48px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
 
   --scrollbar-track: #F1F5F9;
   --scrollbar-thumb: rgba(0, 0, 0, 0.2);
@@ -128,11 +128,13 @@ html[data-theme="light"] {
 }
 
 /* ---- Global resets reading from CSS vars ---- */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
-html, body {
+html,
+body {
   display: block !important;
   background-color: var(--bg-page) !important;
   color: var(--text-primary) !important;
@@ -142,9 +144,11 @@ html, body {
 *::-webkit-scrollbar {
   width: 6px;
 }
+
 *::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
 }
+
 *::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb);
   border-radius: 3px;
@@ -165,6 +169,7 @@ html[data-theme="light"] [data-ambient-blur] {
 html[data-theme="light"] .theme-invert-dark-only {
   filter: none !important;
 }
+
 html[data-theme="dark"] .theme-invert-dark-only {
   filter: brightness(0) invert(1) !important;
 }
@@ -173,18 +178,25 @@ html[data-theme="dark"] .theme-invert-dark-only {
 html[data-theme="light"] #center-hub-logo {
   filter: invert(1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15)) !important;
 }
+
 html[data-theme="dark"] #center-hub-logo {
   filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.25)) !important;
 }
 
 /* Smooth color transitions on all interactive UI */
-button, a, input, select {
+button,
+a,
+input,
+select {
   transition-property: background-color, border-color, color, box-shadow, outline;
   transition-duration: 0.25s;
   transition-timing-function: ease;
 }
 
-canvas, img, video, svg {
+canvas,
+img,
+video,
+svg {
   transition: none !important;
 }
 
@@ -227,6 +239,7 @@ html {
 
 /* ── Reduced motion for accessibility ──────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -261,7 +274,31 @@ html {
 }
 
 /* ── Word break safety for mobile ──────────────────────────────── */
-p, li, h1, h2, h3, h4, h5, h6 {
+p,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+/* ── Mobile responsiveness & viewport safety ───────────────────── */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 }
