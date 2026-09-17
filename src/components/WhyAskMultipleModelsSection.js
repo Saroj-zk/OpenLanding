@@ -115,30 +115,29 @@ export default function WhyAskMultipleModelsSection() {
         backgroundColor: 'var(--bg-section)',
         color: 'var(--text-primary)',
         minHeight: { xs: 'auto', md: '100vh' },
-        maxHeight: { md: '100vh' },
         pt: { xs: '82px', sm: '86px', md: '76px' },
-        pb: { xs: 4, md: 2 },
+        pb: { xs: 4, md: 6 },
         display: 'flex',
         flexDirection: 'column',
         justifyContent: { xs: 'flex-start', md: 'space-between' },
         transition: 'background-color 0.35s ease',
-        overflow: { xs: 'visible', md: 'hidden' },
+        overflow: 'hidden',
         boxSizing: 'border-box',
       }}
     >
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 3, md: 4 }, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: { xs: 'flex-start', md: 'space-between' }, my: 'auto' }}>
         
         {/* HEADER */}
-        <Box sx={{ textAlign: 'center', mb: { xs: 1.5, md: 1.6 } }}>
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, mb: 0.4 }}>
-            <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 3, md: 5 } }}>
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, mb: 1 }}>
+            <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
               Multi-Model Consensus
             </Typography>
           </Box>
-          <Typography variant="h2" sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.25rem', lg: '2.45rem' }, lineHeight: 1.1, letterSpacing: '-0.035em', color: 'var(--text-heading)', mb: 0.5 }}>
+          <Typography variant="h2" sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '3rem', lg: '3.5rem' }, lineHeight: 1.1, letterSpacing: '-0.02em', color: 'var(--text-heading)', mb: 2 }}>
             Ask four models. Get one answer.
           </Typography>
-          <Typography sx={{ color: 'var(--text-secondary)', fontSize: { xs: '0.82rem', md: '0.88rem' }, lineHeight: 1.45, maxWidth: 560, mx: 'auto' }}>
+          <Typography sx={{ color: 'var(--text-secondary)', fontSize: { xs: '1rem', md: '1.125rem' }, lineHeight: 1.6, maxWidth: 600, mx: 'auto' }}>
             The flagship feature. One question, four models, and the optimal answer synthesized from their consensus.
           </Typography>
         </Box>
@@ -188,23 +187,27 @@ export default function WhyAskMultipleModelsSection() {
 
           {/* INNER APP CONTENT - Responsive Viewport Canvas */}
           <Box sx={{
-            p: { xs: 1.8, sm: 2.2, md: 2.4 },
-            minHeight: { xs: 'auto', md: 360 },
-            height: { xs: 'auto', md: 'clamp(340px, 44vh, 420px)' },
+            height: { xs: 520, md: 480 },
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden',
-            pb: { xs: 8, md: 8.5 }
+            overflow: 'hidden'
           }}>
+            {/* SCROLLABLE CHAT AREA */}
+            <Box className="hide-scrollbar" sx={{
+              p: { xs: 1.8, sm: 2.2, md: 2.4 },
+              flexGrow: 1,
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              pb: { xs: 8, md: 8.5 }
+            }}>
             
             <Box sx={{ 
-              transform: activeTab === 2 ? { xs: 'translateY(-14px)', md: 'translateY(-8px)' } : 'translateY(0)',
               opacity: 1,
               transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
               display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1
+              flexDirection: 'column'
             }}>
               {/* PHASE 1: Prompt Dispatch */}
             <Box sx={{ 
@@ -237,7 +240,8 @@ export default function WhyAskMultipleModelsSection() {
             <Box sx={{ 
               opacity: activeTab >= 1 ? 1 : 0, 
               transform: activeTab >= 1 ? 'translateY(0)' : 'translateY(12px)',
-              transition: 'all 0.5s ease', flexGrow: 1
+              transition: 'all 0.5s ease',
+              mb: activeTab === 2 ? 2 : 0
             }}>
               {/* Assistant Message */}
               <Box sx={{ display: 'flex', gap: 1.2, mb: { xs: 1.5, md: 2 } }}>
@@ -333,9 +337,9 @@ export default function WhyAskMultipleModelsSection() {
 
             {/* PHASE 3: Consensus & Final Pick */}
             <Box sx={{ 
-              position: 'absolute', bottom: { xs: 56, md: 58 }, left: { xs: 12, sm: 18, md: 20 }, right: { xs: 12, sm: 18, md: 20 },
-              opacity: activeTab === 2 ? (progress > 10 ? 1 : 0) : 0, 
-              transform: activeTab === 2 && progress > 10 ? 'translateY(0)' : 'translateY(12px)',
+              width: '100%',
+              opacity: activeTab === 2 ? 1 : 0, 
+              transform: activeTab === 2 ? 'translateY(0)' : 'translateY(12px)',
               transition: 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' 
             }}>
               <Box sx={{ 
@@ -348,15 +352,35 @@ export default function WhyAskMultipleModelsSection() {
                 {/* Glowing Background Effect for Final Pick */}
                 <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: isDark ? 'radial-gradient(circle at 10% 50%, rgba(255,255,255,0.06) 0%, transparent 60%)' : 'radial-gradient(circle at 10% 50%, rgba(0,0,0,0.04) 0%, transparent 60%)', zIndex: 0 }} />
                 
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, zIndex: 1 }}>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.66rem', fontWeight: 800, letterSpacing: '0.1em', color: 'var(--text-secondary)', textTransform: 'uppercase', mb: 0.3 }}>Synthesized Final Pick</Typography>
-                    <Typography sx={{ fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-heading)', mb: 0.3 }}>Manten Sushi</Typography>
-                    <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: 620, lineHeight: 1.4 }}>The strongest overall pick for an authentic omakase experience under $100, endorsed by Claude and DeepSeek consensus logic.</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, zIndex: 1, width: '100%' }}>
+                  <Box sx={{ width: '100%' }}>
+                    <Typography sx={{ fontSize: '0.66rem', fontWeight: 800, letterSpacing: '0.1em', color: 'var(--text-secondary)', textTransform: 'uppercase', mb: 0.3 }}>
+                      Final Pick
+                    </Typography>
+                    
+                    {activeTab === 2 && progress > 15 ? (
+                      <>
+                        <Typography sx={{ fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-heading)', mb: 0.3, opacity: progress > 20 ? 1 : 0, transition: 'opacity 0.3s ease' }}>
+                          Manten Sushi
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: 620, lineHeight: 1.4, minHeight: 22 }}>
+                          {"The strongest overall pick for an authentic omakase experience under $100, endorsed by Claude and DeepSeek consensus logic.".substring(0, Math.floor(Math.max(0, progress - 25) / 55 * 119))}
+                          {progress >= 25 && progress < 85 && (
+                            <span style={{ borderRight: '2px solid var(--text-secondary)', marginLeft: 2, animation: 'blink 1s infinite' }} />
+                          )}
+                        </Typography>
+                      </>
+                    ) : (
+                      <Box sx={{ display: 'flex', gap: 0.8, flexDirection: 'column', mt: 1 }}>
+                        <Box sx={{ height: 16, width: '140px', backgroundColor: monoBadgeBg, borderRadius: 1, animation: 'pulse 1.5s infinite' }} />
+                        <Box sx={{ height: 12, width: '80%', maxWidth: 500, backgroundColor: monoBadgeBg, borderRadius: 1, animation: 'pulse 1.5s infinite', animationDelay: '0.2s' }} />
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               </Box>
             </Box>
+            </Box> {/* End of Scrollable Chat Area */}
 
             {/* Chat Input Component at the bottom */}
             <Box
@@ -483,14 +507,21 @@ export default function WhyAskMultipleModelsSection() {
                   0%, 100% { opacity: 0.6; }
                   50% { opacity: 0.2; }
                 }
+                .hide-scrollbar::-webkit-scrollbar {
+                  display: none;
+                }
+                .hide-scrollbar {
+                  -ms-overflow-style: none;
+                  scrollbar-width: none;
+                }
               `}
             </style>
           </Box>
         </Box>
 
         {/* BOTTOM CAPTION & CTA */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: { xs: 1.2, md: 1.5 }, gap: 1 }}>
-          <Typography sx={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: { xs: '0.82rem', md: '0.86rem' }, fontWeight: 500 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: { xs: 3, md: 4 }, gap: 2 }}>
+          <Typography sx={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: { xs: '0.95rem', md: '1.05rem' }, fontWeight: 500 }}>
             A verifiable way to query frontier AI and get consensus truth.
           </Typography>
           
@@ -505,17 +536,21 @@ export default function WhyAskMultipleModelsSection() {
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 1,
-              px: { xs: 3.5, sm: 4 },
-              py: { xs: 0.8, sm: 0.95 },
+              gap: 1.2,
+              px: { xs: 4, sm: 5 },
+              py: { xs: 1, sm: 1.2 },
               borderRadius: '9999px',
-              backgroundColor: '#ff6600',
+              backdropFilter: 'blur(16px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+              background: isDark
+                ? 'linear-gradient(180deg, rgba(255, 115, 30, 0.85) 0%, rgba(220, 80, 0, 0.95) 100%)'
+                : 'linear-gradient(180deg, rgba(255, 125, 40, 0.85) 0%, rgba(240, 90, 0, 0.95) 100%)',
               color: '#ffffff',
-              border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
+              border: isDark ? '1px solid rgba(255, 160, 100, 0.4)' : '1px solid rgba(255, 140, 60, 0.5)',
               boxShadow: isDark
-                ? '0 6px 20px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                : '0 6px 20px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
-              fontSize: { xs: '0.88rem', md: '0.92rem' },
+                ? '0 8px 24px rgba(255, 102, 0, 0.4), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35)'
+                : '0 8px 24px rgba(255, 102, 0, 0.3), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.45)',
+              fontSize: { xs: '0.95rem', md: '1.05rem' },
               fontWeight: 700,
               letterSpacing: '0.02em',
               textTransform: 'none',
@@ -523,11 +558,13 @@ export default function WhyAskMultipleModelsSection() {
               outline: 'none',
               transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
               '&:hover': {
-                backgroundColor: '#e65c00',
-                transform: 'translateY(-1px)',
+                background: isDark
+                  ? 'linear-gradient(180deg, rgba(255, 130, 45, 0.9) 0%, rgba(235, 90, 0, 1) 100%)'
+                  : 'linear-gradient(180deg, rgba(255, 140, 55, 0.9) 0%, rgba(255, 100, 0, 1) 100%)',
+                transform: 'translateY(-2px)',
                 boxShadow: isDark
-                  ? '0 8px 26px rgba(255, 102, 0, 0.45)'
-                  : '0 8px 26px rgba(255, 102, 0, 0.35)',
+                  ? '0 12px 32px rgba(255, 102, 0, 0.5), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.45)'
+                  : '0 12px 32px rgba(255, 102, 0, 0.4), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.55)',
               },
               '&:active': {
                 transform: 'scale(0.96)',
@@ -535,7 +572,7 @@ export default function WhyAskMultipleModelsSection() {
             }}
           >
             Try Consensus Now
-            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>

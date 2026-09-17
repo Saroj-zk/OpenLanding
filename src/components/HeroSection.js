@@ -142,9 +142,9 @@ export default function HeroSection() {
         {/* Headline with Icon */}
         <Box id="hero-headline" sx={{ mb: { xs: 3, sm: 4 }, opacity: 1 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-            <Box 
+            <Box
               component="img"
-              src="/Icons/Frosted logo OPL.png" 
+              src="/Icons/Frosted logo OPL.png"
               alt="OpenLedger"
               sx={{ width: { xs: 60, md: 80 }, height: { xs: 60, md: 80 }, objectFit: 'contain' }}
             />
@@ -161,7 +161,7 @@ export default function HeroSection() {
               display: 'block',
             }}
           >
-            Think Freely...
+            Ask Open...
           </Typography>
         </Box>
 

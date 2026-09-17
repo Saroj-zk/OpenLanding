@@ -35,22 +35,6 @@ const OPTIONS = [
     overlayTitle: 'Contextual dialogue\nwithout boundaries.',
   },
   {
-    id: 'agent',
-    title: 'Agent',
-    icon: SmartToyOutlinedIcon,
-    video: '/Videos/AI ecosystem/Agent.webm',
-    overlayEyebrow: 'AUTONOMOUS EXECUTION',
-    overlayTitle: 'Intelligent reconciliation\nand proactive action.',
-  },
-  {
-    id: 'build',
-    title: 'Build',
-    icon: CodeRoundedIcon,
-    video: '/Videos/AI ecosystem/Build.webm',
-    overlayEyebrow: 'CUSTOM INTEGRATIONS',
-    overlayTitle: 'Create and deploy models\nseamlessly.',
-  },
-  {
     id: 'imagine',
     title: 'Imagine',
     icon: ImageOutlinedIcon,
@@ -65,6 +49,22 @@ const OPTIONS = [
     video: '/Videos/AI ecosystem/Video Gen.webm',
     overlayEyebrow: 'VIDEO GENERATION',
     overlayTitle: 'High-fidelity video\nand motion synthesis.',
+  },
+  {
+    id: 'build',
+    title: 'Build',
+    icon: CodeRoundedIcon,
+    video: '/Videos/AI ecosystem/Build.webm',
+    overlayEyebrow: 'CUSTOM INTEGRATIONS',
+    overlayTitle: 'Create and deploy models\nseamlessly.',
+  },
+  {
+    id: 'agent',
+    title: 'Agent',
+    icon: SmartToyOutlinedIcon,
+    video: '/Videos/AI ecosystem/Agent.webm',
+    overlayEyebrow: 'AUTONOMOUS EXECUTION',
+    overlayTitle: 'Intelligent reconciliation\nand proactive action.',
   },
 ];
 
@@ -85,6 +85,31 @@ const GlassCard = ({ children, sx = {}, borderRadius = 24, ...props }) => {
     >
       {children}
     </Box>
+  );
+};
+
+const TabVideo = ({ src, isActive, onEnded }) => {
+  const videoRef = React.useRef(null);
+  
+  React.useEffect(() => {
+    if (isActive && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(e => console.log('Video play error:', e));
+    } else if (!isActive && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [isActive]);
+
+  return (
+    <Box 
+      component="video" 
+      ref={videoRef} 
+      src={src} 
+      muted 
+      onEnded={onEnded}
+      playsInline 
+      sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+    />
   );
 };
 
@@ -122,20 +147,23 @@ export default function ProductMatrixSection() {
         {/* Top Header */}
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'flex-end' }, mb: { xs: 4, md: 6 } }}>
           <Box>
-            <Typography sx={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-secondary)', mb: 1 }}>
-              Complete AI Ecosystem
-            </Typography>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#CD7A4C' }} />
+              <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#CD7A4C' }}>
+                What you can do
+              </Typography>
+            </Box>
             <Typography variant="h2" sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' }, fontWeight: 500, letterSpacing: '-0.03em', color: 'var(--text-heading)' }}>
-              Everything in one matrix.
+              Uncensored chat,<br />images, video and more.
             </Typography>
           </Box>
           <Typography sx={{ fontSize: '1rem', color: 'var(--text-secondary)', maxWidth: 360, mt: { xs: 2, md: 0 }, lineHeight: 1.5 }}>
-            Seamlessly navigate between private interaction, autonomous agents, and model intelligence.
+            Text, image, video, audio, code and search in one place, all private or anonymous.
           </Typography>
         </Box>
 
-        {/* 4 Feature Value Highlights */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* 4 Feature Value Highlights (Hidden as requested) */}
+        <Grid container spacing={3} sx={{ display: 'none', mb: 4 }}>
           <Grid item xs={12} sm={6} md={3}>
              <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
                 <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
@@ -298,22 +326,9 @@ export default function ProductMatrixSection() {
                     pointerEvents: activeIdx === idx ? 'auto' : 'none'
                   }}
                 >
-                  <Box component="video" src={opt.video} autoPlay loop muted playsInline sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+                  <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} />
                 </Box>
               ))}
-
-              {/* Pagination Controls */}
-              <GlassCard sx={{ position: 'absolute', bottom: { xs: 24, md: 40 }, right: { xs: 24, md: 40 }, display: 'flex', alignItems: 'center', gap: 2, p: 1, borderRadius: '30px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <Box onClick={handlePrev} sx={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(255,255,255,0.3)' } }}>
-                  <KeyboardArrowLeftRoundedIcon sx={{ color: '#fff', fontSize: '1.2rem' }} />
-                </Box>
-                <Typography sx={{ fontSize: '0.9rem', fontWeight: 500, color: '#fff', letterSpacing: '0.1em' }}>
-                  {activeIdx + 1} / {OPTIONS.length}
-                </Typography>
-                <Box onClick={handleNext} sx={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(255,255,255,0.3)' } }}>
-                  <KeyboardArrowRightRoundedIcon sx={{ color: '#fff', fontSize: '1.2rem' }} />
-                </Box>
-              </GlassCard>
             </Box>
 
           </Grid>

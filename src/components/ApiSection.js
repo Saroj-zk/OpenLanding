@@ -100,17 +100,16 @@ const response = await client.chat.completions.create({
           
           {/* Left Column: Content */}
           <Grid item xs={12} md={5}>
-            <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)', mb: 2 }}>
-              For developers
+            <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase', mb: 3 }}>
+              <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#ff6600' }} /> API
             </Typography>
 
-            <Typography variant="h2" sx={{ fontWeight: 600, fontSize: { xs: '3rem', sm: '3.5rem', md: '4.5rem' }, lineHeight: 1.1, letterSpacing: '-0.04em', mb: 3 }}>
-              <span style={{ color: 'var(--text-primary)' }}>One API.</span><br/>
-              <span style={{ color: 'var(--text-muted)' }}>Every modality.</span>
+            <Typography sx={{ color: '#ff6600', fontSize: { xs: '1.1rem', md: '1.25rem' }, fontWeight: 500, lineHeight: 1.5, mb: 3, maxWidth: 500 }}>
+              Access every model with one subscription, built for seamless use across humans and x402-ready agents.
             </Typography>
 
-            <Typography sx={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: 1.6, mb: 5, maxWidth: 450 }}>
-              Text, code, voice, images, and video — all through a single unified API. Start building in seconds.
+            <Typography variant="h2" sx={{ fontWeight: 600, fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem', lg: '4rem' }, lineHeight: 1.1, letterSpacing: '-0.03em', mb: 5 }}>
+              One endpoint. Every model behind it.
             </Typography>
 
             {/* Buttons */}

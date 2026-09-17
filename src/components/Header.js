@@ -22,18 +22,25 @@ export default function Header() {
   const { isDark, toggleTheme } = useThemeMode();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(true);
+  const lastScrollY = React.useRef(0);
 
   React.useEffect(() => {
     const handleScroll = () => {
-      // Check if we have scrolled past the hero section (approx 600px or the start of the second section)
-      const secondSection = document.getElementById('core-features') || document.getElementById('why-ask-multiple-models');
-      if (secondSection) {
-        const rect = secondSection.getBoundingClientRect();
-        setIsVisible(rect.top <= 100);
-      } else {
-        setIsVisible(window.scrollY > 400);
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 50) {
+        // Always show at the top
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        // Scrolling up
+        setIsVisible(true);
       }
+
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -79,7 +86,7 @@ export default function Header() {
             px: { xs: 1.5, md: 2 },
             pointerEvents: isVisible ? 'auto' : 'none',
             opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(-20px)',
+            transform: isVisible ? 'translateY(0)' : 'translateY(-150%)',
             transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
