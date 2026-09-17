@@ -23,13 +23,14 @@ import AppsRoundedIcon from '@mui/icons-material/AppsRounded';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
 
 const OPTIONS = [
   {
     id: 'chat',
     title: 'Chat',
     icon: ChatBubbleOutlineRoundedIcon,
-    image: '/images/chat_feature_bg.jpg',
+    video: '/Videos/AI ecosystem/Chat.webm',
     overlayEyebrow: 'CONVERSATIONAL INTELLIGENCE',
     overlayTitle: 'Contextual dialogue\nwithout boundaries.',
   },
@@ -37,7 +38,7 @@ const OPTIONS = [
     id: 'agent',
     title: 'Agent',
     icon: SmartToyOutlinedIcon,
-    image: '/images/agent_feature_bg.jpg',
+    video: '/Videos/AI ecosystem/Agent.webm',
     overlayEyebrow: 'AUTONOMOUS EXECUTION',
     overlayTitle: 'Intelligent reconciliation\nand proactive action.',
   },
@@ -45,7 +46,7 @@ const OPTIONS = [
     id: 'build',
     title: 'Build',
     icon: CodeRoundedIcon,
-    image: '/images/build_feature_bg.jpg',
+    video: '/Videos/AI ecosystem/Build.webm',
     overlayEyebrow: 'CUSTOM INTEGRATIONS',
     overlayTitle: 'Create and deploy models\nseamlessly.',
   },
@@ -53,17 +54,17 @@ const OPTIONS = [
     id: 'imagine',
     title: 'Imagine',
     icon: ImageOutlinedIcon,
-    image: '/images/imagine_feature_bg.jpg',
+    video: '/Videos/AI ecosystem/Imagine.webm',
     overlayEyebrow: 'VISUAL GENERATION',
     overlayTitle: 'State-of-the-art multi-modal\ncreative synthesis.',
   },
   {
-    id: 'voice',
-    title: 'Voice',
-    icon: MicNoneOutlinedIcon,
-    image: '/images/voice_feature_bg.jpg',
-    overlayEyebrow: 'AUDIO SYNTHESIS',
-    overlayTitle: 'Low-latency speech\nand acoustic reasoning.',
+    id: 'video-gen',
+    title: 'Video Gen',
+    icon: PlayCircleOutlineRoundedIcon,
+    video: '/Videos/AI ecosystem/Video Gen.webm',
+    overlayEyebrow: 'VIDEO GENERATION',
+    overlayTitle: 'High-fidelity video\nand motion synthesis.',
   },
 ];
 
@@ -297,23 +298,7 @@ export default function ProductMatrixSection() {
                     pointerEvents: activeIdx === idx ? 'auto' : 'none'
                   }}
                 >
-                  <Box component="img" src={opt.image} sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
-                  
-                  {/* Text Overlays */}
-                  <Box sx={{ position: 'absolute', top: { xs: 32, md: 48 }, left: { xs: 32, md: 48 } }}>
-                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', mb: 1 }}>
-                      {opt.overlayEyebrow}
-                    </Typography>
-                    <Typography sx={{ fontSize: { xs: '1.8rem', md: '2.5rem' }, fontWeight: 500, lineHeight: 1.2, color: '#fff', whiteSpace: 'pre-line' }}>
-                      {opt.overlayTitle}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ position: 'absolute', bottom: { xs: 32, md: 48 }, left: { xs: 32, md: 48 } }}>
-                    <Typography sx={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>
-                      Real-time processing.<br/>Enterprise ready.
-                    </Typography>
-                  </Box>
+                  <Box component="video" src={opt.video} autoPlay loop muted playsInline sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
                 </Box>
               ))}
 

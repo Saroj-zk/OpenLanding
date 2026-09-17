@@ -31,6 +31,7 @@ const TABS = [
     description: 'Ask freely without your prompts being stored or used for training.',
     hasExplore: true,
     exploreLink: '/private',
+    video: '/Videos/Why Openledger/Private AI.webm',
     tagLeft: 'ZERO RETENTION',
     tagRight: 'UNCENSORED',
   },
@@ -44,6 +45,7 @@ const TABS = [
     description: 'Access leading AI models from one place, with optimized token usage to reduce costs and keep every request efficient.',
     hasExplore: true,
     exploreLink: '/models',
+    video: '/Videos/Why Openledger/Multimodel & Token.webm',
     tagLeft: 'MULTI-MODEL',
     tagRight: 'TOKEN OPTIMIZED',
   },
@@ -57,6 +59,7 @@ const TABS = [
     description: 'Your context stays consistent across models, so you never have to start over.',
     hasExplore: true,
     exploreLink: '/memory',
+    video: '/Videos/Why Openledger/Unified Memory.webm',
     tagLeft: 'ONE MEMORY',
     tagRight: 'SHARED CONTEXT',
   },
@@ -70,6 +73,7 @@ const TABS = [
     description: 'Give agents direct access to leading AI models with x402, enabling seamless interactions across models without complex integrations.',
     hasExplore: true,
     exploreLink: '/capabilities',
+    video: '/Videos/Why Openledger/Built For Agents.webm',
     tagLeft: 'X402 ENABLED',
     tagRight: 'AGENT READY',
   },
@@ -257,401 +261,6 @@ export default function CoreFeaturesSection() {
         isClickingRef.current = false;
       }, 800);
     }
-  };
-
-  // Render the high-fidelity UI mockup inside the center preview area of each tab
-  const renderVisualPreview = (tabId) => {
-    if (tabId === 'private') {
-      return (
-        <Box sx={{ position: 'relative', width: '100%', maxWidth: 440, display: 'flex', alignItems: 'center', justifyContent: 'center', py: { xs: 2, sm: 3 } }}>
-          {/* Floating purge chip top right */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: { xs: -6, sm: 0 },
-              right: { xs: 8, sm: 24 },
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.8,
-              px: 1.2,
-              py: 0.5,
-              borderRadius: '8px',
-              backgroundColor: 'var(--bg-card)',
-              border: '1px solid var(--border-subtle)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-            }}
-          >
-            <DeleteOutlineIcon sx={{ fontSize: '0.95rem', color: isDark ? 'rgba(255,255,255,0.45)' : '#94A3B8' }} />
-            <Box sx={{ width: 22, height: 4, borderRadius: 2, backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#CBD5E1' }} />
-          </Box>
-
-          {/* Center Floating Privacy Controls Card */}
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: 320,
-              backgroundColor: 'var(--bg-card)',
-              borderRadius: '16px',
-              border: '1px solid var(--border-normal)',
-              boxShadow: isDark ? '0 12px 36px rgba(0,0,0,0.4)' : '0 12px 32px rgba(15,23,42,0.08)',
-              p: { xs: 2, sm: 2.6 },
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 1.5,
-              zIndex: 2,
-            }}
-          >
-            {/* Header with blue lock */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.9 }}>
-              <LockOutlinedIcon sx={{ fontSize: '1rem', color: '#0284C7' }} />
-              <Typography sx={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-heading)' }}>
-                Privacy Controls
-              </Typography>
-            </Box>
-
-            {/* Zero Retention Toggle Row */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-              <Box>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-heading)', lineHeight: 1.2 }}>
-                  Zero Retention
-                </Typography>
-                <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-secondary)', mt: 0.3 }}>
-                  Prompts are never stored
-                </Typography>
-              </Box>
-
-              {/* iOS Style Toggle Switch ON */}
-              <Box
-                sx={{
-                  width: 44,
-                  height: 24,
-                  borderRadius: 12,
-                  backgroundColor: '#22C55E',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  px: '2px',
-                  boxShadow: '0 2px 8px rgba(34, 197, 94, 0.4)',
-                  flexShrink: 0,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    backgroundColor: '#FFFFFF',
-                    transform: 'translateX(20px)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
-                  }}
-                />
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Floating purge chip bottom left */}
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: { xs: -6, sm: 0 },
-              left: { xs: 8, sm: 20 },
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.8,
-              px: 1.2,
-              py: 0.5,
-              borderRadius: '8px',
-              backgroundColor: 'var(--bg-card)',
-              border: '1px solid var(--border-subtle)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-            }}
-          >
-            <DeleteOutlineIcon sx={{ fontSize: '0.95rem', color: isDark ? 'rgba(255,255,255,0.45)' : '#94A3B8' }} />
-            <Box sx={{ width: 26, height: 4, borderRadius: 2, backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#CBD5E1' }} />
-          </Box>
-        </Box>
-      );
-    }
-
-    if (tabId === 'multimodel') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, py: { xs: 2, sm: 3 } }}>
-          {/* Select Model Dropdown Pill */}
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 1.2,
-              px: 2.2,
-              py: 0.9,
-              borderRadius: '12px',
-              backgroundColor: 'var(--bg-card)',
-              border: '1px solid var(--border-normal)',
-              boxShadow: isDark ? '0 8px 24px rgba(0,0,0,0.4)' : '0 6px 20px rgba(15,23,42,0.06)',
-            }}
-          >
-            <AutoAwesomeIcon sx={{ fontSize: '1.05rem', color: '#A855F7' }} />
-            <Typography sx={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-heading)' }}>
-              Select Model...
-            </Typography>
-            <UnfoldMoreIcon sx={{ fontSize: '1.15rem', color: 'var(--text-secondary)', ml: 1 }} />
-          </Box>
-
-          {/* Model Badges Pill */}
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: { xs: 0.8, sm: 1.2 },
-              px: { xs: 1.4, sm: 1.8 },
-              py: 0.85,
-              borderRadius: '9999px',
-              backgroundColor: 'var(--bg-card)',
-              border: '1px solid var(--border-normal)',
-              boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.4)' : '0 8px 28px rgba(15,23,42,0.08)',
-            }}
-          >
-            {/* ChatGPT */}
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                backgroundColor: '#0F172A',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Box component="img" src="/Models/Chatgpt.svg" alt="ChatGPT" sx={{ width: 18, height: 18, filter: 'invert(1)' }} />
-            </Box>
-
-            {/* Claude */}
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Box component="img" src="/Models/Claude.svg" alt="Claude" sx={{ width: 18, height: 18 }} />
-            </Box>
-
-            {/* Gemini */}
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                backgroundColor: '#1E40AF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Box component="img" src="/Models/Gemini.svg" alt="Gemini" sx={{ width: 18, height: 18 }} />
-            </Box>
-
-            {/* Meta Llama */}
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                backgroundColor: '#0284C7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Box component="img" src="/Models/Llama.svg" alt="Llama" sx={{ width: 18, height: 18, filter: 'invert(1)' }} />
-            </Box>
-
-            {/* +8 Count Tag */}
-            <Box
-              sx={{
-                px: 1.1,
-                py: 0.35,
-                borderRadius: '9999px',
-                backgroundColor: 'var(--bg-section)',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                color: 'var(--text-secondary)',
-              }}
-            >
-              +8
-            </Box>
-          </Box>
-        </Box>
-      );
-    }
-
-    if (tabId === 'memory') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', py: { xs: 2, sm: 3 } }}>
-          {/* Shared Context Pill */}
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 1,
-              px: 2,
-              py: 0.85,
-              borderRadius: '12px',
-              backgroundColor: 'var(--bg-card)',
-              border: '1px solid var(--border-normal)',
-              boxShadow: isDark ? '0 6px 24px rgba(0,0,0,0.35)' : '0 6px 20px rgba(15,23,42,0.06)',
-              zIndex: 2,
-            }}
-          >
-            <StorageIcon sx={{ fontSize: '1.15rem', color: 'var(--text-heading)' }} />
-            <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-              Shared Context
-            </Typography>
-          </Box>
-
-          {/* Dotted Branching Circuit SVG */}
-          <Box
-            component="svg"
-            viewBox="0 0 160 38"
-            sx={{ width: 160, height: 38, my: 0.5, overflow: 'visible' }}
-          >
-            <path
-              d="M80 0 L80 18 M80 18 L25 18 L25 38 M80 18 L80 38 M80 18 L135 18 L135 38"
-              fill="none"
-              stroke={isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.22)'}
-              strokeWidth="1.5"
-              strokeDasharray="3 3"
-            />
-          </Box>
-
-          {/* 3 Model Connected Square Badges */}
-          <Box sx={{ display: 'flex', gap: { xs: 2.2, sm: 2.8 }, alignItems: 'center', zIndex: 2 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '12px',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.3)' : '0 4px 12px rgba(15,23,42,0.06)',
-              }}
-            >
-              <Box component="img" src="/Models/Chatgpt.svg" alt="ChatGPT" sx={{ width: 22, height: 22, filter: isDark ? 'invert(1)' : 'none' }} />
-            </Box>
-
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '12px',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.3)' : '0 4px 12px rgba(15,23,42,0.06)',
-              }}
-            >
-              <Box component="img" src="/Models/Claude.svg" alt="Claude" sx={{ width: 22, height: 22 }} />
-            </Box>
-
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '12px',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.3)' : '0 4px 12px rgba(15,23,42,0.06)',
-              }}
-            >
-              <Box component="img" src="/Models/Gemini.svg" alt="Gemini" sx={{ width: 22, height: 22 }} />
-            </Box>
-          </Box>
-        </Box>
-      );
-    }
-
-    if (tabId === 'agents') {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: { xs: 1.5, sm: 3.5 }, width: '100%', maxWidth: 440, py: { xs: 2, sm: 3 } }}>
-          {/* Left: 3 Stacked Agent Chips */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {['Research Agent', 'Support Agent', 'Ops Agent'].map((agent) => (
-              <Box
-                key={agent}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.8,
-                  px: { xs: 1.2, sm: 1.5 },
-                  py: 0.6,
-                  borderRadius: '8px',
-                  backgroundColor: 'var(--bg-card)',
-                  border: '1px solid var(--border-normal)',
-                  boxShadow: isDark ? '0 2px 10px rgba(0,0,0,0.3)' : '0 2px 8px rgba(15,23,42,0.06)',
-                }}
-              >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#22C55E', boxShadow: '0 0 6px rgba(34,197,94,0.6)' }} />
-                <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-heading)' }}>
-                  {agent}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-
-          {/* Center Green Connecting Circuit Lines */}
-          <Box
-            component="svg"
-            viewBox="0 0 46 80"
-            sx={{ width: { xs: 32, sm: 46 }, height: 74, overflow: 'visible', flexShrink: 0 }}
-          >
-            <path
-              d="M0 14 L24 14 L38 40 M0 40 L38 40 M0 66 L24 66 L38 40 L46 40"
-              fill="none"
-              stroke="#22C55E"
-              strokeWidth="1.6"
-            />
-          </Box>
-
-          {/* Right: Dark Endpoint Card */}
-          <Box
-            sx={{
-              backgroundColor: '#0F172A',
-              color: '#FFFFFF',
-              borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              p: { xs: 1.4, sm: 1.8 },
-              boxShadow: '0 10px 30px rgba(0,0,0,0.45)',
-              minWidth: { xs: 120, sm: 140 },
-            }}
-          >
-            <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em', textTransform: 'uppercase', mb: 0.4 }}>
-              ENDPOINT
-            </Typography>
-            <Typography sx={{ fontFamily: 'monospace', fontSize: { xs: '0.78rem', sm: '0.86rem' }, fontWeight: 600 }}>
-              <Box component="span" sx={{ color: '#22C55E', fontWeight: 800 }}>POST </Box>
-              <Box component="span" sx={{ color: '#F1F5F9' }}>/v1/chat</Box>
-            </Typography>
-          </Box>
-        </Box>
-      );
-    }
-
-    return null;
   };
 
   return (
@@ -956,8 +565,8 @@ export default function CoreFeaturesSection() {
                   width: '100%',
                   height: '100%',
                   display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
+                  flexDirection: { xs: 'column', md: 'row-reverse' },
+                  gap: { xs: 2, md: 4 },
                   p: { xs: 2.2, sm: 3.2, md: 3.8 },
                   boxSizing: 'border-box',
                   opacity: idx === 0 ? 1 : 0,
@@ -972,42 +581,54 @@ export default function CoreFeaturesSection() {
                 <Box sx={{ position: 'absolute', bottom: 10, left: 10, color: 'var(--text-secondary)', opacity: 0.35, fontSize: '0.78rem', fontFamily: 'monospace', pointerEvents: 'none' }}>└</Box>
                 <Box sx={{ position: 'absolute', bottom: 10, right: 10, color: 'var(--text-secondary)', opacity: 0.35, fontSize: '0.78rem', fontFamily: 'monospace', pointerEvents: 'none' }}>┘</Box>
 
-                {/* Top Section: Title, Copper Subtitle, and Description */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 1.5 }}>
-                  <Box sx={{ maxWidth: 680 }}>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: '1.25rem', sm: '1.45rem', md: '1.6rem' },
-                        fontWeight: 700,
-                        color: 'var(--text-heading)',
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.2,
-                        mb: 0.4,
-                      }}
-                    >
-                      {tab.label}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: '0.88rem', sm: '0.98rem' },
-                        fontWeight: 600,
-                        color: 'var(--text-secondary)',
-                        lineHeight: 1.3,
-                        mb: 0.4,
-                      }}
-                    >
-                      {tab.tagline}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: '0.82rem', sm: '0.9rem' },
-                        color: 'var(--text-secondary)',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {tab.description}
-                    </Typography>
-                  </Box>
+                {/* Left Column: Video */}
+                <Box sx={{ flex: 1, height: '100%', position: 'relative', borderRadius: '16px', overflow: 'hidden', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+                  <Box
+                    component="video"
+                    src={tab.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </Box>
+
+                {/* Right Column: Content */}
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 0, md: 2 } }}>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '1.25rem', sm: '1.45rem', md: '1.8rem' },
+                      fontWeight: 700,
+                      color: 'var(--text-heading)',
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1.2,
+                      mb: 1.5,
+                    }}
+                  >
+                    {tab.label}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '0.95rem', sm: '1.05rem', md: '1.15rem' },
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.4,
+                      mb: 1.5,
+                    }}
+                  >
+                    {tab.tagline}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' },
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.6,
+                      mb: 4,
+                    }}
+                  >
+                    {tab.description}
+                  </Typography>
 
                   {tab.hasExplore && (
                     <Box
@@ -1017,74 +638,57 @@ export default function CoreFeaturesSection() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 0.6,
-                        color: 'var(--text-heading)',
+                        color: '#ff6600',
                         fontWeight: 700,
-                        fontSize: '0.78rem',
+                        fontSize: '0.85rem',
                         letterSpacing: '0.08em',
                         textTransform: 'uppercase',
                         textDecoration: 'none',
-                        pt: 0.5,
                         whiteSpace: 'nowrap',
                         transition: 'opacity 0.2s, transform 0.2s',
                         '&:hover': { opacity: 0.8, transform: 'translateX(2px)' },
+                        mb: 4,
                       }}
                     >
                       EXPLORE &rarr;
                     </Box>
                   )}
-                </Box>
 
-                {/* Center Section: High-Fidelity UI Graphic Preview */}
-                <Box
-                  sx={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.025)' : '#F5EFEB',
-                    borderRadius: '16px',
-                    border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
-                    p: { xs: 1.5, sm: 2.5 },
-                    my: 1,
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {renderVisualPreview(tab.id)}
-                </Box>
-
-                {/* Bottom Section: Footer Tags Row */}
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    pt: 1.2,
-                    borderTop: '1px solid var(--border-subtle)',
-                  }}
-                >
-                  <Typography
+                  {/* Tags */}
+                  <Box
                     sx={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.12em',
-                      color: 'var(--text-secondary)',
-                      textTransform: 'uppercase',
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      gap: 3,
+                      alignItems: 'center',
+                      pt: 2,
+                      borderTop: '1px solid var(--border-subtle)',
+                      mt: 'auto'
                     }}
                   >
-                    {tab.tagLeft}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.12em',
-                      color: 'var(--text-secondary)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {tab.tagRight}
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.12em',
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {tab.tagLeft}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.12em',
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {tab.tagRight}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             ))}
