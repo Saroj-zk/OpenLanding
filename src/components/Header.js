@@ -26,21 +26,25 @@ export default function Header() {
   const lastScrollY = React.useRef(0);
 
   React.useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
 
-      if (currentScrollY < 50) {
-        // Always show at the top
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current) {
-        // Scrolling down
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        // Scrolling up
-        setIsVisible(true);
+          if (currentScrollY < 50) {
+            setIsVisible(true);
+          } else if (currentScrollY > lastScrollY.current) {
+            setIsVisible(false);
+          } else if (currentScrollY < lastScrollY.current) {
+            setIsVisible(true);
+          }
+
+          lastScrollY.current = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

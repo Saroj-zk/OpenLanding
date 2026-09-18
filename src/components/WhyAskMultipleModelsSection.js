@@ -207,7 +207,9 @@ export default function WhyAskMultipleModelsSection() {
               opacity: 1,
               transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              transform: 'translateZ(0)',
+              willChange: 'transform, opacity'
             }}>
               {/* PHASE 1: Prompt Dispatch */}
             <Box sx={{ 

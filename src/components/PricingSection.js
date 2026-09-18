@@ -59,20 +59,21 @@ export default function PricingSection() {
       border: cardBorder,
       borderRadius: '16px',
       boxShadow: cardShadow,
-      mb: 1.5,
       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       '&:hover': {
         transform: 'translateY(-2px)',
-        boxShadow: isDark ? '0 16px 40px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.08)' : '0 16px 40px rgba(15,23,42,0.06), inset 0 1px 1px rgba(255,255,255,1)',
+        boxShadow: isDark ? '0 16px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,102,0,0.15)' : '0 16px 40px rgba(255,102,0,0.12), inset 0 1px 1px rgba(255,255,255,1)',
       }
     }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {icon}
-        </Box>
-        <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: primaryText }}>{name}</Typography>
+        {icon}
+        <Typography sx={{ fontWeight: 600, fontSize: '0.95rem', color: primaryText }}>
+          {name}
+        </Typography>
       </Box>
-      <Typography sx={{ fontSize: '1.05rem', fontWeight: 700, color: primaryText }}>${price}</Typography>
+      <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: primaryText }}>
+        ${price}
+      </Typography>
     </Box>
   );
 
@@ -92,7 +93,7 @@ export default function PricingSection() {
       {/* Background Decor */}
       <Box sx={{ position: 'absolute', top: -200, right: -200, width: 800, height: 800, background: 'radial-gradient(circle, rgba(255,102,0,0.03) 0%, transparent 60%)', zIndex: 0 }} />
 
-      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 }, position: 'relative' }}>
         
         {/* HERO HEADER */}
         <Box sx={{ textAlign: 'center', mb: { xs: 8, md: 10 } }}>
@@ -121,13 +122,52 @@ export default function PricingSection() {
               The Cost of Fragmentation
             </Typography>
             
-            {/* Cards container: total height is 380px */}
-            <Box sx={{ position: 'relative', height: 380 }}>
-              <SubCard name="ChatGPT Plus" price="20" icon={<GptIcon />} />
-              <SubCard name="Claude Pro" price="20" icon={<ClaudeIcon />} />
-              <SubCard name="Gemini Pro" price="20" icon={<GeminiIcon />} />
-              <SubCard name="Grok" price="30" icon={<GrokIcon />} />
-              <SubCard name="Midjourney" price="30" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#5865F2', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>M</Box>} />
+            {/* Cards container: Auto-Scrolling Carousel */}
+            <Box sx={{ 
+              position: 'relative', 
+              height: 380,
+              overflow: 'hidden',
+              // Fade out top and bottom for a seamless entering/exiting effect
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+            }}>
+              <style>{`
+                @keyframes verticalMarquee {
+                  0% { transform: translateY(0); }
+                  100% { transform: translateY(-50%); }
+                }
+              `}</style>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 1.5,
+                // The total height of one set must be exactly exactly 50% of this container's scrolling height.
+                // By duplicating the content, -50% translates exactly to the start of the second set!
+                animation: 'verticalMarquee 15s linear infinite',
+                '&:hover': {
+                  animationPlayState: 'paused'
+                }
+              }}>
+                {/* First Set */}
+                <SubCard name="ChatGPT Plus" price="20" icon={<GptIcon />} />
+                <SubCard name="Claude Pro" price="20" icon={<ClaudeIcon />} />
+                <SubCard name="Gemini Pro" price="20" icon={<GeminiIcon />} />
+                <SubCard name="Grok" price="30" icon={<GrokIcon />} />
+                <SubCard name="Midjourney" price="30" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#5865F2', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>M</Box>} />
+                <SubCard name="Perplexity Pro" price="20" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#21B3A4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>P</Box>} />
+                <SubCard name="GitHub Copilot" price="10" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#000000', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>C</Box>} />
+                <SubCard name="Runway Gen-2" price="15" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#FFD700', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '10px', fontWeight: 'bold' }}>R</Box>} />
+                
+                {/* Duplicated Second Set for Seamless Looping */}
+                <SubCard name="ChatGPT Plus" price="20" icon={<GptIcon />} />
+                <SubCard name="Claude Pro" price="20" icon={<ClaudeIcon />} />
+                <SubCard name="Gemini Pro" price="20" icon={<GeminiIcon />} />
+                <SubCard name="Grok" price="30" icon={<GrokIcon />} />
+                <SubCard name="Midjourney" price="30" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#5865F2', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>M</Box>} />
+                <SubCard name="Perplexity Pro" price="20" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#21B3A4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>P</Box>} />
+                <SubCard name="GitHub Copilot" price="10" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#000000', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>C</Box>} />
+                <SubCard name="Runway Gen-2" price="15" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#FFD700', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '10px', fontWeight: 'bold' }}>R</Box>} />
+              </Box>
             </Box>
 
             {/* Total Summary */}
@@ -161,181 +201,204 @@ export default function PricingSection() {
             </Box>
           </Box>
 
-          {/* SVG Connector: Left to Center */}
+          {/* MIDDLE BRIDGE: Video ONLY */}
           <Box sx={{ 
-            flexGrow: 1, height: 380, minWidth: 40, mt: '38px',
-            display: { xs: 'none', lg: 'block' }, position: 'relative' 
+            flexGrow: 1, 
+            height: 380, 
+            mt: '38px',
+            position: 'relative',
+            display: { xs: 'none', lg: 'flex' },
+            alignItems: 'center',
+            justifyContent: 'center',
+            mx: { lg: 2 }, // Small margin to prevent literal overlapping of cards
+            mixBlendMode: isDark ? 'screen' : 'multiply',
+            filter: isDark ? 'invert(1) hue-rotate(180deg)' : 'none',
+            overflow: 'hidden', // Crops the baked-in grey borders of the video
+            borderRadius: '24px', // Soft rounded edges for the crop
           }}>
-            <svg width="100%" height="100%" viewBox="0 0 100 380" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor={isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'} />
-                  <stop offset="100%" stopColor="#ff6600" />
-                </linearGradient>
-              </defs>
-              <path className="flow-line" d="M 0,32 C 40,32 60,190 100,190" fill="none" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="3,3" />
-              <path className="flow-line-alt" d="M 0,108 C 40,108 60,190 100,190" fill="none" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="3,3" />
-              <path className="flow-line" d="M 0,184 C 40,184 60,190 100,190" fill="none" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="3,3" />
-              <path className="flow-line-alt" d="M 0,260 C 40,260 60,190 100,190" fill="none" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="3,3" />
-              <path className="flow-line" d="M 0,336 C 40,336 60,190 100,190" fill="none" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="3,3" />
-            </svg>
-          </Box>
-
-          {/* CENTER: OpenLedger Hub */}
-          <Box sx={{ 
-            width: 160, flexShrink: 0, mt: '38px', height: 380,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' 
-          }}>
-            <Box sx={{ 
-              width: 160, height: 60, 
-              borderRadius: '16px',
-              background: isDark ? 'linear-gradient(180deg, rgba(255,102,0,0.1) 0%, rgba(20,24,30,0.95) 100%)' : 'linear-gradient(180deg, rgba(255,102,0,0.05) 0%, #ffffff 100%)',
-              border: isDark ? '1px solid rgba(255,102,0,0.4)' : '1px solid rgba(255,102,0,0.3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: isDark ? '0 0 40px rgba(255,102,0,0.2), inset 0 0 20px rgba(255,102,0,0.05)' : '0 10px 30px rgba(255,102,0,0.1), inset 0 0 10px rgba(255,255,255,1)',
-              zIndex: 2,
-              animation: 'pulseGlow 4s ease-in-out infinite'
-            }}>
-              <img
-                src="/Open%20Ledegr%20Full%20Black.svg"
-                alt="OpenLedger"
-                style={{
-                  height: 28,
-                  width: 'auto',
-                  display: 'block',
-                  filter: isDark ? 'brightness(0) invert(1)' : 'none',
-                }}
-              />
-            </Box>
-          </Box>
-
-          {/* SVG Connector: Center to Right */}
-          <Box sx={{ 
-            flexGrow: 1, height: 380, minWidth: 40, mt: '38px',
-            display: { xs: 'none', lg: 'block' }, position: 'relative' 
-          }}>
-            <svg width="100%" height="100%" viewBox="0 0 100 380" preserveAspectRatio="none">
-              <path className="flow-line-alt" d="M 0,190 L 100,190" fill="none" stroke="#ff6600" strokeWidth="1" strokeDasharray="3,3" />
-              <polygon points="100,187 103,190 100,193" fill="#ff6600" transform="translate(-3, 0)" />
-            </svg>
+            <video 
+              src="/pricing_video.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              style={{ 
+                width: '100%', 
+                height: '100%',
+                objectFit: 'cover', // This stretches the video to touch the edges, cropping excess white padding
+                pointerEvents: 'none',
+                transform: 'scale(1.3)' // Scale significantly to push the MP4's built-in grey borders far outside the hidden overflow
+              }}
+            />
           </Box>
 
           {/* RIGHT COLUMN: OpenLedger Pro Premium Card */}
           <Box sx={{ width: { xs: '100%', sm: 380 }, flexShrink: 0, position: 'relative', mt: { xs: 0, lg: '28px' } }}>
-            <Box sx={{ maxWidth: 380, mx: 'auto', position: 'relative' }}>
-              
-              {/* Premium Glow Underlay */}
-              <Box sx={{ position: 'absolute', inset: -2, background: 'linear-gradient(180deg, #ff6600 0%, rgba(255,102,0,0) 100%)', borderRadius: '26px', filter: 'blur(10px)', opacity: 0.5, zIndex: 0 }} />
+            <style>{`
+              @keyframes floatCard {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-8px); }
+              }
+              @keyframes spinBorder {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+              @keyframes pulseGlow {
+                0%, 100% { opacity: 0.4; filter: blur(12px); transform: scale(1); }
+                50% { opacity: 0.7; filter: blur(20px); transform: scale(1.02); }
+              }
+            `}</style>
 
-              {/* The Card */}
+            <Box sx={{ 
+              maxWidth: 380, mx: 'auto', position: 'relative',
+              animation: 'floatCard 6s ease-in-out infinite' 
+            }}>
+              
+              {/* Animated Premium Glow Underlay */}
+              <Box sx={{ 
+                position: 'absolute', inset: -4, 
+                background: 'linear-gradient(180deg, #ff6600 0%, rgba(255,102,0,0) 100%)', 
+                borderRadius: '30px', 
+                animation: 'pulseGlow 4s ease-in-out infinite',
+                zIndex: 0 
+              }} />
+
+              {/* Animated Border Wrapper */}
               <Box sx={{
-                background: isDark ? 'linear-gradient(180deg, rgba(30,20,15,0.95) 0%, rgba(15,20,25,0.95) 100%)' : 'linear-gradient(180deg, rgba(255,245,240,0.95) 0%, rgba(255,255,255,0.95) 100%)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.5)',
-                borderRadius: '24px',
-                p: { xs: 4, sm: 5 },
-                textAlign: 'center',
-                boxShadow: isDark ? '0 24px 48px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,102,0,0.2)' : '0 24px 48px rgba(255,102,0,0.15), inset 0 1px 1px rgba(255,255,255,1)',
                 position: 'relative',
                 zIndex: 1,
-                display: 'flex', flexDirection: 'column', alignItems: 'center'
+                borderRadius: '26px',
+                p: '1px', // This acts as the border thickness
+                overflow: 'hidden',
+                boxShadow: isDark ? '0 24px 48px rgba(0,0,0,0.5)' : '0 24px 48px rgba(255,102,0,0.15)'
               }}>
-                
-                {/* Embedded Best Value Ribbon */}
-                <Box sx={{ 
-                  backgroundColor: 'rgba(255,102,0,0.1)', 
-                  border: '1px solid rgba(255,102,0,0.3)',
-                  color: '#ff6600',
-                  px: 2, py: 0.5, borderRadius: '99px',
-                  fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase',
-                  display: 'flex', alignItems: 'center', gap: 1, mb: 4
+                {/* Rotating Conic Gradient */}
+                <Box sx={{
+                  position: 'absolute',
+                  top: '-50%', left: '-50%', width: '200%', height: '200%',
+                  background: isDark 
+                    ? 'conic-gradient(from 0deg, transparent 0 300deg, #ff6600 360deg)' 
+                    : 'conic-gradient(from 0deg, transparent 0 280deg, #ff6600 360deg)',
+                  animation: 'spinBorder 4s linear infinite',
+                  zIndex: 0
+                }} />
+
+                {/* The Card Inner Content */}
+                <Box sx={{
+                  background: isDark ? 'linear-gradient(180deg, rgba(30,20,15,0.92) 0%, rgba(15,20,25,0.96) 100%)' : 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,250,248,0.98) 100%)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  borderRadius: '25px', // Slightly smaller than wrapper
+                  p: { xs: 3, sm: 3 },
+                  textAlign: 'left',
+                  boxShadow: isDark ? 'inset 0 1px 1px rgba(255,102,0,0.2)' : 'inset 0 1px 1px rgba(255,255,255,1)',
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'flex', flexDirection: 'column'
                 }}>
-                  <CheckCircleRoundedIcon sx={{ fontSize: '1rem' }} /> Best value
-                </Box>
+                  
+                  {/* Top Header Row */}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography sx={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
+                      <span style={{ color: primaryText }}>OPENLEDGER</span> <span style={{ color: '#ff6600' }}>PRO</span>
+                    </Typography>
+                    <Box sx={{ 
+                      backgroundColor: 'rgba(255,102,0,0.1)', 
+                      border: '1px solid rgba(255,102,0,0.3)',
+                      color: '#ff6600',
+                      px: 1, py: 0.25, borderRadius: '99px',
+                      fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase',
+                      display: 'flex', alignItems: 'center', gap: 0.5
+                    }}>
+                      <CheckCircleRoundedIcon sx={{ fontSize: '0.8rem' }} /> Best value
+                    </Box>
+                  </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
-                  <Typography sx={{ fontSize: '1.9rem', fontWeight: 900, color: primaryText, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
-                    OPENLEDGER <span style={{ color: '#ff6600' }}>PRO</span>
-                  </Typography>
-                </Box>
+                  {/* Price Block */}
+                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 2 }}>
+                    <Typography sx={{ fontSize: '3rem', fontWeight: 900, color: primaryText, lineHeight: 1, letterSpacing: '-0.04em' }}>
+                      $20
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: secondaryText, textTransform: 'uppercase' }}>
+                      / mo
+                    </Typography>
+                    <Typography sx={{ ml: 'auto', fontSize: '1rem', fontWeight: 700, color: 'var(--text-muted)', textDecoration: 'line-through', opacity: 0.5 }}>
+                      $120
+                    </Typography>
+                  </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 0.8, mb: 4, whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
-                  <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: secondaryText, textTransform: 'uppercase', flexShrink: 0 }}>
-                    From
-                  </Typography>
-                  <Typography sx={{ fontSize: '2.2rem', fontWeight: 700, color: 'var(--text-muted)', textDecoration: 'line-through', opacity: 0.6, ml: 0.5, mr: 0.5, lineHeight: 1, flexShrink: 0 }}>
-                    $120
-                  </Typography>
-                  <Typography sx={{ fontSize: '4.5rem', fontWeight: 800, color: primaryText, lineHeight: 1, letterSpacing: '-0.04em', flexShrink: 0 }}>
-                    $20
-                  </Typography>
-                  <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: secondaryText, textTransform: 'uppercase', flexShrink: 0 }}>
-                    / mo
-                  </Typography>
-                </Box>
+                  {/* Divider */}
+                  <Box sx={{ height: '1px', width: '100%', background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)', mb: 2 }} />
 
-                {/* Consolidated Icons Pill */}
-                <Box sx={{ 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: -1, 
-                  backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.02)',
-                  border: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)',
-                  borderRadius: '99px', p: 1, pr: 2, mb: 2
-                }}>
-                  <Box sx={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: cardBg, border: cardBorder, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}><GptIcon /></Box>
-                  <Box sx={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: cardBg, border: cardBorder, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4, ml: -1, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}><ClaudeIcon /></Box>
-                  <Box sx={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: cardBg, border: cardBorder, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3, ml: -1, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}><GeminiIcon /></Box>
-                  <Box sx={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: cardBg, border: cardBorder, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, ml: -1, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}><Box sx={{ width: 14, height: 14, backgroundColor: '#5865F2', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '8px', fontWeight: 'bold' }}>M</Box></Box>
-                  <Typography sx={{ ml: 1.5, fontSize: '0.85rem', fontWeight: 700, color: secondaryText }}>
-                    100+ models
-                  </Typography>
-                </Box>
-                
-                <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: '#ff6600', letterSpacing: '0.05em' }}>
-                  It's all here.
-                </Typography>
+                  {/* Feature List */}
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2, mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,102,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6600' }}>
+                        <CheckCircleRoundedIcon sx={{ fontSize: '0.85rem' }} />
+                      </Box>
+                      <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: primaryText }}>All premium models included</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,102,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6600' }}>
+                        <CheckCircleRoundedIcon sx={{ fontSize: '0.85rem' }} />
+                      </Box>
+                      <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: primaryText }}>Unified context & memory</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,102,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6600' }}>
+                        <CheckCircleRoundedIcon sx={{ fontSize: '0.85rem' }} />
+                      </Box>
+                      <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: primaryText }}>Zero hidden API costs</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(255,102,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6600' }}>
+                        <CheckCircleRoundedIcon sx={{ fontSize: '0.85rem' }} />
+                      </Box>
+                      <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: primaryText }}>Unlimited daily messages</Typography>
+                    </Box>
+                  </Box>
 
+                  {/* CTA Button Inside Card */}
+                  <Button 
+                    variant="contained"
+                    fullWidth
+                    sx={{ 
+                      borderRadius: '12px',
+                      py: 1.2,
+                      fontSize: '1rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.02em',
+                      textTransform: 'none',
+                      backgroundColor: '#ff6600',
+                      color: '#ffffff',
+                      boxShadow: isDark
+                        ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                        : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                      '&:hover': {
+                        backgroundColor: '#e65c00',
+                        transform: 'translateY(-2px)',
+                        boxShadow: isDark
+                          ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
+                          : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
+                      },
+                      '&:active': { transform: 'scale(0.96)' },
+                    }}>
+                    Upgrade to Pro
+                  </Button>
+                  
+                  <Typography sx={{ mt: 2, fontSize: '0.75rem', fontWeight: 600, color: secondaryText, textAlign: 'center' }}>
+                    Cancel anytime. No lock-in.
+                  </Typography>
+
+                </Box>
               </Box>
-
             </Box>
           </Box>
         </Box>
 
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: { xs: 8, md: 12 } }}>
-          <Button 
-            variant="contained"
-            sx={{ 
-              display: 'inline-flex',
-              cursor: 'pointer',
-              userSelect: 'none',
-              borderRadius: '9999px',
-              px: { xs: 4, sm: 5 },
-              py: { xs: 1.5, sm: 1.8 },
-              fontSize: { xs: '1rem', sm: '1.1rem' },
-              fontWeight: 800,
-              letterSpacing: '0.02em',
-              textTransform: 'none',
-              backgroundColor: '#ff6600',
-              color: '#ffffff',
-              border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
-              boxShadow: isDark
-                ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              '&:hover': {
-                backgroundColor: '#e65c00',
-                transform: 'translateY(-2px)',
-                boxShadow: isDark
-                  ? '0 12px 36px rgba(255, 102, 0, 0.45), 0 0 20px rgba(255, 102, 0, 0.2)'
-                  : '0 12px 36px rgba(255, 102, 0, 0.35), 0 0 20px rgba(255, 102, 0, 0.2)',
-              },
-              '&:active': {
-                transform: 'scale(0.96)',
-              },
-            }}>
-            Upgrade to Pro
-          </Button>
           <Button sx={{ 
             borderRadius: '9999px',
             py: 1.5,
