@@ -544,69 +544,204 @@ export default function MemoryPage() {
               />
             </Reveal>
 
-            {/* Right Visual Image Card Showcase */}
+            {/* Right: the memory layer itself. One store, read by every model,
+                which is the claim the headline makes. */}
             <Reveal delay={120}>
               <Box
                 sx={{
                   position: 'relative',
-                  borderRadius: { xs: 4, md: 5 },
                   overflow: 'hidden',
+                  borderRadius: { xs: 4, md: 5 },
+                  p: { xs: 2.5, sm: 3.5 },
                   border: '1px solid var(--border-normal)',
-                  boxShadow: isDark
-                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(255,102,0,0.15)'
-                    : '0 20px 45px -12px rgba(15,23,42,0.12)',
                   backgroundColor: 'var(--bg-card)',
+                  boxShadow: isDark
+                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(255,102,0,0.12)'
+                    : '0 20px 45px -12px rgba(15,23,42,0.12)',
                 }}
               >
                 <Box
-                  component="img"
-                  src="/images/Portable memory.jpg"
-                  alt="OpenLedger Portable Context and Unified Memory"
+                  aria-hidden="true"
                   sx={{
-                    width: '100%',
-                    height: { xs: 280, sm: 340, md: 380 },
-                    objectFit: 'cover',
-                    display: 'block',
+                    position: 'absolute',
+                    top: '-25%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '85%',
+                    height: '65%',
+                    background: 'radial-gradient(ellipse at center, rgba(255,102,0,0.14) 0%, transparent 70%)',
+                    pointerEvents: 'none',
                   }}
                 />
 
-                {/* Floating telemetry HUD over image */}
                 <Box
                   sx={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    right: 16,
+                    position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    p: 1.2,
-                    borderRadius: '9999px',
-                    backgroundColor: isDark ? 'rgba(10,12,16,0.85)' : 'rgba(255,255,255,0.9)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid var(--border-normal)',
+                    gap: 2,
+                    mb: 2.5,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 1 }}>
-                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 8px #FF6600' }} />
-                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-                      PORTABLE MEMORY VAULT
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 8px #FF6600' }} />
+                    <Typography
+                      sx={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.09em',
+                        textTransform: 'uppercase',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Unified memory
                     </Typography>
                   </Box>
-                  <Box
+                  <Typography
                     sx={{
-                      px: 1.5,
+                      px: 1.4,
                       py: 0.4,
                       borderRadius: '9999px',
-                      backgroundColor: 'rgba(255,102,0,0.15)',
-                      color: '#FF6600',
-                      fontSize: '0.72rem',
+                      fontSize: '0.68rem',
                       fontWeight: 700,
+                      whiteSpace: 'nowrap',
+                      color: '#FF6600',
+                      backgroundColor: 'rgba(255,102,0,0.1)',
+                      border: '1px solid rgba(255,102,0,0.3)',
                     }}
                   >
-                    Encrypted on Device
-                  </Box>
+                    Encrypted on device
+                  </Typography>
                 </Box>
+
+                {/* The store, showing the four kinds of thing the copy names */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    px: 2,
+                    py: 0.5,
+                    borderRadius: '16px',
+                    border: '1px solid var(--border-normal)',
+                    backgroundColor: 'var(--bg-glass)',
+                  }}
+                >
+                  {[
+                    ['Preference', 'Concise answers'],
+                    ['Active project', 'Payments API rewrite'],
+                    ['Constraint', 'Postgres, not Mongo'],
+                    ['Decision', 'Stripe over Adyen'],
+                  ].map(([label, value], i) => (
+                    <Box
+                      key={label}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.3,
+                        py: 1.35,
+                        borderTop: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', flexShrink: 0, color: '#FF6600' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </Box>
+                      <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-heading)', whiteSpace: 'nowrap' }}>
+                        {label}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: '0.82rem',
+                          color: 'var(--text-secondary)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* One store fanning out to every model */}
+                <Box aria-hidden="true" sx={{ position: 'relative', height: 44 }}>
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: 0,
+                      width: '2px',
+                      height: 21,
+                      ml: '-1px',
+                      backgroundColor: 'rgba(255,102,0,0.45)',
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: '12.5%',
+                      right: '12.5%',
+                      top: 21,
+                      height: '2px',
+                      backgroundColor: 'rgba(255,102,0,0.45)',
+                    }}
+                  />
+                  {['12.5%', '37.5%', '62.5%', '87.5%'].map((x) => (
+                    <Box
+                      key={x}
+                      sx={{
+                        position: 'absolute',
+                        left: x,
+                        top: 21,
+                        width: '2px',
+                        height: 23,
+                        ml: '-1px',
+                        backgroundColor: 'rgba(255,102,0,0.45)',
+                      }}
+                    />
+                  ))}
+                </Box>
+
+                <Box
+                  sx={{
+                    position: 'relative',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gap: 1,
+                  }}
+                >
+                  {[
+                    ['AN', 'Claude'],
+                    ['OA', 'GPT-4o'],
+                    ['GG', 'Gemini'],
+                    ['DS', 'DeepSeek'],
+                  ].map(([code, name]) => (
+                    <Box key={code} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                      <BrandTile code={code} size={34} />
+                      <Typography
+                        sx={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textAlign: 'center' }}
+                      >
+                        {name}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                <Typography
+                  sx={{
+                    position: 'relative',
+                    mt: 3,
+                    pt: 2.5,
+                    borderTop: '1px solid var(--border-subtle)',
+                    fontSize: '0.82rem',
+                    color: 'var(--text-secondary)',
+                    textAlign: 'center',
+                  }}
+                >
+                  Written once. Read by every model you switch to.
+                </Typography>
               </Box>
             </Reveal>
           </Box>
