@@ -754,7 +754,7 @@ export default function MemoryPage() {
                   maxWidth: '22ch',
                   fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
                   fontWeight: 700,
-                  lineHeight: 1.2,
+                  lineHeight: 1.28,
                   letterSpacing: '-0.02em',
                   color: 'var(--text-heading)',
                   mb: 4,
@@ -788,7 +788,7 @@ export default function MemoryPage() {
                   maxWidth: '20ch',
                   fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
                   fontWeight: 700,
-                  lineHeight: 1.2,
+                  lineHeight: 1.28,
                   letterSpacing: '-0.02em',
                   color: 'var(--text-heading)',
                   mb: 2,
@@ -902,15 +902,15 @@ export default function MemoryPage() {
                   maxWidth: '20ch',
                   fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
                   fontWeight: 700,
-                  lineHeight: 1.2,
+                  lineHeight: 1.28,
                   letterSpacing: '-0.02em',
                   color: 'var(--text-heading)',
                   mb: 2,
                 }}
               >
-                Memory that belongs to you,{' '}
+                Memory usually ends{' '}
                 <Box component="span" sx={{ color: '#FF6600' }}>
-                  not to the model.
+                  where the app does.
                 </Box>
               </Typography>
               <Typography
@@ -922,8 +922,8 @@ export default function MemoryPage() {
                   mb: 6,
                 }}
               >
-                Most assistants keep what they learn inside their own product. Change tools and you start again from
-                nothing. Unified Memory sits outside the model, so it travels with you and you decide what stays in it.
+                Every assistant says it remembers you. Most of them do it inside their own product, in a store you
+                cannot read, move, or clear. The difference shows up the moment you switch.
               </Typography>
             </Reveal>
 
@@ -1049,7 +1049,7 @@ export default function MemoryPage() {
                   maxWidth: '24ch',
                   fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
                   fontWeight: 700,
-                  lineHeight: 1.2,
+                  lineHeight: 1.28,
                   letterSpacing: '-0.02em',
                   color: 'var(--text-heading)',
                   mb: 2,
