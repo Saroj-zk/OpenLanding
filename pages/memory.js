@@ -747,24 +747,24 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Eyebrow>Same context. Different model.</Eyebrow>
-              <Typography
-                component="h2"
-                sx={{
-                  maxWidth: '22ch',
-                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.28,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-heading)',
-                  mb: 4,
-                }}
-              >
-                Switch models without repeating yourself.
-              </Typography>
+              <Box sx={{ textAlign: 'center', maxWidth: '36rem', mx: 'auto', mb: { xs: 5, md: 6.5 } }}>
+                <Eyebrow>Same context. Different model.</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.28,
+                    letterSpacing: '-0.02em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  Switch models without repeating yourself.
+                </Typography>
+              </Box>
             </Reveal>
 
-            <Reveal delay={80} sx={{ mt: 2 }}>
+            <Reveal delay={80}>
               <MemoryChatDemo />
             </Reveal>
 
@@ -781,32 +781,44 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Eyebrow>More than chat history</Eyebrow>
-              <Typography
-                component="h2"
+              <Box
                 sx={{
-                  maxWidth: '20ch',
-                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.28,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-heading)',
-                  mb: 2,
-                }}
-              >
-                It remembers what matters.
-              </Typography>
-              <Typography
-                sx={{
-                  maxWidth: '58ch',
-                  fontSize: '1.05rem',
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 0.9fr)' },
+                  gap: { xs: 2.5, md: 6 },
+                  alignItems: 'end',
                   mb: 6,
                 }}
               >
-                Unified Memory builds a private understanding of the context you choose to carry across conversations and models.
-              </Typography>
+                <Box>
+                  <Eyebrow>More than chat history</Eyebrow>
+                  <Typography
+                    component="h2"
+                    sx={{
+                      maxWidth: '16ch',
+                      fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                      fontWeight: 700,
+                      lineHeight: 1.28,
+                      letterSpacing: '-0.02em',
+                      color: 'var(--text-heading)',
+                    }}
+                  >
+                    It remembers what matters.
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{
+                    maxWidth: '46ch',
+                    fontSize: '1.05rem',
+                    lineHeight: 1.6,
+                    color: 'var(--text-secondary)',
+                    pb: { md: 0.75 },
+                  }}
+                >
+                  Unified Memory builds a private understanding of the context you choose to carry across conversations
+                  and models.
+                </Typography>
+              </Box>
             </Reveal>
 
             <Grid container spacing={2.5}>
@@ -1042,7 +1054,18 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Eyebrow>How Unified Memory works</Eyebrow>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2.5,
+                  mb: 3,
+                  '& > *:first-of-type': { mb: 0 },
+                }}
+              >
+                <Eyebrow>How Unified Memory works</Eyebrow>
+                <Box sx={{ flex: 1, height: '1px', backgroundColor: 'var(--border-normal)' }} />
+              </Box>
               <Typography
                 component="h2"
                 sx={{
@@ -1059,7 +1082,7 @@ export default function MemoryPage() {
               </Typography>
               <Typography
                 sx={{
-                  maxWidth: '62ch',
+                  maxWidth: '52ch',
                   fontSize: '1.05rem',
                   lineHeight: 1.6,
                   color: 'var(--text-secondary)',
