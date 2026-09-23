@@ -890,7 +890,154 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: Architecture & Mechanics ───────────────── */}
+        {/* ── Section 4: What makes it different ─────────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
+          <Rule />
+          <Box sx={{ py: { xs: 7, md: 9 } }}>
+            <Reveal>
+              <Eyebrow>Why this is different</Eyebrow>
+              <Typography
+                component="h2"
+                sx={{
+                  maxWidth: '20ch',
+                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.2,
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-heading)',
+                  mb: 2,
+                }}
+              >
+                Memory that belongs to you,{' '}
+                <Box component="span" sx={{ color: '#FF6600' }}>
+                  not to the model.
+                </Box>
+              </Typography>
+              <Typography
+                sx={{
+                  maxWidth: '58ch',
+                  fontSize: '1.05rem',
+                  lineHeight: 1.6,
+                  color: 'var(--text-secondary)',
+                  mb: 6,
+                }}
+              >
+                Most assistants keep what they learn inside their own product. Change tools and you start again from
+                nothing. Unified Memory sits outside the model, so it travels with you and you decide what stays in it.
+              </Typography>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  borderRadius: { xs: '14px', md: '16px' },
+                  overflow: 'hidden',
+                  border: '1px solid var(--border-normal)',
+                }}
+              >
+                {[
+                  {
+                    label: 'Memory inside one app',
+                    ours: false,
+                    points: [
+                      'Locked to the product that wrote it',
+                      'Starts from nothing when you switch',
+                      'No plain list of what it kept',
+                      'Clearing it means closing the account',
+                    ],
+                  },
+                  {
+                    label: 'Unified Memory',
+                    ours: true,
+                    points: [
+                      'Read by every model you use',
+                      'Carries over the moment you switch',
+                      'Every entry readable in plain words',
+                      'Edit or remove any of it, whenever',
+                    ],
+                  },
+                ].map((col) => (
+                  <Box
+                    key={col.label}
+                    sx={{
+                      p: { xs: 2.5, sm: 3.5 },
+                      backgroundColor: col.ours ? 'rgba(255, 102, 0, 0.05)' : 'transparent',
+                      borderLeft: { md: col.ours ? '1px solid var(--border-normal)' : 'none' },
+                      borderTop: { xs: col.ours ? '1px solid var(--border-normal)' : 'none', md: 'none' },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: col.ours ? '#FF6600' : 'var(--text-muted)',
+                        pb: 2.5,
+                        borderBottom: '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      {col.label}
+                    </Typography>
+
+                    {col.points.map((point, i) => (
+                      <Box
+                        key={point}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.6,
+                          py: { xs: 2, md: 2.35 },
+                          borderTop: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 22,
+                            height: 22,
+                            flexShrink: 0,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: col.ours ? '#FFFFFF' : 'var(--text-muted)',
+                            backgroundColor: col.ours ? '#FF6600' : 'transparent',
+                            border: col.ours ? 'none' : '1px solid var(--border-normal)',
+                          }}
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            {col.ours ? (
+                              <polyline points="20 6 9 17 4 12" />
+                            ) : (
+                              <>
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                              </>
+                            )}
+                          </svg>
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontSize: '0.95rem',
+                            lineHeight: 1.5,
+                            fontWeight: col.ours ? 600 : 400,
+                            color: col.ours ? 'var(--text-primary)' : 'var(--text-secondary)',
+                          }}
+                        >
+                          {point}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+            </Reveal>
+          </Box>
+        </Box>
+
+        {/* ── Section 5: Architecture & Mechanics ───────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
@@ -991,7 +1138,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 5: Bottom Cinematic CTA Banner ─────────────── */}
+        {/* ── Section 6: Bottom Cinematic CTA Banner ─────────────── */}
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>
