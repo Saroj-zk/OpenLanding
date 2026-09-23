@@ -103,13 +103,11 @@ const PIPELINE_CHIPS = ['Encrypted in transit', 'RAM-only execution', 'No trace 
 const FLOWS = [
   {
     label: 'Most platforms',
-    status: 'Filtered',
     accent: false,
     note: 'An extra moderation layer sits between your prompt and the model.',
   },
   {
     label: 'OpenLedger',
-    status: 'Direct',
     accent: true,
     note: 'Nothing is inserted in between. Your prompt reaches the model as written.',
   },
@@ -469,35 +467,26 @@ const GHOST_CTA_SX = {
 
 /* ── Filter-layer comparison ─────────────────────────────────────── */
 
-function FlowChip({ icon, label, accent }) {
+/* Both paths run on identical grid tracks, so "You" and "Model" land on the
+   same x in either row and the only visible difference is what sits between
+   them. That contrast is the whole argument, so nothing else competes with it. */
+
+function PathEnd({ icon, label, accent, side }) {
   return (
     <Box
       sx={{
-        position: 'relative',
-        zIndex: 2,
-        flexShrink: 0,
         display: 'inline-flex',
         alignItems: 'center',
         gap: 0.8,
-        px: { xs: 1.3, sm: 1.7 },
-        py: { xs: 0.85, sm: 1 },
-        borderRadius: '9999px',
         whiteSpace: 'nowrap',
-        fontSize: { xs: '0.72rem', sm: '0.8rem' },
+        pr: side === 'start' ? 1.5 : 0,
+        pl: side === 'end' ? 1.5 : 0,
+        fontSize: { xs: '0.72rem', sm: '0.78rem' },
         fontWeight: 700,
         color: accent ? ORANGE : 'var(--text-primary)',
-        // Opaque base + tint layer, so the lit rail passes behind the chip instead of through it.
-        backgroundColor: 'var(--bg-card)',
-        backgroundImage: accent
-          ? 'linear-gradient(rgba(255, 102, 0, 0.13), rgba(255, 102, 0, 0.13))'
-          : 'none',
-        border: `1px solid ${accent ? 'rgba(255, 102, 0, 0.42)' : 'var(--border-normal)'}`,
-        boxShadow: accent
-          ? '0 6px 18px rgba(255, 102, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
-          : '0 4px 12px rgba(15, 23, 42, 0.07)',
       }}
     >
-      <Box sx={{ display: 'flex', flexShrink: 0, opacity: 0.9 }}>
+      <Box sx={{ display: 'flex', flexShrink: 0, opacity: 0.85 }}>
         <Glyph name={icon} size={13} />
       </Box>
       {label}
@@ -505,230 +494,96 @@ function FlowChip({ icon, label, accent }) {
   );
 }
 
-function FlowSlotCaption({ children, accent }) {
+function PathLine({ accent }) {
   return (
-    <Typography
+    <Box
+      aria-hidden="true"
       sx={{
-        position: 'absolute',
-        top: 'calc(100% + 10px)',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        height: '2px',
+        borderRadius: '2px',
+        backgroundColor: accent ? ORANGE : 'var(--border-normal)',
+      }}
+    />
+  );
+}
+
+function FilterNode() {
+  return (
+    <Box
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0.7,
+        mx: 1.5,
+        px: { xs: 1.2, sm: 1.5 },
+        py: 1,
+        borderRadius: '10px',
         whiteSpace: 'nowrap',
-        fontSize: '0.64rem',
+        fontSize: { xs: '0.7rem', sm: '0.76rem' },
         fontWeight: 700,
-        letterSpacing: '0.09em',
-        textTransform: 'uppercase',
-        color: accent ? ORANGE : 'var(--text-muted)',
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border-strong)',
       }}
     >
-      {children}
-    </Typography>
-  );
-}
-
-/* The obstruction: a squared-off gate that physically breaks the path. */
-function FilterGate() {
-  return (
-    <Box sx={{ position: 'relative', zIndex: 2, flexShrink: 0 }}>
-      <Box
-        sx={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 0.8,
-          minWidth: { xs: 98, sm: 134 },
-          px: { xs: 1.2, sm: 1.8 },
-          py: { xs: 1.05, sm: 1.25 },
-          borderRadius: '12px',
-          whiteSpace: 'nowrap',
-          fontSize: { xs: '0.72rem', sm: '0.8rem' },
-          fontWeight: 700,
-          color: 'var(--text-primary)',
-          backgroundColor: 'var(--bg-card)',
-          border: '1px solid var(--border-strong)',
-          boxShadow: '0 8px 22px rgba(15, 23, 42, 0.1)',
-        }}
-      >
-        <Box sx={{ display: 'flex', flexShrink: 0, color: 'var(--text-muted)' }}>
-          <Glyph name="funnel" size={13} />
-        </Box>
-        Platform filter
+      <Box sx={{ display: 'flex', flexShrink: 0, color: 'var(--text-muted)' }}>
+        <Glyph name="funnel" size={12} />
       </Box>
-      <FlowSlotCaption>Extra layer</FlowSlotCaption>
+      Platform filter
     </Box>
   );
 }
 
-/* The absence: an empty frame the path runs straight through. */
-function FilterGateRemoved() {
-  return (
-    <Box sx={{ position: 'relative', zIndex: 2, flexShrink: 0 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minWidth: { xs: 98, sm: 134 },
-          height: { xs: 36, sm: 42 },
-          borderRadius: '12px',
-          backgroundColor: 'transparent',
-          border: '1.5px dashed var(--border-strong)',
-        }}
-      />
-      <FlowSlotCaption accent>Not added</FlowSlotCaption>
-    </Box>
-  );
-}
-
-function FlowCard({ flow }) {
+function FlowRow({ flow }) {
   const accent = flow.accent;
 
   return (
     <Box
       sx={{
-        position: 'relative',
-        overflow: 'hidden',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        p: { xs: 2.75, sm: 3.25, md: 3.5 },
-        borderRadius: '20px',
-        backgroundColor: 'var(--bg-card)',
-        border: `1px solid ${accent ? 'rgba(255, 102, 0, 0.32)' : 'var(--border-normal)'}`,
-        boxShadow: accent ? '0 18px 44px rgba(255, 102, 0, 0.15)' : 'var(--shadow-card)',
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: '180px minmax(0, 1fr)' },
+        columnGap: { md: 4 },
+        rowGap: { xs: 2, md: 0 },
+        alignItems: { md: 'center' },
+        py: ROW_PY,
+        borderBottom: '1px solid var(--border-normal)',
       }}
     >
-      <style>{`
-        @keyframes olFlowDot {
-          0% { left: 10%; opacity: 0; }
-          12% { opacity: 1; }
-          88% { opacity: 1; }
-          100% { left: 90%; opacity: 0; }
-        }
-      `}</style>
-
-      {accent && (
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            background: 'radial-gradient(ellipse 70% 90% at 50% 45%, rgba(255, 102, 0, 0.14) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-
-      {/* Card header */}
-      <Box
-        sx={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 2,
-          mb: { xs: 3.5, md: 4.5 },
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: '0.72rem',
-            fontWeight: 700,
-            letterSpacing: '0.09em',
-            textTransform: 'uppercase',
-            color: accent ? ORANGE : 'var(--text-muted)',
-          }}
-        >
-          {flow.label}
-        </Typography>
-        <Box
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 0.7,
-            px: 1.3,
-            py: 0.4,
-            borderRadius: '9999px',
-            fontSize: '0.64rem',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
-            color: accent ? ORANGE : 'var(--text-muted)',
-            backgroundColor: accent ? 'rgba(255, 102, 0, 0.1)' : 'var(--bg-glass)',
-            border: `1px solid ${accent ? 'rgba(255, 102, 0, 0.3)' : 'var(--border-subtle)'}`,
-          }}
-        >
-          <Box
-            sx={{
-              width: 5,
-              height: 5,
-              borderRadius: '50%',
-              backgroundColor: accent ? ORANGE : 'var(--text-muted)',
-              boxShadow: accent ? `0 0 8px ${ORANGE}` : 'none',
-            }}
-          />
-          {flow.status}
-        </Box>
-      </Box>
-
-      {/* The path */}
-      <Box
-        sx={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: { xs: 0.5, sm: 1 },
-          mb: { xs: 4.5, md: 5 },
-        }}
-      >
-        {/* Rail — lit and continuous on the direct path, plain and interrupted on the other */}
-        <Box
-          aria-hidden="true"
-          sx={{
-            position: 'absolute',
-            left: 12,
-            right: 12,
-            top: '50%',
-            height: accent ? '2.5px' : '2px',
-            transform: 'translateY(-50%)',
-            zIndex: 1,
-            borderRadius: '2px',
-            backgroundColor: accent ? ORANGE : 'var(--border-normal)',
-            opacity: accent ? 0.9 : 1,
-            boxShadow: accent ? `0 0 14px ${ORANGE}` : 'none',
-          }}
-        />
-
-        {accent && (
-          <Box
-            aria-hidden="true"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              zIndex: 1,
-              width: 7,
-              height: 7,
-              mt: '-3.5px',
-              borderRadius: '50%',
-              backgroundColor: '#FFFFFF',
-              boxShadow: `0 0 12px 2px ${ORANGE}`,
-              animation: 'olFlowDot 3.4s linear infinite',
-              pointerEvents: 'none',
-            }}
-          />
-        )}
-
-        <FlowChip icon="user" label="You" accent={accent} />
-        {accent ? <FilterGateRemoved /> : <FilterGate />}
-        <FlowChip icon="spark" label="Model" accent={accent} />
-      </Box>
-
       <Typography
-        sx={{ position: 'relative', mt: 'auto', fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}
+        sx={{
+          fontSize: '0.72rem',
+          fontWeight: 700,
+          letterSpacing: '0.09em',
+          textTransform: 'uppercase',
+          color: accent ? ORANGE : 'var(--text-muted)',
+        }}
       >
-        {flow.note}
+        {flow.label}
       </Typography>
+
+      <Box>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'auto 1fr 130px 1fr auto',
+              sm: 'auto 1fr 176px 1fr auto',
+            },
+            alignItems: 'center',
+          }}
+        >
+          <PathEnd icon="user" label="You" accent={accent} side="start" />
+          <PathLine accent={accent} />
+          {accent ? <PathLine accent /> : <FilterNode />}
+          <PathLine accent={accent} />
+          <PathEnd icon="spark" label="Model" accent={accent} side="end" />
+        </Box>
+
+        <Typography sx={{ mt: 2.25, fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+          {flow.note}
+        </Typography>
+      </Box>
     </Box>
   );
 }
@@ -1497,16 +1352,9 @@ export default function PrivatePage() {
 
             {/* Filter-layer comparison */}
             <Reveal>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                  gap: 2.5,
-                  mb: 0,
-                }}
-              >
+              <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
                 {FLOWS.map((flow) => (
-                  <FlowCard key={flow.label} flow={flow} />
+                  <FlowRow key={flow.label} flow={flow} />
                 ))}
               </Box>
             </Reveal>
