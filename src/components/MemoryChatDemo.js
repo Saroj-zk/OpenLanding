@@ -20,45 +20,54 @@ const MEMORY = [
   { id: 'trip', label: 'Japan · 7 days · October' },
 ];
 
-/* The thread plays itself, switches included. `chip` marks a phrase the model
-   pulled straight out of memory rather than out of the message you just sent. */
+/* The visitor names the model they want; the thread hands over and the new
+   model answers from memory. Each request after the first carries no context
+   at all — every detail in the answers comes out of the four saved facts,
+   which is the only way to show what unified memory is actually for. */
 const SCRIPT = [
   {
     kind: 'user',
-    text: "I'm planning a 7-day trip to Japan in October. My budget is $2,000, I prefer quieter places, and I'm vegetarian.",
+    text: "I'm planning a 7-day trip to Japan in October. My budget is $2,000, I'm vegetarian, and I'd rather avoid crowds.",
   },
   {
     kind: 'reply',
     model: 'GG',
+    saves: ['veg', 'budget', 'quiet', 'trip'],
     uses: [],
-    parts: [{ t: "Got it. I'll keep the trip within $2,000, prioritize less crowded areas, and keep vegetarian options in mind." }],
+    parts: [
+      { t: "Saved — 7 days in Japan this October, $2,000 all in, vegetarian, and away from the crowds. I'll plan around that, and so will any model you switch to." },
+    ],
   },
+
+  { kind: 'user', text: 'Ask Claude where I should stay in Kyoto.' },
   { kind: 'switch', model: 'AN' },
-  { kind: 'user', text: 'Find me a good place to stay in Kyoto.' },
   {
     kind: 'reply',
     model: 'AN',
     uses: ['quiet', 'budget', 'veg'],
     parts: [
-      { t: "Since you're looking for " },
-      { t: 'quieter places', chip: true },
-      { t: ' and keeping the full Japan trip ' },
-      { t: 'under $2,000', chip: true },
-      { t: ", I'd focus on smaller stays around Higashiyama or northern Kyoto, with easy access to " },
-      { t: 'vegetarian restaurants', chip: true },
-      { t: '.' },
+      { t: "Higashiyama or northern Kyoto — both stay " },
+      { t: 'quiet', chip: true },
+      { t: ' once the day-trippers leave. Small ryokan there run about ¥12,000 a night, which keeps the week ' },
+      { t: 'inside $2,000', chip: true },
+      { t: ', and each has ' },
+      { t: 'vegetarian', chip: true },
+      { t: ' kaiseki within walking distance.' },
     ],
   },
+
+  { kind: 'user', text: 'Now have GPT-4o plan day two.' },
   { kind: 'switch', model: 'OA' },
-  { kind: 'user', text: 'What should I do there on day two?' },
   {
     kind: 'reply',
     model: 'OA',
     uses: ['quiet', 'trip'],
     parts: [
-      { t: 'Keeping your preference for ' },
-      { t: 'quieter experiences', chip: true },
-      { t: " in mind, I'd start early at Nanzen-ji, walk the Philosopher's Path, and spend the afternoon around northern Higashiyama." },
+      { t: 'Nanzen-ji at opening, then the Philosopher\u2019s Path north to Shisen-d\u014d — all walkable, and it keeps you clear of the Fushimi Inari crowds, which is the ' },
+      { t: 'quieter', chip: true },
+      { t: ' way round. Worth doing early in ' },
+      { t: 'October', chip: true },
+      { t: ', before the maple crowds arrive.' },
     ],
   },
 ];
@@ -129,6 +138,47 @@ function UserBubble({ text }) {
   );
 }
 
+/* Shown while the incoming model pulls the context across. */
+function ReadingRow({ model }) {
+  return (
+    <Box sx={{ display: 'flex', gap: 1.6, mb: 2.5, alignItems: 'center' }}>
+      <Box sx={{ flexShrink: 0 }}>
+        <BrandTile code={model} size={26} />
+      </Box>
+      <Box
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 1.2,
+          px: 1.75,
+          py: 1.05,
+          borderRadius: '12px',
+          backgroundColor: 'var(--bg-glass)',
+          border: '1px solid var(--border-subtle)',
+        }}
+      >
+        <Box sx={{ display: 'flex', gap: 0.55 }}>
+          {[0, 1, 2].map((d) => (
+            <Box
+              key={d}
+              sx={{
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                backgroundColor: ORANGE,
+                animation: `olDot 1.05s ease-in-out ${d * 0.16}s infinite`,
+              }}
+            />
+          ))}
+        </Box>
+        <Typography sx={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+          {MODELS[model].name} is reading your memory
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
 function Reply({ model, parts }) {
   return (
     <Box sx={{ display: 'flex', gap: 1.6, mb: 2.5, alignItems: 'flex-start' }}>
@@ -169,23 +219,31 @@ export function MemoryChatDemo() {
     return () => io.disconnect();
   }, []);
 
-  // Play the thread, hold a beat at the end, then run it again.
+  // Each kind gets its own beat. The pause before a reply is where the
+  // incoming model is shown reading memory.
   React.useEffect(() => {
     if (!inView) return undefined;
 
-    if (shown < SCRIPT.length) {
-      const t = setTimeout(() => setShown((n) => n + 1), shown === 0 ? 500 : 1200);
+    const next = SCRIPT[shown];
+    if (next) {
+      const wait = shown === 0 ? 500 : { user: 1150, switch: 750, reply: 1450 }[next.kind];
+      const t = setTimeout(() => setShown((n) => n + 1), wait);
       return () => clearTimeout(t);
     }
 
-    const t = setTimeout(() => setShown(0), 3600);
+    const t = setTimeout(() => setShown(0), 3800);
     return () => clearTimeout(t);
   }, [shown, inView]);
 
   const thread = SCRIPT.slice(0, shown);
+  const pending = SCRIPT[shown];
+  const fetching = pending && pending.kind === 'reply' ? pending : null;
   const lastReply = [...thread].reverse().find((m) => m.kind === 'reply');
+
   const usedNow = lastReply ? lastReply.uses : [];
-  const activeModel = lastReply ? lastReply.model : SCRIPT[1].model;
+  const savedNow = lastReply && lastReply.saves ? lastReply.saves : [];
+  const readingNow = fetching ? fetching.uses : [];
+  const activeModel = fetching ? fetching.model : lastReply ? lastReply.model : SCRIPT[1].model;
 
   return (
     <Box
@@ -262,6 +320,14 @@ export function MemoryChatDemo() {
               from { opacity: 0; transform: translateY(8px); }
               to   { opacity: 1; transform: translateY(0); }
             }
+            @keyframes olDot {
+              0%, 100% { opacity: 0.25; transform: translateY(0); }
+              50%      { opacity: 1; transform: translateY(-2px); }
+            }
+            @keyframes olReading {
+              0%, 100% { border-color: rgba(255, 102, 0, 0.3); }
+              50%      { border-color: rgba(255, 102, 0, 0.85); }
+            }
           `}</style>
 
           <Box aria-hidden="true" sx={{ visibility: 'hidden', px: { xs: 2.25, sm: 3 }, pt: 3, pb: 0.5 }}>
@@ -276,6 +342,11 @@ export function MemoryChatDemo() {
                 <ThreadItem item={m} />
               </Box>
             ))}
+            {fetching && (
+              <Box sx={{ animation: 'olMsgIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both' }}>
+                <ReadingRow model={fetching.model} />
+              </Box>
+            )}
           </Box>
         </Box>
 
@@ -358,7 +429,11 @@ export function MemoryChatDemo() {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
           {MEMORY.map((item) => {
+            const reading = readingNow.includes(item.id);
             const used = usedNow.includes(item.id);
+            const saved = savedNow.includes(item.id);
+            const lit = reading || used || saved;
+            const tag = reading ? 'READING' : used ? 'USED' : saved ? 'SAVED' : null;
             return (
               <Box
                 key={item.id}
@@ -369,12 +444,13 @@ export function MemoryChatDemo() {
                   px: 1.75,
                   py: 1.4,
                   borderRadius: '12px',
-                  backgroundColor: used ? 'rgba(255, 102, 0, 0.09)' : 'var(--bg-glass)',
-                  border: `1px solid ${used ? 'rgba(255, 102, 0, 0.35)' : 'var(--border-subtle)'}`,
+                  backgroundColor: lit ? 'rgba(255, 102, 0, 0.09)' : 'var(--bg-glass)',
+                  border: `1px solid ${lit ? 'rgba(255, 102, 0, 0.35)' : 'var(--border-subtle)'}`,
+                  animation: reading ? 'olReading 1.05s ease-in-out infinite' : 'none',
                   transition: 'background-color 0.45s ease, border-color 0.45s ease',
                 }}
               >
-                <Box sx={{ display: 'flex', flexShrink: 0, color: used ? ORANGE : 'var(--text-muted)' }}>
+                <Box sx={{ display: 'flex', flexShrink: 0, color: lit ? ORANGE : 'var(--text-muted)' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
@@ -382,11 +458,11 @@ export function MemoryChatDemo() {
                 <Typography sx={{ flex: 1, fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {item.label}
                 </Typography>
-                {used && (
+                {tag && (
                   <Typography
                     sx={{ fontSize: '0.64rem', fontWeight: 800, letterSpacing: '0.08em', color: ORANGE, flexShrink: 0 }}
                   >
-                    USED
+                    {tag}
                   </Typography>
                 )}
               </Box>
