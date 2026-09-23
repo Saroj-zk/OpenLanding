@@ -468,11 +468,23 @@ const GHOST_CTA_SX = {
 /* ── Filter-layer comparison ─────────────────────────────────────── */
 
 /* Two lanes on identical grid tracks. The endpoints sit at the same x in both,
-   so the eye compares one thing only: what happens in the middle. One lane is
-   cut by a slab; the other runs unbroken and lit all the way through. */
+   so the eye compares one thing only: what happens in the middle.
+   A pulse runs the lane to show the prompt moving. On the filtered lane it is
+   drawn in two hops with a pause at the slab; on ours it is one clean run. */
 
 const LANE_NODE = 44;
 const LANE_H = 10;
+
+function FlowKeyframes() {
+  return (
+    <style>{`
+      @keyframes olLanePulse {
+        0%   { transform: translateX(-130%); }
+        100% { transform: translateX(340%); }
+      }
+    `}</style>
+  );
+}
 
 function LaneNode({ icon, label, accent, align = 'start' }) {
   const node = (
@@ -509,30 +521,55 @@ function LaneNode({ icon, label, accent, align = 'start' }) {
   );
 
   return (
-    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.4, pr: align === 'start' ? 2 : 0, pl: align === 'end' ? 2 : 0 }}>
+    <Box
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 1.4,
+        pr: align === 'start' ? 2 : 0,
+        pl: align === 'end' ? 2 : 0,
+      }}
+    >
       {align === 'start' ? node : text}
       {align === 'start' ? text : node}
     </Box>
   );
 }
 
-/* A length of the lane. `arrow` caps it with a head so direction is never in doubt. */
-function Lane({ accent, arrow = false }) {
-  const fill = accent ? `linear-gradient(90deg, ${ORANGE} 0%, #FF8A2B 100%)` : 'none';
-
+/* A run of lane. Only the first run in a row is rounded on the left; the rest
+   butt together square so a multi-track lane reads as one continuous channel
+   rather than three pills in a row. */
+function Lane({ accent, arrow = false, roundStart = false, delay = 0, duration = 2.6, sx = {} }) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0, ...sx }}>
       <Box
         aria-hidden="true"
         sx={{
+          position: 'relative',
+          overflow: 'hidden',
           flex: 1,
+          minWidth: 0,
           height: LANE_H,
-          borderRadius: arrow ? '5px 0 0 5px' : '5px',
-          background: fill,
-          backgroundColor: accent ? undefined : 'var(--border-normal)',
+          borderRadius: roundStart ? `${LANE_H / 2}px 0 0 ${LANE_H / 2}px` : 0,
+          background: accent ? `linear-gradient(90deg, ${ORANGE} 0%, #FF8A2B 100%)` : 'var(--border-normal)',
           boxShadow: accent ? `0 0 16px ${ORANGE}55` : 'none',
         }}
-      />
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: '32%',
+            background: `linear-gradient(90deg, transparent 0%, ${
+              accent ? 'rgba(255, 255, 255, 0.85)' : 'var(--border-strong)'
+            } 50%, transparent 100%)`,
+            animation: `olLanePulse ${duration}s linear ${delay}s infinite`,
+          }}
+        />
+      </Box>
+
       {arrow && (
         <Box
           aria-hidden="true"
@@ -610,9 +647,19 @@ function FlowRow({ flow }) {
         }}
       >
         <LaneNode icon="user" label="You" accent={accent} align="start" />
-        <Lane accent={accent} arrow={!accent} />
-        {accent ? <Lane accent /> : <LaneBlock />}
-        <Lane accent={accent} arrow />
+
+        {accent ? (
+          // One element across all three middle tracks, so a single pulse runs
+          // the whole way and no seams show between segments.
+          <Lane accent arrow roundStart duration={2.2} sx={{ gridColumn: '2 / 5' }} />
+        ) : (
+          <>
+            <Lane arrow roundStart />
+            <LaneBlock />
+            <Lane arrow roundStart delay={1.3} />
+          </>
+        )}
+
         <LaneNode icon="spark" label="Model" accent={accent} align="end" />
       </Box>
 
@@ -1388,6 +1435,7 @@ export default function PrivatePage() {
             {/* Filter-layer comparison */}
             <Reveal>
               <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+                <FlowKeyframes />
                 {FLOWS.map((flow) => (
                   <FlowRow key={flow.label} flow={flow} />
                 ))}
