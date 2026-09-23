@@ -551,29 +551,27 @@ export default function MemoryPage() {
                 sx={{
                   position: 'relative',
                   overflow: 'hidden',
-                  borderRadius: { xs: '14px', md: '16px' },
+                  borderRadius: { xs: '16px', md: '20px' },
                   p: { xs: 2.5, sm: 3.5 },
-                  border: '1px solid var(--border-normal)',
-                  backgroundColor: 'var(--bg-card)',
+                  backgroundColor: isDark ? 'rgba(18, 21, 28, 0.55)' : 'rgba(255, 255, 255, 0.52)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.7)',
                   boxShadow: isDark
-                    ? '0 18px 44px -20px rgba(0,0,0,0.7)'
-                    : '0 14px 34px -18px rgba(15,23,42,0.14)',
+                    ? '0 22px 55px -24px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.13)'
+                    : '0 22px 55px -26px rgba(15, 23, 42, 0.22), inset 0 1.5px 0 rgba(255, 255, 255, 0.95)',
+                  // Specular sheen across the top edge, the way light sits on glass
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    pointerEvents: 'none',
+                    background: isDark
+                      ? 'linear-gradient(158deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 42%)'
+                      : 'linear-gradient(158deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 46%)',
+                  },
                 }}
               >
-                <Box
-                  aria-hidden="true"
-                  sx={{
-                    position: 'absolute',
-                    top: '-25%',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '85%',
-                    height: '65%',
-                    background: 'radial-gradient(ellipse at center, rgba(255,102,0,0.14) 0%, transparent 70%)',
-                    pointerEvents: 'none',
-                  }}
-                />
-
                 <Box
                   sx={{
                     position: 'relative',
@@ -619,8 +617,8 @@ export default function MemoryPage() {
                 <Box
                   sx={{
                     position: 'relative',
-                    borderTop: '1px solid var(--border-normal)',
-                    borderBottom: '1px solid var(--border-normal)',
+                    borderTop: '1px solid var(--border-subtle)',
+                    borderBottom: '1px solid var(--border-subtle)',
                   }}
                 >
                   {[
