@@ -927,15 +927,14 @@ export default function MemoryPage() {
               </Typography>
               <Typography
                 sx={{
-                  maxWidth: '58ch',
-                  fontSize: '1.05rem',
-                  lineHeight: 1.6,
+                  maxWidth: '54ch',
+                  fontSize: '1.15rem',
+                  lineHeight: 1.55,
                   color: 'var(--text-secondary)',
                   mb: 6,
                 }}
               >
-                Every assistant says it remembers you. Most of them do it inside their own product, in a store you
-                cannot read, move, or clear. The difference shows up the moment you switch.
+                The difference shows up the moment you switch.
               </Typography>
             </Reveal>
 
@@ -1066,32 +1065,38 @@ export default function MemoryPage() {
                 <Eyebrow>How Unified Memory works</Eyebrow>
                 <Box sx={{ flex: 1, height: '1px', backgroundColor: 'var(--border-normal)' }} />
               </Box>
-              <Typography
-                component="h2"
+              <Box
                 sx={{
-                  maxWidth: '24ch',
-                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.28,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-heading)',
-                  mb: 2,
-                }}
-              >
-                Your memory stays with you, not the model.
-              </Typography>
-              <Typography
-                sx={{
-                  maxWidth: '52ch',
-                  fontSize: '1.05rem',
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 0.85fr) minmax(0, 1.15fr)' },
+                  gap: { xs: 1.5, md: 5 },
+                  alignItems: 'start',
                   mb: 6,
                 }}
               >
-                Your context lives in one private memory layer, independent of any AI model. When you switch models,
-                only the relevant context is made available so the conversation can continue without starting over.
-              </Typography>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.45rem', sm: '1.7rem', md: '1.95rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.3,
+                    letterSpacing: '-0.015em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  Your memory stays with you, not the model.
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.98rem',
+                    lineHeight: 1.65,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Your context lives in one private memory layer, independent of any AI model. When you switch models,
+                  only the relevant context is made available so the conversation can continue without starting over.
+                </Typography>
+              </Box>
             </Reveal>
 
             {/* Architecture Stack */}
