@@ -551,13 +551,13 @@ export default function MemoryPage() {
                 sx={{
                   position: 'relative',
                   overflow: 'hidden',
-                  borderRadius: { xs: 4, md: 5 },
+                  borderRadius: { xs: '14px', md: '16px' },
                   p: { xs: 2.5, sm: 3.5 },
                   border: '1px solid var(--border-normal)',
                   backgroundColor: 'var(--bg-card)',
                   boxShadow: isDark
-                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(255,102,0,0.12)'
-                    : '0 20px 45px -12px rgba(15,23,42,0.12)',
+                    ? '0 18px 44px -20px rgba(0,0,0,0.7)'
+                    : '0 14px 34px -18px rgba(15,23,42,0.14)',
                 }}
               >
                 <Box
@@ -619,11 +619,8 @@ export default function MemoryPage() {
                 <Box
                   sx={{
                     position: 'relative',
-                    px: 2,
-                    py: 0.5,
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-normal)',
-                    backgroundColor: 'var(--bg-glass)',
+                    borderTop: '1px solid var(--border-normal)',
+                    borderBottom: '1px solid var(--border-normal)',
                   }}
                 >
                   {[
