@@ -467,68 +467,114 @@ const GHOST_CTA_SX = {
 
 /* ── Filter-layer comparison ─────────────────────────────────────── */
 
-/* Both paths run on identical grid tracks, so "You" and "Model" land on the
-   same x in either row and the only visible difference is what sits between
-   them. That contrast is the whole argument, so nothing else competes with it. */
+/* Two lanes on identical grid tracks. The endpoints sit at the same x in both,
+   so the eye compares one thing only: what happens in the middle. One lane is
+   cut by a slab; the other runs unbroken and lit all the way through. */
 
-function PathEnd({ icon, label, accent, side }) {
-  return (
+const LANE_NODE = 44;
+const LANE_H = 10;
+
+function LaneNode({ icon, label, accent, align = 'start' }) {
+  const node = (
     <Box
       sx={{
-        display: 'inline-flex',
+        width: LANE_NODE,
+        height: LANE_NODE,
+        flexShrink: 0,
+        borderRadius: '50%',
+        display: 'flex',
         alignItems: 'center',
-        gap: 0.8,
-        whiteSpace: 'nowrap',
-        pr: side === 'start' ? 1.5 : 0,
-        pl: side === 'end' ? 1.5 : 0,
-        fontSize: { xs: '0.72rem', sm: '0.78rem' },
+        justifyContent: 'center',
+        backgroundColor: accent ? ORANGE : 'var(--bg-card)',
+        border: `2px solid ${accent ? ORANGE : 'var(--border-strong)'}`,
+        color: accent ? '#FFFFFF' : 'var(--text-secondary)',
+        boxShadow: accent ? `0 6px 18px ${ORANGE}40` : '0 2px 8px rgba(15, 23, 42, 0.06)',
+      }}
+    >
+      <Glyph name={icon} size={19} />
+    </Box>
+  );
+
+  const text = (
+    <Typography
+      sx={{
+        fontSize: { xs: '0.78rem', sm: '0.85rem' },
         fontWeight: 700,
+        whiteSpace: 'nowrap',
         color: accent ? ORANGE : 'var(--text-primary)',
       }}
     >
-      <Box sx={{ display: 'flex', flexShrink: 0, opacity: 0.85 }}>
-        <Glyph name={icon} size={13} />
-      </Box>
       {label}
+    </Typography>
+  );
+
+  return (
+    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.4, pr: align === 'start' ? 2 : 0, pl: align === 'end' ? 2 : 0 }}>
+      {align === 'start' ? node : text}
+      {align === 'start' ? text : node}
     </Box>
   );
 }
 
-function PathLine({ accent }) {
+/* A length of the lane. `arrow` caps it with a head so direction is never in doubt. */
+function Lane({ accent, arrow = false }) {
+  const fill = accent ? `linear-gradient(90deg, ${ORANGE} 0%, #FF8A2B 100%)` : 'none';
+
   return (
-    <Box
-      aria-hidden="true"
-      sx={{
-        height: '2px',
-        borderRadius: '2px',
-        backgroundColor: accent ? ORANGE : 'var(--border-normal)',
-      }}
-    />
+    <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+      <Box
+        aria-hidden="true"
+        sx={{
+          flex: 1,
+          height: LANE_H,
+          borderRadius: arrow ? '5px 0 0 5px' : '5px',
+          background: fill,
+          backgroundColor: accent ? undefined : 'var(--border-normal)',
+          boxShadow: accent ? `0 0 16px ${ORANGE}55` : 'none',
+        }}
+      />
+      {arrow && (
+        <Box
+          aria-hidden="true"
+          sx={{
+            width: 0,
+            height: 0,
+            flexShrink: 0,
+            borderTop: `${LANE_H}px solid transparent`,
+            borderBottom: `${LANE_H}px solid transparent`,
+            borderLeft: `13px solid ${accent ? '#FF8A2B' : 'var(--border-normal)'}`,
+            filter: accent ? `drop-shadow(0 0 8px ${ORANGE}55)` : 'none',
+          }}
+        />
+      )}
+    </Box>
   );
 }
 
-function FilterNode() {
+/* The obstruction: a solid slab sitting across the lane, cutting it in two. */
+function LaneBlock() {
   return (
     <Box
       sx={{
+        mx: 1.5,
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 0.7,
-        mx: 1.5,
-        px: { xs: 1.2, sm: 1.5 },
-        py: 1,
-        borderRadius: '10px',
+        gap: 0.8,
+        px: { xs: 1.2, sm: 1.6 },
+        py: 1.25,
+        borderRadius: '12px',
         whiteSpace: 'nowrap',
-        fontSize: { xs: '0.7rem', sm: '0.76rem' },
+        fontSize: { xs: '0.7rem', sm: '0.78rem' },
         fontWeight: 700,
         color: 'var(--text-primary)',
         backgroundColor: 'var(--bg-card)',
         border: '1px solid var(--border-strong)',
+        boxShadow: '0 10px 24px rgba(15, 23, 42, 0.12)',
       }}
     >
       <Box sx={{ display: 'flex', flexShrink: 0, color: 'var(--text-muted)' }}>
-        <Glyph name="funnel" size={12} />
+        <Glyph name="funnel" size={14} />
       </Box>
       Platform filter
     </Box>
@@ -539,17 +585,7 @@ function FlowRow({ flow }) {
   const accent = flow.accent;
 
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: '180px minmax(0, 1fr)' },
-        columnGap: { md: 4 },
-        rowGap: { xs: 2, md: 0 },
-        alignItems: { md: 'center' },
-        py: ROW_PY,
-        borderBottom: '1px solid var(--border-normal)',
-      }}
-    >
+    <Box sx={{ py: ROW_PY, borderBottom: '1px solid var(--border-normal)' }}>
       <Typography
         sx={{
           fontSize: '0.72rem',
@@ -557,33 +593,32 @@ function FlowRow({ flow }) {
           letterSpacing: '0.09em',
           textTransform: 'uppercase',
           color: accent ? ORANGE : 'var(--text-muted)',
+          mb: 2.5,
         }}
       >
         {flow.label}
       </Typography>
 
-      <Box>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'auto 1fr 130px 1fr auto',
-              sm: 'auto 1fr 176px 1fr auto',
-            },
-            alignItems: 'center',
-          }}
-        >
-          <PathEnd icon="user" label="You" accent={accent} side="start" />
-          <PathLine accent={accent} />
-          {accent ? <PathLine accent /> : <FilterNode />}
-          <PathLine accent={accent} />
-          <PathEnd icon="spark" label="Model" accent={accent} side="end" />
-        </Box>
-
-        <Typography sx={{ mt: 2.25, fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-          {flow.note}
-        </Typography>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'auto 1fr 150px 1fr auto',
+            sm: 'auto 1fr 190px 1fr auto',
+          },
+          alignItems: 'center',
+        }}
+      >
+        <LaneNode icon="user" label="You" accent={accent} align="start" />
+        <Lane accent={accent} arrow={!accent} />
+        {accent ? <Lane accent /> : <LaneBlock />}
+        <Lane accent={accent} arrow />
+        <LaneNode icon="spark" label="Model" accent={accent} align="end" />
       </Box>
+
+      <Typography sx={{ mt: 2.75, maxWidth: '62ch', fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+        {flow.note}
+      </Typography>
     </Box>
   );
 }
