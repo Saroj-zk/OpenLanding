@@ -7,440 +7,1186 @@ import Typography from '@mui/material/Typography';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule } from '@/components/ui/LedgerUI';
-import { GlyphTile } from '@/components/PrivacyVisuals';
 import { useThemeMode } from '@/context/ThemeContext';
 
-/* ─────────────────────────────────────────────────────────────────
-   Privacy Pillars
-──────────────────────────────────────────────────────────────────── */
+const ORANGE = '#FF6600';
+const CHAT_URL = 'https://ais.openledger.xyz/chat';
+
+/* One vertical scale for the whole page, so every band and row agrees. */
+const SECTION_PY = { xs: 8, md: 12 }; // padding inside each section band
+const BLOCK_GAP = { xs: 5, md: 7 };   // header to content, and between blocks
+const ROW_PY = { xs: 3.5, md: 4 };    // ledger rows and divided columns
+
+/* ── Content ─────────────────────────────────────────────────────── */
+
+const GUARANTEES = ['Local-Only History', 'Zero Retention', 'No Training'];
+
+const DEFAULTS = [
+  { term: 'Zero Retention', detail: 'Prompts not stored after inference' },
+  { term: 'No Training', detail: "Models don't learn from your data" },
+  { term: 'Local-Only History', detail: 'Vault saved on device' },
+];
+
+const TELEMETRY = [
+  { label: 'Retention', value: '0 seconds' },
+  { label: 'AI Training', value: 'Disabled' },
+  { label: 'Profiling', value: 'None' },
+];
+
 const PILLARS = [
   {
     glyph: 'device',
-    title: 'Local-Only History',
-    badge: 'On-Device Vault',
-    body: 'Your conversation history and memories stay in your device storage, where you hold the only decryption keys.',
+    term: 'Local-Only History',
+    detail: 'Your conversation history stays on your device, where you control it.',
+    status: 'Stored on device',
   },
   {
     glyph: 'nostore',
-    title: 'Zero Retention',
-    badge: '0s Memory Buffer',
-    body: 'Prompts and outputs are never stored on intermediate servers. Once inference completes, the buffer is dropped immediately.',
+    term: 'Zero Retention',
+    detail: "Prompts and responses aren't stored on our servers after processing.",
+    status: 'Discarded after use',
   },
   {
     glyph: 'notrain',
-    title: 'No Model Training',
-    badge: 'Zero Ingestion',
-    body: 'Your code, sensitive documents, and questions are strictly excluded from all base and fine-tuning model datasets.',
+    term: 'No Training',
+    detail: "Your conversations aren't collected or used to train AI models.",
+    status: 'Excluded from datasets',
   },
   {
     glyph: 'noprofile',
-    title: 'No Profiling & KYC',
-    badge: 'Anonymous Access',
-    body: 'No phone verification or personal identifiers required. What you query never maps to an ad identity or tracking dossier.',
+    term: 'No Profiling',
+    detail: "What you ask isn't used to build an advertising or behavioral profile.",
+    status: 'No behavioral graph',
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────────
-   Data Flow Pipeline Nodes
-──────────────────────────────────────────────────────────────────── */
-const FLOW_NODES = [
+const STEPS = [
   {
-    id: 'you',
-    label: 'You',
-    sub: 'Local Client',
-    isHighlight: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-      </svg>
-    ),
+    step: '01',
+    glyph: 'device',
+    zone: 'you',
+    term: 'Your Device',
+    line: 'Query originates',
+    detail: 'Your conversation starts and remains on your device, with chat history saved locally.',
   },
   {
-    id: 'device',
-    label: 'Device Vault',
-    sub: 'Encrypted at Rest',
-    isHighlight: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="2" y="3" width="20" height="14" rx="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
+    step: '02',
+    glyph: 'shield',
+    zone: 'openledger',
+    term: 'Secure Node',
+    line: 'End-to-end routing',
+    detail:
+      'When you send a prompt, it travels through an encrypted connection to a secure server that routes the request.',
   },
   {
-    id: 'pipe',
-    label: 'Zero-Knowledge Pipe',
-    sub: 'Ephemeral Relay',
-    isHighlight: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      </svg>
-    ),
+    step: '03',
+    glyph: 'cpu',
+    zone: 'openledger',
+    term: 'Private Inference',
+    line: 'RAM-only execution',
+    detail:
+      'The request is sent to the selected AI model for processing without recording your identity or the contents.',
   },
   {
-    id: 'ai',
-    label: 'Stateless Inference',
-    sub: 'Volatile RAM Only',
-    isHighlight: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="4" y="4" width="16" height="16" rx="2" />
-        <rect x="9" y="9" width="6" height="6" />
-        <line x1="9" y1="1" x2="9" y2="4" />
-        <line x1="15" y1="1" x2="15" y2="4" />
-        <line x1="9" y1="20" x2="9" y2="23" />
-        <line x1="15" y1="20" x2="15" y2="23" />
-        <line x1="20" y1="9" x2="23" y2="9" />
-        <line x1="20" y1="14" x2="23" y2="14" />
-        <line x1="1" y1="9" x2="4" y2="9" />
-        <line x1="1" y1="14" x2="4" y2="14" />
-      </svg>
-    ),
+    step: '04',
+    glyph: 'reply',
+    zone: 'you',
+    term: 'Straight Back to You',
+    line: 'Back on the wire',
+    detail:
+      'The generated response is streamed back through the secure proxy to your device, leaving no trace behind.',
   },
 ];
 
-const FLOW_DETAILS = [
+const PIPELINE_CHIPS = ['Encrypted in transit', 'RAM-only execution', 'No trace left behind'];
+
+const FLOWS = [
   {
-    num: '01',
-    title: 'Local Source Encryption',
-    body: 'Your query is processed locally before dispatch. Ephemeral session tokens replace your IP and device fingerprints.',
+    label: 'Most platforms',
+    status: 'Filtered',
+    accent: false,
+    note: 'An extra moderation layer sits between your prompt and the model.',
   },
   {
-    num: '02',
-    title: 'Zero-Knowledge Transit',
-    body: 'Transfers through an encrypted tunnel. Relays route packets without holding decryption keys to the payload.',
-  },
-  {
-    num: '03',
-    title: 'RAM-Only Execution',
-    body: 'The chosen model executes the prompt purely in volatile memory. No writes occur to persistent disks or cold storage.',
-  },
-  {
-    num: '04',
-    title: 'Immediate Buffer Purge',
-    body: 'Upon sending the final token back, session buffers are wiped. Your prompt is never retained for future training datasets.',
+    label: 'OpenLedger',
+    status: 'Direct',
+    accent: true,
+    note: 'Nothing is inserted in between. Your prompt reaches the model as written.',
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────────
-   Comparison Matrix
-──────────────────────────────────────────────────────────────────── */
-const COMPARISONS = [
+const FREEDOMS = [
   {
-    feature: 'Prompt & Chat History',
-    openledger: 'Device vault only (Encrypted locally)',
-    traditional: 'Server databases (Retained 30–90+ days)',
-    status: true,
+    glyph: 'chat',
+    term: 'Ask Freely',
+    detail: 'Explore questions and topics without unnecessary filters getting in the way.',
   },
   {
-    feature: 'AI Model Training',
-    openledger: 'Zero training on user inputs, ever',
-    traditional: 'Trained by default unless tedious opt-out',
-    status: true,
+    glyph: 'pen',
+    term: 'Create Freely',
+    detail: 'Write, research, brainstorm, code, and create with fewer restrictions.',
   },
   {
-    feature: 'Personal Identity & Sign-Up',
-    openledger: 'Anonymous, wallet, or zero-log account',
-    traditional: 'Requires phone number, email & payment KYC',
-    status: true,
-  },
-  {
-    feature: 'IP Address & Network Logging',
-    openledger: 'Zero-knowledge relay masks origin IP',
-    traditional: 'Tracked and mapped to your digital fingerprint',
-    status: true,
-  },
-  {
-    feature: 'Context Memory Portability',
-    openledger: 'Client-controlled across 50+ models',
-    traditional: 'Walled garden locked to one vendor',
-    status: true,
+    glyph: 'layers',
+    term: 'Choose Your Model',
+    detail: 'Access leading AI models based on what works best for you, without being locked into a single provider.',
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────────
-   Interactive Chat Preview
-──────────────────────────────────────────────────────────────────── */
-function ChatPreview({ isDark }) {
-  const messages = [
-    { role: 'user', text: "Audit this confidential smart contract and check for reentrancy bugs." },
-    { role: 'ai', text: 'Analyzing in volatile RAM... Zero vulnerabilities detected in lines 45-80. Local memory buffer scheduled for immediate purge.' },
-    { role: 'user', text: 'Will this code snippet be logged to OpenAI or server training logs?' },
-    { role: 'ai', text: 'No. The Zero-Knowledge Relay stripped your network identity, and inference was routed statelessly. Zero retention.' },
-  ];
+const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
+
+const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
+
+const SURFACES = [
+  { glyph: 'globe', term: 'Web', sub: 'Any browser' },
+  { glyph: 'laptop', term: 'Native App', sub: 'macOS · Windows · Linux' },
+  { glyph: 'code', term: 'API & SDKs', sub: 'Drop-in endpoint' },
+  { glyph: 'terminal', term: 'CLI', sub: 'From your shell' },
+];
+
+/* ── Glyphs ──────────────────────────────────────────────────────── */
+
+const GLYPH_PATHS = {
+  device: (
+    <>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </>
+  ),
+  nostore: (
+    <>
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+      <polyline points="17 21 17 13 7 13 7 21" />
+      <polyline points="7 3 7 8 15 8" />
+    </>
+  ),
+  notrain: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.5" />
+    </>
+  ),
+  noprofile: (
+    <>
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <circle cx="12" cy="13" r="2" />
+      <path d="M9 18h6" />
+    </>
+  ),
+  shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+  chat: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" />,
+  pen: (
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </>
+  ),
+  layers: (
+    <>
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </>
+  ),
+  user: (
+    <>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </>
+  ),
+  spark: <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z" />,
+  cpu: (
+    <>
+      <rect x="5" y="5" width="14" height="14" rx="2" />
+      <rect x="9" y="9" width="6" height="6" />
+      <line x1="9" y1="2" x2="9" y2="5" />
+      <line x1="15" y1="2" x2="15" y2="5" />
+      <line x1="9" y1="19" x2="9" y2="22" />
+      <line x1="15" y1="19" x2="15" y2="22" />
+      <line x1="19" y1="9" x2="22" y2="9" />
+      <line x1="19" y1="15" x2="22" y2="15" />
+      <line x1="2" y1="9" x2="5" y2="9" />
+      <line x1="2" y1="15" x2="5" y2="15" />
+    </>
+  ),
+  reply: (
+    <>
+      <polyline points="9 15 4 10 9 5" />
+      <path d="M20 20v-6a4 4 0 0 0-4-4H4" />
+    </>
+  ),
+  funnel: <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />,
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z" />
+    </>
+  ),
+  laptop: (
+    <>
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <line x1="2" y1="20" x2="22" y2="20" />
+    </>
+  ),
+  code: (
+    <>
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </>
+  ),
+  terminal: (
+    <>
+      <polyline points="4 17 10 11 4 5" />
+      <line x1="12" y1="19" x2="20" y2="19" />
+    </>
+  ),
+  check: <polyline points="20 6 9 17 4 12" />,
+  lock: (
+    <>
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </>
+  ),
+};
+
+function Glyph({ name, size = 22 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ display: 'block' }}
+    >
+      {GLYPH_PATHS[name]}
+    </svg>
+  );
+}
+
+/* ── Shared UI ───────────────────────────────────────────────────── */
+
+function Eyebrow({ children }) {
+  return (
+    <Box
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 1.2,
+        color: ORANGE,
+        mb: 2.5,
+        fontSize: '0.78rem',
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+      }}
+    >
+      <Box sx={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: ORANGE, boxShadow: `0 0 10px ${ORANGE}` }} />
+      {children}
+    </Box>
+  );
+}
+
+function SectionHead({ eyebrow, title, lede }) {
+  return (
+    <Reveal>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 0.9fr)' },
+          gap: { xs: 2.5, md: 6 },
+          alignItems: 'end',
+          mb: BLOCK_GAP,
+        }}
+      >
+        <Box>
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <Typography
+            component="h2"
+            sx={{
+              maxWidth: '17ch',
+              fontSize: { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
+              fontWeight: 700,
+              lineHeight: 1.12,
+              letterSpacing: '-0.03em',
+              color: 'var(--text-heading)',
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
+        <Typography
+          sx={{
+            maxWidth: '48ch',
+            fontSize: { xs: '1rem', md: '1.05rem' },
+            lineHeight: 1.7,
+            color: 'var(--text-secondary)',
+            pb: { md: 0.75 },
+          }}
+        >
+          {lede}
+        </Typography>
+      </Box>
+    </Reveal>
+  );
+}
+
+function SpecLine({ items, sx = {} }) {
+  return (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, ...sx }}>
+      {items.map((item, i) => (
+        <React.Fragment key={item}>
+          {i > 0 && (
+            <Typography component="span" sx={{ fontSize: '0.6rem', color: 'var(--border-strong)', userSelect: 'none' }}>
+              ◆
+            </Typography>
+          )}
+          <Typography
+            component="span"
+            sx={{
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: 'var(--text-secondary)',
+            }}
+          >
+            {item}
+          </Typography>
+        </React.Fragment>
+      ))}
+    </Box>
+  );
+}
+
+/* Frosted tile — reads as glass rather than a filled brand swatch. */
+function GlassTile({ name, size = 38 }) {
+  const { isDark } = useThemeMode();
 
   return (
     <Box
       sx={{
-        borderRadius: 4,
-        border: '1px solid var(--border-normal)',
-        backgroundColor: 'var(--bg-card)',
-        overflow: 'hidden',
-        boxShadow: isDark ? '0 16px 40px rgba(0,0,0,0.6)' : '0 12px 32px rgba(15,23,42,0.08)',
+        width: size,
+        height: size,
+        flexShrink: 0,
+        borderRadius: '11px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: ORANGE,
+        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(255, 255, 255, 0.72)',
+        backdropFilter: 'blur(10px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(10px) saturate(180%)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.14)' : '1px solid rgba(255, 255, 255, 0.95)',
+        boxShadow: isDark
+          ? 'inset 0 1px 0 rgba(255, 255, 255, 0.14)'
+          : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 0 rgba(255, 255, 255, 1)',
       }}
     >
+      <Glyph name={name} size={Math.round(size * 0.48)} />
+    </Box>
+  );
+}
+
+function GlyphTile({ name, size = 44 }) {
+  return (
+    <Box
+      sx={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        borderRadius: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 102, 0, 0.1)',
+        border: '1px solid rgba(255, 102, 0, 0.3)',
+        color: ORANGE,
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+      }}
+    >
+      <Glyph name={name} size={Math.round(size * 0.5)} />
+    </Box>
+  );
+}
+
+const PRIMARY_CTA_SX = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: ORANGE,
+  color: '#FFFFFF',
+  px: 4.5,
+  py: 1.7,
+  borderRadius: '9999px',
+  fontSize: '1rem',
+  fontWeight: 700,
+  letterSpacing: '0.02em',
+  textDecoration: 'none',
+  border: '1px solid rgba(255, 102, 0, 0.45)',
+  boxShadow: '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
+  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+  '&:hover': {
+    backgroundColor: '#E65C00',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 14px 44px rgba(255, 102, 0, 0.5)',
+  },
+  '&:active': { transform: 'scale(0.97)' },
+};
+
+const GHOST_CTA_SX = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'var(--text-primary)',
+  px: 4,
+  py: 1.7,
+  borderRadius: '9999px',
+  fontSize: '1rem',
+  fontWeight: 600,
+  textDecoration: 'none',
+  border: '1px solid var(--border-normal)',
+  backgroundColor: 'var(--bg-glass)',
+  backdropFilter: 'blur(16px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+  boxShadow: 'inset 0 1.5px 0 rgba(255, 255, 255, 0.45)',
+  transition: 'all 0.25s ease',
+  '&:hover': {
+    borderColor: ORANGE,
+    color: ORANGE,
+    transform: 'translateY(-2px)',
+    boxShadow: 'inset 0 1.5px 0 rgba(255, 255, 255, 0.6), 0 6px 18px rgba(255, 102, 0, 0.14)',
+  },
+};
+
+/* ── Filter-layer comparison ─────────────────────────────────────── */
+
+function FlowChip({ icon, label, accent }) {
+  return (
+    <Box
+      sx={{
+        position: 'relative',
+        zIndex: 2,
+        flexShrink: 0,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.8,
+        px: { xs: 1.3, sm: 1.7 },
+        py: { xs: 0.85, sm: 1 },
+        borderRadius: '9999px',
+        whiteSpace: 'nowrap',
+        fontSize: { xs: '0.72rem', sm: '0.8rem' },
+        fontWeight: 700,
+        color: accent ? ORANGE : 'var(--text-primary)',
+        // Opaque base + tint layer, so the lit rail passes behind the chip instead of through it.
+        backgroundColor: 'var(--bg-card)',
+        backgroundImage: accent
+          ? 'linear-gradient(rgba(255, 102, 0, 0.13), rgba(255, 102, 0, 0.13))'
+          : 'none',
+        border: `1px solid ${accent ? 'rgba(255, 102, 0, 0.42)' : 'var(--border-normal)'}`,
+        boxShadow: accent
+          ? '0 6px 18px rgba(255, 102, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
+          : '0 4px 12px rgba(15, 23, 42, 0.07)',
+      }}
+    >
+      <Box sx={{ display: 'flex', flexShrink: 0, opacity: 0.9 }}>
+        <Glyph name={icon} size={13} />
+      </Box>
+      {label}
+    </Box>
+  );
+}
+
+function FlowSlotCaption({ children, accent }) {
+  return (
+    <Typography
+      sx={{
+        position: 'absolute',
+        top: 'calc(100% + 10px)',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        whiteSpace: 'nowrap',
+        fontSize: '0.64rem',
+        fontWeight: 700,
+        letterSpacing: '0.09em',
+        textTransform: 'uppercase',
+        color: accent ? ORANGE : 'var(--text-muted)',
+      }}
+    >
+      {children}
+    </Typography>
+  );
+}
+
+/* The obstruction: a squared-off gate that physically breaks the path. */
+function FilterGate() {
+  return (
+    <Box sx={{ position: 'relative', zIndex: 2, flexShrink: 0 }}>
       <Box
         sx={{
-          px: 3,
-          py: 2,
-          borderBottom: '1px solid var(--border-subtle)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 0.8,
+          minWidth: { xs: 98, sm: 134 },
+          px: { xs: 1.2, sm: 1.8 },
+          py: { xs: 1.05, sm: 1.25 },
+          borderRadius: '12px',
+          whiteSpace: 'nowrap',
+          fontSize: { xs: '0.72rem', sm: '0.8rem' },
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-strong)',
+          boxShadow: '0 8px 22px rgba(15, 23, 42, 0.1)',
+        }}
+      >
+        <Box sx={{ display: 'flex', flexShrink: 0, color: 'var(--text-muted)' }}>
+          <Glyph name="funnel" size={13} />
+        </Box>
+        Platform filter
+      </Box>
+      <FlowSlotCaption>Extra layer</FlowSlotCaption>
+    </Box>
+  );
+}
+
+/* The absence: an empty frame the path runs straight through. */
+function FilterGateRemoved() {
+  return (
+    <Box sx={{ position: 'relative', zIndex: 2, flexShrink: 0 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: { xs: 98, sm: 134 },
+          height: { xs: 36, sm: 42 },
+          borderRadius: '12px',
+          backgroundColor: 'transparent',
+          border: '1.5px dashed var(--border-strong)',
+        }}
+      />
+      <FlowSlotCaption accent>Not added</FlowSlotCaption>
+    </Box>
+  );
+}
+
+function FlowCard({ flow }) {
+  const accent = flow.accent;
+
+  return (
+    <Box
+      sx={{
+        position: 'relative',
+        overflow: 'hidden',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        p: { xs: 2.75, sm: 3.25, md: 3.5 },
+        borderRadius: '20px',
+        backgroundColor: 'var(--bg-card)',
+        border: `1px solid ${accent ? 'rgba(255, 102, 0, 0.32)' : 'var(--border-normal)'}`,
+        boxShadow: accent ? '0 18px 44px rgba(255, 102, 0, 0.15)' : 'var(--shadow-card)',
+      }}
+    >
+      <style>{`
+        @keyframes olFlowDot {
+          0% { left: 10%; opacity: 0; }
+          12% { opacity: 1; }
+          88% { opacity: 1; }
+          100% { left: 90%; opacity: 0; }
+        }
+      `}</style>
+
+      {accent && (
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(ellipse 70% 90% at 50% 45%, rgba(255, 102, 0, 0.14) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Card header */}
+      <Box
+        sx={{
+          position: 'relative',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
+          gap: 2,
+          mb: { xs: 3.5, md: 4.5 },
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-          <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-          <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-heading)' }}>
-            Confidential Session
-          </Typography>
-        </Box>
+        <Typography
+          sx={{
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            letterSpacing: '0.09em',
+            textTransform: 'uppercase',
+            color: accent ? ORANGE : 'var(--text-muted)',
+          }}
+        >
+          {flow.label}
+        </Typography>
         <Box
           sx={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: 0.8,
-            px: 1.4,
+            gap: 0.7,
+            px: 1.3,
             py: 0.4,
             borderRadius: '9999px',
-            backgroundColor: 'rgba(255,102,0,0.1)',
-            border: '1px solid rgba(255,102,0,0.3)',
-            fontSize: '0.72rem',
-            color: '#FF6600',
+            fontSize: '0.64rem',
             fontWeight: 700,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            color: accent ? ORANGE : 'var(--text-muted)',
+            backgroundColor: accent ? 'rgba(255, 102, 0, 0.1)' : 'var(--bg-glass)',
+            border: `1px solid ${accent ? 'rgba(255, 102, 0, 0.3)' : 'var(--border-subtle)'}`,
           }}
         >
-          <Box sx={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: '#FF6600' }} />
-          RAM Only • Discard on Close
+          <Box
+            sx={{
+              width: 5,
+              height: 5,
+              borderRadius: '50%',
+              backgroundColor: accent ? ORANGE : 'var(--text-muted)',
+              boxShadow: accent ? `0 0 8px ${ORANGE}` : 'none',
+            }}
+          />
+          {flow.status}
         </Box>
       </Box>
 
-      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.2 }}>
-        {messages.map((m, i) => (
-          <Box key={i} sx={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-            <Box
-              sx={{
-                maxWidth: '85%',
-                px: 2.2,
-                py: 1.4,
-                borderRadius: m.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                backgroundColor: m.role === 'user' ? '#FF6600' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                border: m.role === 'user' ? 'none' : '1px solid var(--border-subtle)',
-                boxShadow: m.role === 'user' ? '0 4px 16px rgba(255,102,0,0.3)' : 'none',
-              }}
-            >
-              <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.55, color: m.role === 'user' ? '#FFFFFF' : 'var(--text-primary)' }}>
-                {m.text}
-              </Typography>
-            </Box>
-          </Box>
-        ))}
-      </Box>
-
+      {/* The path */}
       <Box
         sx={{
-          mx: 3,
-          mb: 3,
-          px: 2.2,
-          py: 1.4,
-          borderRadius: '9999px',
-          border: '1px solid var(--border-normal)',
-          backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+          position: 'relative',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          gap: { xs: 0.5, sm: 1 },
+          mb: { xs: 4.5, md: 5 },
         }}
       >
-        <Typography sx={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-          Ask confidential questions, paste code, analyze contracts…
-        </Typography>
+        {/* Rail — lit and continuous on the direct path, plain and interrupted on the other */}
         <Box
+          aria-hidden="true"
           sx={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            backgroundColor: '#FF6600',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            boxShadow: '0 4px 14px rgba(255,102,0,0.45)',
+            position: 'absolute',
+            left: 12,
+            right: 12,
+            top: '50%',
+            height: accent ? '2.5px' : '2px',
+            transform: 'translateY(-50%)',
+            zIndex: 1,
+            borderRadius: '2px',
+            backgroundColor: accent ? ORANGE : 'var(--border-normal)',
+            opacity: accent ? 0.9 : 1,
+            boxShadow: accent ? `0 0 14px ${ORANGE}` : 'none',
           }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
-            <line x1="12" y1="19" x2="12" y2="5" />
-            <polyline points="5 12 12 5 19 12" />
-          </svg>
-        </Box>
+        />
+
+        {accent && (
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              zIndex: 1,
+              width: 7,
+              height: 7,
+              mt: '-3.5px',
+              borderRadius: '50%',
+              backgroundColor: '#FFFFFF',
+              boxShadow: `0 0 12px 2px ${ORANGE}`,
+              animation: 'olFlowDot 3.4s linear infinite',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+
+        <FlowChip icon="user" label="You" accent={accent} />
+        {accent ? <FilterGateRemoved /> : <FilterGate />}
+        <FlowChip icon="spark" label="Model" accent={accent} />
+      </Box>
+
+      <Typography
+        sx={{ position: 'relative', mt: 'auto', fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}
+      >
+        {flow.note}
+      </Typography>
+    </Box>
+  );
+}
+
+/* ── Hero console ────────────────────────────────────────────────── */
+
+function LockedToggle() {
+  return (
+    <Box
+      aria-hidden="true"
+      sx={{
+        width: 46,
+        height: 26,
+        flexShrink: 0,
+        borderRadius: '9999px',
+        position: 'relative',
+        backgroundColor: ORANGE,
+        boxShadow: '0 4px 12px rgba(255, 102, 0, 0.32), inset 0 1px 2px rgba(0, 0, 0, 0.12)',
+      }}
+    >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 3,
+          left: 23,
+          width: 20,
+          height: 20,
+          borderRadius: '50%',
+          backgroundColor: '#FFFFFF',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: ORANGE,
+          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+        }}
+      >
+        <Glyph name="lock" size={11} />
       </Box>
     </Box>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   Model Selector Widget
-──────────────────────────────────────────────────────────────────── */
-function ModelSelector({ isDark }) {
-  const [selected, setSelected] = React.useState('DS');
-  const [activeMode, setActiveMode] = React.useState('Private');
-
-  const models = [
-    { code: 'DS', name: 'DeepSeek R1', vendor: 'DeepSeek', color: '#4D6BFE', desc: 'Open weights, chain-of-thought, uncensored logic' },
-    { code: 'AN', name: 'Claude 3.5 Sonnet', vendor: 'Anthropic', color: '#D97757', desc: 'Superior code analysis and long context drafting' },
-    { code: 'OA', name: 'GPT-4o', vendor: 'OpenAI', color: '#10A37F', desc: 'Multimodal vision and rapid everyday intelligence' },
-  ];
-
-  const modes = ['Private', 'Anonymous', 'Shielded'];
+function PrivacyConsole() {
+  const { isDark } = useThemeMode();
 
   return (
     <Box
       sx={{
-        borderRadius: 4,
-        border: '1px solid var(--border-normal)',
-        backgroundColor: 'var(--bg-card)',
+        position: 'relative',
+        borderRadius: '26px',
         overflow: 'hidden',
-        boxShadow: isDark ? '0 16px 40px rgba(0,0,0,0.6)' : '0 12px 32px rgba(15,23,42,0.08)',
+        backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border-normal)',
+        boxShadow: isDark
+          ? '0 30px 70px rgba(0, 0, 0, 0.65), 0 0 40px rgba(255, 102, 0, 0.08)'
+          : '0 24px 60px rgba(15, 23, 42, 0.09)',
       }}
     >
-      <Box sx={{ px: 3, pt: 2.5, pb: 0, display: 'flex', gap: 1 }}>
-        {modes.map((m) => (
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '-30%',
+          right: '-20%',
+          width: '70%',
+          height: '70%',
+          background: 'radial-gradient(circle, rgba(255, 102, 0, 0.14) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Console header */}
+      <Box
+        sx={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 2,
+          px: { xs: 3, sm: 4 },
+          py: 2.5,
+          borderBottom: '1px solid var(--border-subtle)',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <GlyphTile name="shield" size={36} />
+          <Box>
+            <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.01em' }}>
+              Privacy Defaults
+            </Typography>
+            <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Applied to every session</Typography>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: { xs: 'none', sm: 'inline-flex' },
+            alignItems: 'center',
+            gap: 0.8,
+            px: 1.5,
+            py: 0.5,
+            borderRadius: '9999px',
+            backgroundColor: 'rgba(255, 102, 0, 0.08)',
+            border: '1px solid rgba(255, 102, 0, 0.3)',
+            color: ORANGE,
+            fontSize: '0.68rem',
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Box sx={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: ORANGE }} />
+          ENFORCED
+        </Box>
+      </Box>
+
+      {/* Default rows */}
+      <Box sx={{ position: 'relative', px: { xs: 3, sm: 4 }, py: 1 }}>
+        {DEFAULTS.map((item, i) => (
           <Box
-            key={m}
-            onClick={() => setActiveMode(m)}
+            key={item.term}
             sx={{
-              px: 2.2,
-              py: 0.7,
-              borderRadius: '9999px',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              backgroundColor: activeMode === m ? '#FF6600' : 'transparent',
-              color: activeMode === m ? '#FFFFFF' : 'var(--text-secondary)',
-              border: '1px solid',
-              borderColor: activeMode === m ? '#FF6600' : 'var(--border-normal)',
-              boxShadow: activeMode === m ? '0 4px 14px rgba(255,102,0,0.35)' : 'none',
-              '&:hover': {
-                borderColor: '#FF6600',
-                color: activeMode === m ? '#FFFFFF' : '#FF6600',
-              },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+              py: 2.4,
+              borderTop: i === 0 ? 'none' : '1px solid var(--border-subtle)',
             }}
           >
-            {m}
+            <Box>
+              <Typography sx={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                {item.term}
+              </Typography>
+              <Typography sx={{ fontSize: '0.82rem', color: 'var(--text-secondary)', mt: 0.3 }}>
+                {item.detail}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Typography
+                sx={{
+                  display: { xs: 'none', sm: 'block' },
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.07em',
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Always on
+              </Typography>
+              <LockedToggle />
+            </Box>
           </Box>
         ))}
       </Box>
 
-      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-        <Typography sx={{ fontSize: '0.74rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', mb: 0.5 }}>
-          Select Active Model
-        </Typography>
-        {models.map((model) => {
-          const isActive = selected === model.code;
-          return (
-            <Box
-              key={model.code}
-              onClick={() => setSelected(model.code)}
+      {/* Telemetry */}
+      <Box
+        sx={{
+          position: 'relative',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 1,
+          px: { xs: 3, sm: 4 },
+          py: 2.75,
+          borderTop: '1px solid var(--border-subtle)',
+          backgroundColor: 'var(--bg-glass)',
+        }}
+      >
+        {TELEMETRY.map((t) => (
+          <Box key={t.label}>
+            <Typography
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                p: 2,
-                borderRadius: 3,
-                cursor: 'pointer',
-                border: '1px solid',
-                borderColor: isActive ? '#FF6600' : 'var(--border-subtle)',
-                backgroundColor: isActive ? 'rgba(255,102,0,0.08)' : 'transparent',
-                transition: 'all 0.2s',
-                '&:hover': {
-                  borderColor: 'rgba(255,102,0,0.5)',
-                  backgroundColor: 'rgba(255,102,0,0.04)',
-                },
+                fontSize: '0.66rem',
+                fontWeight: 600,
+                letterSpacing: '0.07em',
+                textTransform: 'uppercase',
+                color: 'var(--text-muted)',
               }}
             >
+              {t.label}
+            </Typography>
+            <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: ORANGE, mt: 0.4 }}>{t.value}</Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+/* ── Pipeline ────────────────────────────────────────────────────── */
+
+function Pipeline() {
+  const [active, setActive] = React.useState(0);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setActive((prev) => (prev + 1) % STEPS.length), 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // The wire sits at your level for 01 and 04 and drops to ours for 02 and 03,
+  // so the trust boundary is carried by the geometry rather than a label alone.
+  const RAIL_H = 132;
+  const NODE = 44;
+  const HIGH = 30;
+  const LOW = 74;
+  const cy = (i) => (STEPS[i].zone === 'you' ? HIGH : LOW) + NODE / 2;
+
+  return (
+    <Box sx={{ position: 'relative', width: '100%' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' },
+          gap: { xs: 3.5, md: 4 },
+        }}
+      >
+        {STEPS.map((s, i) => {
+          const isActive = i === active;
+          const isOurs = s.zone === 'openledger';
+          const passed = i < active;
+          const top = isOurs ? LOW : HIGH;
+
+          return (
+            <Box
+              key={s.step}
+              onClick={() => setActive(i)}
+              sx={{
+                position: 'relative',
+                cursor: 'pointer',
+                display: { xs: 'flex', md: 'block' },
+                flexDirection: { xs: 'row' },
+                alignItems: { xs: 'flex-start' },
+                gap: { xs: 2.5, md: 0 },
+                pt: { md: `${RAIL_H}px` },
+              }}
+            >
+              {/* Zone annotations, drawn once per stretch of the wire */}
+              {(i === 0 || i === 1 || i === 3) && (
+                <Typography
+                  sx={{
+                    display: { xs: 'none', md: 'block' },
+                    position: 'absolute',
+                    top: 0,
+                    left: i === 1 ? 'calc(100% + 16px)' : 0,
+                    transform: i === 1 ? 'translateX(-50%)' : 'none',
+                    whiteSpace: 'nowrap',
+                    fontSize: '0.64rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: i === 1 ? 'var(--text-muted)' : ORANGE,
+                  }}
+                >
+                  {i === 1 ? 'OpenLedger infrastructure' : 'Your device'}
+                </Typography>
+              )}
+
+              {/* Where the wire crosses out of your device, and back in */}
+              {(i === 0 || i === 2) && (
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    display: { xs: 'none', md: 'block' },
+                    position: 'absolute',
+                    top: 18,
+                    right: -16,
+                    width: 0,
+                    height: RAIL_H - 28,
+                    borderLeft: '1px dashed var(--border-strong)',
+                    opacity: 0.5,
+                  }}
+                />
+              )}
+
+              {/* The wire itself: it descends into our zone and climbs back out */}
+              {i < STEPS.length - 1 && (
+                <Box
+                  component="svg"
+                  aria-hidden="true"
+                  viewBox={`0 0 100 ${RAIL_H}`}
+                  preserveAspectRatio="none"
+                  sx={{
+                    display: { xs: 'none', md: 'block' },
+                    position: 'absolute',
+                    top: 0,
+                    left: NODE / 2,
+                    width: 'calc(100% + 32px)',
+                    height: `${RAIL_H}px`,
+                    overflow: 'visible',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <path
+                    d={
+                      cy(i) === cy(i + 1)
+                        ? `M 0 ${cy(i)} L 100 ${cy(i + 1)}`
+                        : `M 0 ${cy(i)} C 38 ${cy(i)} 62 ${cy(i + 1)} 100 ${cy(i + 1)}`
+                    }
+                    fill="none"
+                    stroke={passed ? ORANGE : 'var(--border-normal)'}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
+                    style={{
+                      transition: 'stroke 0.55s ease',
+                      filter: passed ? `drop-shadow(0 0 6px ${ORANGE}66)` : 'none',
+                    }}
+                  />
+                </Box>
+              )}
+
+              {/* Run-out: the response leaves the diagram on its way back to you */}
+              {i === STEPS.length - 1 && (
+                <Box
+                  component="svg"
+                  aria-hidden="true"
+                  viewBox={`0 0 100 ${RAIL_H}`}
+                  preserveAspectRatio="none"
+                  sx={{
+                    display: { xs: 'none', md: 'block' },
+                    position: 'absolute',
+                    top: 0,
+                    left: NODE / 2,
+                    width: `calc(100% - ${NODE / 2}px)`,
+                    height: `${RAIL_H}px`,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <defs>
+                    <linearGradient id="ol-runout" x1="0" x2="1" y1="0" y2="0">
+                      <stop offset="0%" stopColor={isActive ? ORANGE : 'currentColor'} stopOpacity="0.9" />
+                      <stop offset="100%" stopColor={isActive ? ORANGE : 'currentColor'} stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d={`M 0 ${cy(i)} L 100 ${cy(i)}`}
+                    fill="none"
+                    stroke="url(#ol-runout)"
+                    strokeWidth="2"
+                    vectorEffect="non-scaling-stroke"
+                    style={{ color: 'var(--border-normal)', transition: 'stroke 0.55s ease' }}
+                  />
+                </Box>
+              )}
+
+              {/* Marker. Solid ring where the data rests, dashed where it only passes through. */}
               <Box
                 sx={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 2,
-                  backgroundColor: model.color,
+                  position: { xs: 'static', md: 'absolute' },
+                  top: { md: `${top}px` },
+                  left: { md: 0 },
+                  zIndex: 1,
+                  width: NODE,
+                  height: NODE,
+                  flexShrink: 0,
+                  borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
-                  boxShadow: `0 4px 12px ${model.color}40`,
+                  backgroundColor: isActive ? ORANGE : 'var(--bg-page)',
+                  border: `${isOurs ? '1.5px dashed' : '2px solid'} ${
+                    isActive ? ORANGE : 'var(--border-strong)'
+                  }`,
+                  color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                  boxShadow: isActive ? `0 0 0 6px ${ORANGE}1f` : 'none',
+                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
-                <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#fff', letterSpacing: '0.03em' }}>
-                  {model.code}
-                </Typography>
+                <Glyph name={s.glyph} size={20} />
               </Box>
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {model.name}
-                  </Typography>
-                  <Typography sx={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                    • {model.vendor}
-                  </Typography>
-                </Box>
-                <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-secondary)', mt: 0.3 }}>
-                  {model.desc}
-                </Typography>
-              </Box>
-              {isActive && (
+
+              {/* Mobile keeps the plain vertical run between markers */}
+              {i < STEPS.length - 1 && (
                 <Box
+                  aria-hidden="true"
                   sx={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: '50%',
-                    backgroundColor: '#FF6600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    boxShadow: '0 0 10px rgba(255,102,0,0.6)',
+                    display: { xs: 'block', md: 'none' },
+                    position: 'absolute',
+                    left: NODE / 2 - 1,
+                    top: NODE,
+                    width: '2px',
+                    height: 'calc(100% - 16px)',
+                    borderRadius: '2px',
+                    backgroundColor: passed ? ORANGE : 'var(--border-normal)',
+                    transition: 'background-color 0.55s ease',
+                  }}
+                />
+              )}
+
+              <Box sx={{ pr: { md: 3 } }}>
+                <Typography
+                  sx={{ fontSize: '1.02rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--text-heading)' }}
+                >
+                  {s.term}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.73rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.07em',
+                    textTransform: 'uppercase',
+                    color: isActive ? ORANGE : 'var(--text-muted)',
+                    mt: 0.6,
+                    mb: 1.6,
+                    transition: 'color 0.35s ease',
                   }}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </Box>
-              )}
+                  <Box component="span" sx={{ color: 'var(--text-muted)', mr: 0.9 }}>
+                    {s.step}
+                  </Box>
+                  {s.line}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.88rem',
+                    lineHeight: 1.65,
+                    color: 'var(--text-secondary)',
+                    // Reserve the tallest paragraph's height so all four
+                    // columns end on the same baseline.
+                    minHeight: { md: 96 },
+                  }}
+                >
+                  {s.detail}
+                </Typography>
+              </Box>
             </Box>
           );
         })}
       </Box>
 
+      {/* Guarantees — plain marks on a hairline, not pills */}
       <Box
         sx={{
-          mx: 3,
-          mb: 3,
-          p: 2,
-          borderRadius: 3,
-          backgroundColor: isDark ? 'rgba(255,102,0,0.06)' : 'rgba(255,102,0,0.04)',
-          border: '1px solid rgba(255,102,0,0.2)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 1.5,
-          textAlign: 'center',
+          position: 'relative',
+          mt: BLOCK_GAP,
+          pt: { xs: 3, md: 3.5 },
+          borderTop: '1px solid var(--border-normal)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: { xs: 2.5, md: 5 },
         }}
       >
-        {[
-          ['Models', '50+ Supported'],
-          ['Log Retention', '0 Seconds'],
-          ['User Tracking', 'Zero / None'],
-        ].map(([k, v]) => (
-          <Box key={k}>
-            <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              {k}
-            </Typography>
-            <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: '#FF6600', mt: 0.3 }}>
-              {v}
+        {PIPELINE_CHIPS.map((chip) => (
+          <Box key={chip} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.1 }}>
+            <Box sx={{ color: ORANGE, display: 'flex' }}>
+              <Glyph name="check" size={14} />
+            </Box>
+            <Typography
+              sx={{
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              {chip}
             </Typography>
           </Box>
         ))}
@@ -449,25 +1195,30 @@ function ModelSelector({ isDark }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   Main Page Component
-──────────────────────────────────────────────────────────────────── */
+/* ── Page ────────────────────────────────────────────────────────── */
+
 export default function PrivatePage() {
   const { isDark } = useThemeMode();
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        position: 'relative',
+        overflowX: 'hidden',
+        backgroundColor: 'var(--bg-page)',
+        transition: 'background-color 0.35s ease',
+      }}
+    >
       <Head>
-        <title>Private AI — Confidential, Zero-Retention Intelligence | OpenLedger</title>
+        <title>Private AI — Confidential Intelligence | OpenLedger</title>
         <meta
           name="description"
-          content="Use 50+ leading AI models without compromising your privacy. Zero server logging, local-only conversation vaults, and zero model training on your prompts."
+          content="Use powerful AI without giving up your privacy. Zero retention, no training, and local-only history by default."
         />
       </Head>
 
-      <PageHeader />
-
-      {/* Ambient background glow streaks — deep dark security aesthetic */}
+      {/* Ambient layers */}
       <Box
         data-ambient-blur
         sx={{
@@ -477,66 +1228,47 @@ export default function PrivatePage() {
           transform: 'translateX(-50%)',
           width: '100%',
           maxWidth: 1400,
-          height: 750,
-          background: 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(255, 102, 0, 0.14) 0%, rgba(255, 60, 0, 0.04) 55%, transparent 80%)',
+          height: 760,
+          background:
+            'radial-gradient(ellipse 80% 55% at 50% 0%, rgba(255, 102, 0, 0.15) 0%, rgba(255, 80, 0, 0.04) 55%, transparent 80%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
       />
-      {/* Cool security tint — right side */}
       <Box
         data-ambient-blur
         sx={{
           position: 'absolute',
-          top: '5%',
+          top: '12%',
           right: 0,
-          width: { xs: 300, md: 500 },
-          height: 500,
-          background: 'radial-gradient(ellipse 80% 70% at 100% 0%, rgba(80, 120, 255, 0.07) 0%, transparent 70%)',
+          width: { xs: 240, md: 420 },
+          height: 420,
+          background: 'radial-gradient(ellipse 80% 70% at 100% 0%, rgba(255, 140, 0, 0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
       />
 
+      <PageHeader />
+
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
-        {/* ── Section 1: Hero Showcase with Visual Imagery ───────── */}
-        <Box sx={{ pt: { xs: 14, sm: 16, md: 18 }, pb: { xs: 8, md: 12 } }}>
+        {/* ── Section 1: Hero ──────────────────────────────────── */}
+        <Box component="section" sx={{ pt: { xs: 14, sm: 16, md: 18 }, pb: SECTION_PY }}>
           <Box
             sx={{
               display: 'grid',
               gap: { xs: 6, lg: 8 },
-              gridTemplateColumns: { lg: 'minmax(0,1.15fr) minmax(0,0.85fr)' },
+              gridTemplateColumns: { lg: 'minmax(0, 1.05fr) minmax(0, 0.95fr)' },
               alignItems: 'center',
             }}
           >
-            {/* Left Copy */}
             <Reveal>
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  color: '#FF6600',
-                  mb: 3,
-                  px: 1.8,
-                  py: 0.6,
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 102, 0, 0.08)',
-                  border: '1px solid rgba(255, 102, 0, 0.25)',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Zero-Knowledge Intelligence
-              </Box>
+              <Eyebrow>Private AI</Eyebrow>
 
               <Typography
                 component="h1"
                 sx={{
-                  fontSize: { xs: '2.5rem', sm: '3.4rem', md: '4.2rem' },
+                  fontSize: { xs: '2.6rem', sm: '3.6rem', md: '4.4rem' },
                   fontWeight: 700,
                   lineHeight: 1.06,
                   letterSpacing: '-0.035em',
@@ -544,8 +1276,17 @@ export default function PrivatePage() {
                   mb: 3,
                 }}
               >
-                What you ask{' '}
-                <Box component="span" sx={{ color: '#FF6600' }}>
+                What you ask
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'block',
+                    background: 'linear-gradient(92deg, #FF6600 0%, #FF9A2E 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
                   stays yours.
                 </Box>
               </Typography>
@@ -556,413 +1297,167 @@ export default function PrivatePage() {
                   fontSize: { xs: '1.05rem', md: '1.15rem' },
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
-                  mb: 4,
+                  mb: 4.5,
                 }}
               >
-                Run confidential code audits, sensitive financial models, and research queries across 50+ frontier models. Your data runs purely in volatile RAM, is never written to disk, and is never used for training.
+                Use powerful AI without giving up your privacy. Your conversations stay private, aren&apos;t used for
+                training, and aren&apos;t stored on our servers.
               </Typography>
 
-              {/* Action Buttons */}
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2.5, mb: 5 }}>
-                <Box
-                  component="a"
-                  href="https://ais.openledger.xyz/chat"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#FF6600',
-                    color: '#FFFFFF',
-                    px: 4.5,
-                    py: 1.8,
-                    borderRadius: '9999px',
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    letterSpacing: '0.02em',
-                    boxShadow: '0 8px 32px rgba(255,102,0,0.38), inset 0 1px 0 rgba(255,255,255,0.25)',
-                    border: '1px solid rgba(255,102,0,0.4)',
-                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-                    '&:hover': {
-                      backgroundColor: '#e65c00',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 14px 40px rgba(255,102,0,0.52)',
-                    },
-                    '&:active': { transform: 'scale(0.98)' },
-                  }}
-                >
-                  Start a Private Chat →
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 5 }}>
+                <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={PRIMARY_CTA_SX}>
+                  Start a Private Chat
                 </Box>
-
-                <Box
-                  component="a"
-                  href="#how-it-works"
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    color: 'var(--text-secondary)',
-                    px: 3.5,
-                    py: 1.8,
-                    borderRadius: '9999px',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    border: '1px solid var(--border-normal)',
-                    backgroundColor: 'var(--bg-glass)',
-                    backdropFilter: 'blur(12px)',
-                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                    '&:hover': {
-                      borderColor: '#FF6600',
-                      color: '#FF6600',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 20px rgba(255,102,0,0.12)',
-                    },
-                  }}
-                >
-                  See Architecture
+                <Box component="a" href="#how-it-works" sx={GHOST_CTA_SX}>
+                  See how it works
                 </Box>
               </Box>
 
-              {/* Quick telemetry badges */}
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: { xs: 2, sm: 3 },
-                  pt: 3.5,
-                  borderTop: '1px solid var(--border-subtle)',
-                }}
-              >
-                {[
-                  { stat: '0 Seconds', label: 'Data Retention', color: '#FF6600' },
-                  { stat: '100% Client-Side', label: 'Encrypted Vault', color: 'var(--text-heading)' },
-                  { stat: 'Zero', label: 'Model Training', color: '#10B981' },
-                ].map((item, idx) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: { xs: 1.5, sm: 2.5 } }}>
+                {GUARANTEES.map((g) => (
                   <Box
-                    key={item.label}
+                    key={g}
                     sx={{
-                      pl: idx > 0 ? { xs: 1.5, sm: 3 } : 0,
-                      borderLeft: idx > 0 ? '1px solid var(--border-subtle)' : 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      px: 1.8,
+                      py: 0.8,
+                      borderRadius: '9999px',
+                      backgroundColor: 'var(--bg-glass)',
+                      border: '1px solid var(--border-subtle)',
                     }}
                   >
-                    <Typography sx={{ fontSize: { xs: '1.15rem', sm: '1.35rem' }, fontWeight: 800, color: item.color, lineHeight: 1 }}>
-                      {item.stat}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.72rem', color: 'var(--text-muted)', mt: 0.6, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
-                      {item.label}
+                    <Box sx={{ color: ORANGE, display: 'flex' }}>
+                      <Glyph name="check" size={13} />
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                        color: 'var(--text-secondary)',
+                      }}
+                    >
+                      {g}
                     </Typography>
                   </Box>
                 ))}
               </Box>
             </Reveal>
 
-            {/* Right Hero Image Card Showcase */}
             <Reveal delay={120}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  borderRadius: { xs: 4, md: 5 },
-                  overflow: 'hidden',
-                  border: '1px solid var(--border-normal)',
-                  boxShadow: isDark
-                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 40px rgba(255,102,0,0.18)'
-                    : '0 20px 45px -12px rgba(15,23,42,0.14)',
-                  backgroundColor: 'var(--bg-card)',
-                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    borderColor: 'rgba(255,102,0,0.4)',
-                    boxShadow: isDark
-                      ? '0 30px 70px -15px rgba(0,0,0,0.85), 0 0 50px rgba(255,102,0,0.25)'
-                      : '0 24px 50px -10px rgba(15,23,42,0.18)',
-                  },
-                }}
-              >
-                {/* Top Media Container */}
-                <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-                  {/* Hero Image */}
-                  <Box
-                    component="img"
-                    src="/images/Privacy.jpg"
-                    alt="OpenLedger Private AI Enclave"
-                    sx={{
-                      width: '100%',
-                      height: { xs: 260, sm: 300, md: 340 },
-                      objectFit: 'cover',
-                      display: 'block',
-                      filter: isDark ? 'brightness(0.92) contrast(1.05)' : 'none',
-                    }}
-                  />
-
-                  {/* Subtle Gradient Scrim at Bottom of Image */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: isDark
-                        ? 'linear-gradient(to top, rgba(14, 16, 21, 0.9) 0%, rgba(14, 16, 21, 0.15) 35%, transparent 65%)'
-                        : 'linear-gradient(to top, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) 35%, transparent 65%)',
-                      pointerEvents: 'none',
-                    }}
-                  />
-
-                  {/* Floating telemetry HUD over image */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: { xs: 12, sm: 16 },
-                      left: { xs: 12, sm: 16 },
-                      right: { xs: 12, sm: 16 },
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      px: 1.8,
-                      py: 1,
-                      borderRadius: '9999px',
-                      backgroundColor: isDark ? 'rgba(10,12,16,0.82)' : 'rgba(255,255,255,0.9)',
-                      backdropFilter: 'blur(16px)',
-                      border: '1px solid var(--border-normal)',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                      <Box
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          backgroundColor: '#10B981',
-                          boxShadow: '0 0 10px #10B981',
-                        }}
-                      />
-                      <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '0.04em' }}>
-                        ENCLAVE ACTIVE
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 0.8,
-                        px: 1.4,
-                        py: 0.35,
-                        borderRadius: '9999px',
-                        backgroundColor: 'rgba(255,102,0,0.12)',
-                        border: '1px solid rgba(255,102,0,0.3)',
-                        color: '#FF6600',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                      }}
-                    >
-                      Zero Disk Write
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* Integrated Glass Telemetry Strip at Bottom of Image Card */}
-                <Box
-                  sx={{
-                    p: { xs: 2.2, sm: 2.8 },
-                    backgroundColor: 'var(--bg-card)',
-                    borderTop: '1px solid var(--border-subtle)',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: 1.5,
-                    textAlign: 'center',
-                  }}
-                >
-                  <Box>
-                    <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
-                      Buffer Purge
-                    </Typography>
-                    <Typography sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, fontWeight: 800, color: '#FF6600', mt: 0.4 }}>
-                      0s Ephemeral
-                    </Typography>
-                  </Box>
-                  <Box sx={{ borderLeft: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)' }}>
-                    <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
-                      Transport
-                    </Typography>
-                    <Typography sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, fontWeight: 800, color: 'var(--text-heading)', mt: 0.4 }}>
-                      ZK-Relay
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
-                      Inference
-                    </Typography>
-                    <Typography sx={{ fontSize: { xs: '0.85rem', sm: '1rem' }, fontWeight: 800, color: '#10B981', mt: 0.4 }}>
-                      Volatile RAM
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
+              <PrivacyConsole />
             </Reveal>
           </Box>
         </Box>
 
-        {/* ── Section 2: Privacy Pillars Bento Grid ─────────────── */}
-        <Rule />
-        <Box sx={{ py: { xs: 8, md: 12 } }}>
-          <Reveal>
-            <Box
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 1.2,
-                color: '#FF6600',
-                mb: 2,
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-              }}
-            >
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-              Four Pillars of Confidentiality
-            </Box>
-            <Typography
-              component="h2"
-              sx={{
-                fontSize: { xs: '2rem', sm: '2.6rem', md: '3rem' },
-                fontWeight: 700,
-                lineHeight: 1.15,
-                letterSpacing: '-0.03em',
-                color: 'var(--text-heading)',
-                maxWidth: '24ch',
-              }}
-            >
-              Your conversations aren't the product.
-            </Typography>
-            <Typography sx={{ mt: 2, maxWidth: '62ch', fontSize: '1.05rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-              Unlike consumer chat platforms that collect queries for model training, ad profiling, and long-term logging, OpenLedger is engineered from the ground up for strict confidentiality.
-            </Typography>
-          </Reveal>
+        {/* ── Section 2: Privacy Pillars ───────────────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px' }}>
+          <Rule />
+          <Box sx={{ py: SECTION_PY }}>
+            <SectionHead
+              eyebrow="Privacy Pillars"
+              title="Your conversations aren't the product."
+              lede="Your prompts, documents, files, and spreadsheets remain exclusively yours. They stay on your device instead of becoming a permanent record on our servers."
+            />
 
-          {/* Bento Grid layout with imagery */}
-          <Box
-            sx={{
-              mt: 6,
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: 'repeat(12, 1fr)' },
-              gap: 3,
-            }}
-          >
-            {/* Visual Feature Card: Hand with App Shield (Spans 5 cols on desktop) */}
-            <Box
-              sx={{
-                gridColumn: { xs: '1 / -1', md: 'span 5' },
-                borderRadius: 4,
-                overflow: 'hidden',
-                border: '1px solid var(--border-normal)',
-                backgroundColor: 'var(--bg-card)',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: isDark ? '0 16px 40px rgba(0,0,0,0.5)' : '0 10px 30px rgba(15,23,42,0.06)',
-              }}
-            >
-              <Box
-                component="img"
-                src="/images/hand_holding_phone.jpg"
-                alt="Local hardware encryption vault"
-                sx={{
-                  width: '100%',
-                  height: 240,
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-              <Box sx={{ p: 3.5, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <Box>
-                  <Box
-                    sx={{
-                      display: 'inline-flex',
-                      px: 1.4,
-                      py: 0.4,
-                      borderRadius: '9999px',
-                      backgroundColor: 'rgba(255,102,0,0.1)',
-                      color: '#FF6600',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      mb: 2,
-                    }}
-                  >
-                    HARDWARE ENCLAVE
-                  </Box>
-                  <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1.2 }}>
-                    Private by Device
-                  </Typography>
-                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                    Your encryption keys and chat memory reside locally in your browser sandbox or native client. No administrator, employee, or third party has access.
-                  </Typography>
-                </Box>
-                <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#10B981' }} />
-                  <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                    AES-256 Client-Side Protected
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* 4 Pillars Grid (Spans 7 cols on desktop) */}
-            <Box
-              sx={{
-                gridColumn: { xs: '1 / -1', md: 'span 7' },
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                gap: 2.5,
-              }}
-            >
+            {/* A ledger, not a card grid — hairline rows carry the rhythm. */}
+            <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
               {PILLARS.map((pillar, i) => (
-                <Reveal key={pillar.title} delay={i * 80} sx={{ display: 'flex' }}>
+                <Reveal key={pillar.term} delay={i * 60}>
                   <Box
                     sx={{
-                      width: '100%',
-                      p: 3,
-                      borderRadius: 3.5,
-                      border: '1px solid var(--border-normal)',
-                      backgroundColor: 'var(--bg-card)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-                      '&:hover': {
-                        borderColor: '#FF6600',
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 12px 32px rgba(255,102,0,0.12)',
+                      display: 'grid',
+                      // Every track is a fixed size or a fraction — nothing is
+                      // content-sized, so all four rows resolve to identical
+                      // columns instead of each row measuring its own text.
+                      gridTemplateColumns: {
+                        xs: 'auto minmax(0, 1fr)',
+                        md: '28px minmax(0, 0.78fr) minmax(0, 1.45fr) 190px',
                       },
+                      columnGap: { xs: 2, md: 4 },
+                      rowGap: { xs: 1.2, md: 0 },
+                      alignItems: { md: 'center' },
+                      position: 'relative',
+                      py: ROW_PY,
+                      borderBottom: '1px solid var(--border-normal)',
+                      // Hover tint bleeds past the text, but the hairline stays
+                      // flush with the container so every rule on the page lines up.
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        inset: '0 -16px',
+                        zIndex: 0,
+                        backgroundColor: 'transparent',
+                        transition: 'background-color 0.3s ease',
+                        pointerEvents: 'none',
+                      },
+                      '& > *': { position: 'relative', zIndex: 1 },
+                      '&:hover::before': { backgroundColor: 'var(--bg-glass)' },
+                      '&:hover .pillar-glyph': { transform: 'translateY(-2px)' },
                     }}
                   >
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5 }}>
-                        <GlyphTile name={pillar.glyph} size={44} />
-                        <Typography
-                          sx={{
-                            fontSize: '0.68rem',
-                            fontWeight: 700,
-                            letterSpacing: '0.04em',
-                            textTransform: 'uppercase',
-                            color: '#FF6600',
-                            px: 1,
-                            py: 0.3,
-                            borderRadius: '9999px',
-                            backgroundColor: 'rgba(255,102,0,0.08)',
-                            border: '1px solid rgba(255,102,0,0.2)',
-                          }}
-                        >
-                          {pillar.badge}
-                        </Typography>
-                      </Box>
-                      <Typography component="h3" sx={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
-                        {pillar.title}
-                      </Typography>
-                      <Typography sx={{ fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                        {pillar.body}
+                    <Box
+                      className="pillar-glyph"
+                      sx={{ display: 'flex', color: ORANGE, transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                    >
+                      <Glyph name={pillar.glyph} size={24} />
+                    </Box>
+
+                    <Typography
+                      sx={{
+                        fontSize: { xs: '1.05rem', md: '1.18rem' },
+                        fontWeight: 700,
+                        letterSpacing: '-0.01em',
+                        color: 'var(--text-heading)',
+                      }}
+                    >
+                      {pillar.term}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        gridColumn: { xs: '1 / -1', md: 'auto' },
+                        fontSize: '0.95rem',
+                        lineHeight: 1.6,
+                        color: 'var(--text-secondary)',
+                      }}
+                    >
+                      {pillar.detail}
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        gridColumn: { xs: '1 / -1', md: 'auto' },
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 1.1,
+                        justifySelf: 'start',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 5,
+                          height: 5,
+                          borderRadius: '50%',
+                          flexShrink: 0,
+                          backgroundColor: ORANGE,
+                          boxShadow: '0 0 6px rgba(255, 102, 0, 0.6)',
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          letterSpacing: '0.07em',
+                          textTransform: 'uppercase',
+                          color: 'var(--text-muted)',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {pillar.status}
                       </Typography>
                     </Box>
                   </Box>
@@ -972,551 +1467,310 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 3: Data Flow Pipeline ─────────────────────── */}
-        <Rule />
-        <Box id="how-it-works" sx={{ py: { xs: 8, md: 12 } }}>
-          <Reveal>
-            <Box
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 1.2,
-                color: '#FF6600',
-                mb: 2,
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-              }}
-            >
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-              Zero-Knowledge Architecture
-            </Box>
-            <Typography
-              component="h2"
-              sx={{
-                fontSize: { xs: '2rem', sm: '2.6rem', md: '3rem' },
-                fontWeight: 700,
-                lineHeight: 1.15,
-                letterSpacing: '-0.03em',
-                color: 'var(--text-heading)',
-                maxWidth: '26ch',
-              }}
-            >
-              Your request travels.{' '}
-              <Box component="span" sx={{ color: 'var(--text-secondary)', fontWeight: 400 }}>
-                Your identity doesn't.
-              </Box>
-            </Typography>
-            <Typography sx={{ mt: 2, maxWidth: '60ch', fontSize: '1.05rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-              How queries travel between you and multi-model providers through our zero-knowledge routing network without leaving a trail.
-            </Typography>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <Box
-              sx={{
-                mt: 6,
-                p: { xs: 3, sm: 4.5 },
-                borderRadius: 4,
-                border: '1px solid var(--border-normal)',
-                backgroundColor: 'var(--bg-card)',
-                boxShadow: isDark ? '0 20px 50px rgba(0,0,0,0.6)' : '0 12px 36px rgba(15,23,42,0.08)',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              {/* Background radial accent */}
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '-30%',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '90%',
-                  height: '80%',
-                  background: 'radial-gradient(ellipse, rgba(255,102,0,0.08) 0%, transparent 70%)',
-                  pointerEvents: 'none',
-                }}
-              />
-
-              {/* Pipeline Nodes Flow */}
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-                  gap: 2.5,
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
-                {FLOW_NODES.map((node, idx) => (
-                  <Box
-                    key={node.id}
-                    sx={{
-                      p: 2.5,
-                      borderRadius: 3,
-                      border: '1px solid',
-                      borderColor: node.isHighlight ? '#FF6600' : 'var(--border-subtle)',
-                      backgroundColor: node.isHighlight ? 'rgba(255,102,0,0.08)' : isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 2,
-                      boxShadow: node.isHighlight ? '0 8px 24px rgba(255,102,0,0.2)' : 'none',
-                      transition: 'all 0.25s ease',
-                      '&:hover': {
-                        borderColor: '#FF6600',
-                        transform: 'translateY(-2px)',
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Box
-                        sx={{
-                          width: 44,
-                          height: 44,
-                          borderRadius: 2.5,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: node.isHighlight ? '#FF6600' : isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-                          color: node.isHighlight ? '#FFFFFF' : '#FF6600',
-                          boxShadow: node.isHighlight ? '0 4px 16px rgba(255,102,0,0.4)' : 'none',
-                        }}
-                      >
-                        {node.icon}
-                      </Box>
-                      <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)' }}>
-                        STAGE 0{idx + 1}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: node.isHighlight ? '#FF6600' : 'var(--text-primary)' }}>
-                        {node.label}
-                      </Typography>
-                      <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', mt: 0.3 }}>
-                        {node.sub}
-                      </Typography>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-
-              {/* Stage Detail Cards */}
-              <Box sx={{ mt: 4, pt: 3.5, borderTop: '1px solid var(--border-subtle)', position: 'relative', zIndex: 1 }}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(4, 1fr)' }, gap: 3 }}>
-                  {FLOW_DETAILS.map((d) => (
-                    <Box key={d.num}>
-                      <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#FF6600', letterSpacing: '0.06em', textTransform: 'uppercase', mb: 0.8 }}>
-                        {d.num} — {d.title}
-                      </Typography>
-                      <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                        {d.body}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            </Box>
-          </Reveal>
+        {/* ── Section 3: How it works ──────────────────────────── */}
+        <Box component="section" id="how-it-works" sx={{ scrollMarginTop: '96px' }}>
+          <Rule />
+          <Box sx={{ py: SECTION_PY }}>
+            <SectionHead
+              eyebrow="How it works"
+              title="Your request travels. Your data doesn't stay."
+              lede="Privacy is built into every step of the process. Your data securely traverses our architecture and routes back to you just as you left it."
+            />
+            <Reveal delay={120}>
+              <Pipeline />
+            </Reveal>
+          </Box>
         </Box>
 
-        {/* ── Section 4: OpenLedger vs Traditional AI Matrix ─────── */}
-        <Rule />
-        <Box sx={{ py: { xs: 8, md: 12 } }}>
-          <Reveal>
-            <Box
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 1.2,
-                color: '#FF6600',
-                mb: 2,
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-              }}
-            >
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-              Direct Comparison
-            </Box>
-            <Typography
-              component="h2"
-              sx={{
-                fontSize: { xs: '2rem', sm: '2.6rem', md: '3rem' },
-                fontWeight: 700,
-                lineHeight: 1.15,
-                letterSpacing: '-0.03em',
-                color: 'var(--text-heading)',
-                maxWidth: '22ch',
-              }}
-            >
-              Engineered differently from the ground up.
-            </Typography>
-            <Typography sx={{ mt: 2, maxWidth: '58ch', fontSize: '1.05rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-              See how OpenLedger Private AI compares to standard corporate AI interfaces in data stewardship, model training, and privacy protections.
-            </Typography>
-          </Reveal>
+        {/* ── Section 4: Freedom to ask ────────────────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px' }}>
+          <Rule />
+          <Box sx={{ py: SECTION_PY }}>
+            <SectionHead
+              eyebrow="Uncensored by design"
+              title="Private enough to ask. Free enough to explore."
+              lede="Privacy protects what you ask. Uncensored AI gives you the freedom to ask it — explore ideas, research difficult topics, create, and code without unnecessary platform-level restrictions."
+            />
 
-          <Reveal delay={100}>
-            <Box
-              sx={{
-                mt: 6,
-                borderRadius: 4,
-                border: '1px solid var(--border-normal)',
-                backgroundColor: 'var(--bg-card)',
-                overflow: 'hidden',
-                boxShadow: isDark ? '0 16px 40px rgba(0,0,0,0.6)' : '0 10px 30px rgba(15,23,42,0.06)',
-              }}
-            >
-              {/* Header row */}
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1.2fr 1fr', md: '1.4fr 1.3fr 1.3fr' },
-                  p: { xs: 2, md: 2.5 },
-                  borderBottom: '1px solid var(--border-normal)',
-                  backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-                }}
-              >
-                <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>
-                  Security Dimension
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 8px #FF6600' }} />
-                  <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#FF6600' }}>
-                    OpenLedger Private AI
-                  </Typography>
-                </Box>
-                <Typography
-                  sx={{
-                    display: { xs: 'none', md: 'block' },
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                    color: 'var(--text-muted)',
-                  }}
-                >
-                  Standard Consumer AI
-                </Typography>
-              </Box>
-
-              {/* Rows */}
-              {COMPARISONS.map((row, idx) => (
-                <Box
-                  key={row.feature}
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1.2fr 1fr', md: '1.4fr 1.3fr 1.3fr' },
-                    p: { xs: 2, md: 2.5 },
-                    borderBottom: idx < COMPARISONS.length - 1 ? '1px solid var(--border-subtle)' : 'none',
-                    backgroundColor: idx % 2 === 1 ? (isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.015)') : 'transparent',
-                    alignItems: 'center',
-                    transition: 'background-color 0.2s',
-                    '&:hover': {
-                      backgroundColor: isDark ? 'rgba(255,102,0,0.04)' : 'rgba(255,102,0,0.03)',
-                    },
-                  }}
-                >
-                  <Typography sx={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-heading)' }}>
-                    {row.feature}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box
-                      sx={{
-                        width: 18,
-                        height: 18,
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(16,185,129,0.15)',
-                        border: '1px solid #10B981',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </Box>
-                    <Typography sx={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                      {row.openledger}
-                    </Typography>
-                  </Box>
-                  <Typography
-                    sx={{
-                      display: { xs: 'none', md: 'block' },
-                      fontSize: '0.86rem',
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    {row.traditional}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Reveal>
-        </Box>
-
-        {/* ── Section 5: Interactive Chat & Model Switcher Demo ──── */}
-        <Rule />
-        <Box sx={{ py: { xs: 8, md: 12 } }}>
-          <Box
-            sx={{
-              display: 'grid',
-              gap: { xs: 6, lg: 8 },
-              gridTemplateColumns: { lg: 'minmax(0,1.05fr) minmax(0,0.95fr)' },
-              alignItems: 'center',
-            }}
-          >
-            {/* Left */}
+            {/* Filter-layer comparison */}
             <Reveal>
               <Box
                 sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  color: '#FF6600',
-                  mb: 2,
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 2.5,
+                  mb: 0,
                 }}
               >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Hands-On Studio
+                {FLOWS.map((flow) => (
+                  <FlowCard key={flow.label} flow={flow} />
+                ))}
               </Box>
-
-              <Typography
-                component="h2"
-                sx={{
-                  fontSize: { xs: '2rem', sm: '2.6rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.03em',
-                  color: 'var(--text-heading)',
-                  mb: 2,
-                }}
-              >
-                Private enough to ask.{' '}
-                <Box component="span" sx={{ color: 'var(--text-secondary)', fontWeight: 400 }}>
-                  Free enough to explore.
-                </Box>
-              </Typography>
-
-              <Typography sx={{ maxWidth: '52ch', fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', mb: 4 }}>
-                Uncensored research, proprietary codebases, pitch decks, competitive intelligence, and medical data — finally ask what you actually need without fear of corporate leaks or data aggregation.
-              </Typography>
-
-              <ChatPreview isDark={isDark} />
             </Reveal>
 
-            {/* Right */}
-            <Reveal delay={110}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
-                <ModelSelector isDark={isDark} />
-
-                {/* Ambient callout */}
-                <Box
-                  sx={{
-                    p: 3,
-                    borderRadius: 3.5,
-                    border: '1px solid rgba(255,102,0,0.25)',
-                    backgroundColor: isDark ? 'rgba(255,102,0,0.06)' : 'rgba(255,102,0,0.03)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2.5,
-                  }}
-                >
+            {/* Three columns divided by hairlines — no card chrome. */}
+            <Box
+              sx={{
+                mt: BLOCK_GAP,
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
+                borderTop: '1px solid var(--border-normal)',
+                borderBottom: { md: '1px solid var(--border-normal)' },
+              }}
+            >
+              {FREEDOMS.map((card, i) => (
+                <Reveal key={card.term} delay={i * 80}>
                   <Box
                     sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: '50%',
-                      backgroundColor: '#FF6600',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#fff',
-                      flexShrink: 0,
-                      boxShadow: '0 4px 16px rgba(255,102,0,0.4)',
+                      height: '100%',
+                      py: ROW_PY,
+                      pr: { md: 4 },
+                      pl: { md: i === 0 ? 0 : 4 },
+                      borderBottom: { xs: '1px solid var(--border-normal)', md: 'none' },
+                      borderLeft: { md: i === 0 ? 'none' : '1px solid var(--border-normal)' },
+                      '&:hover .freedom-glyph': { transform: 'translateY(-2px)' },
                     }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-                      Switch Models in the Same Private Thread
+                    <Box
+                      className="freedom-glyph"
+                      sx={{
+                        display: 'flex',
+                        color: ORANGE,
+                        mb: 2.25,
+                        transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    >
+                      <Glyph name={card.glyph} size={26} />
+                    </Box>
+
+                    <Typography
+                      sx={{
+                        fontSize: '1.18rem',
+                        fontWeight: 700,
+                        letterSpacing: '-0.01em',
+                        color: 'var(--text-heading)',
+                        mb: 1.2,
+                      }}
+                    >
+                      {card.term}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.82rem', color: 'var(--text-secondary)', mt: 0.3, lineHeight: 1.5 }}>
-                      Compare responses between DeepSeek R1 and Claude 3.5 Sonnet side-by-side with zero data leaving your local sandbox.
+
+                    <Typography sx={{ maxWidth: '34ch', fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+                      {card.detail}
                     </Typography>
                   </Box>
+                </Reveal>
+              ))}
+            </Box>
+
+            {/* Section footer: actions + spec line */}
+            <Reveal delay={160}>
+              <Box
+                sx={{
+                  mt: BLOCK_GAP,
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: { xs: 3, md: 4 },
+                }}
+              >
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                  <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={PRIMARY_CTA_SX}>
+                    Start Chatting
+                  </Box>
+                  <Link href="/models" passHref legacyBehavior>
+                    <Box component="a" sx={GHOST_CTA_SX}>
+                      See every model
+                    </Box>
+                  </Link>
                 </Box>
+
+                <SpecLine items={FREEDOM_SPECS} />
               </Box>
             </Reveal>
           </Box>
         </Box>
 
-        {/* ── Section 6: Bottom Cinematic CTA Banner ─────────────── */}
-        <Rule />
-        <Box sx={{ py: { xs: 8, md: 14 } }}>
-          <Reveal>
-            <Box
-              sx={{
-                position: 'relative',
-                borderRadius: { xs: 4, md: 6 },
-                p: { xs: 4, sm: 6, md: 8 },
-                overflow: 'hidden',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                boxShadow: isDark
-                  ? '0 25px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,102,0,0.15)'
-                  : '0 20px 45px rgba(15,23,42,0.1)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-              }}
-            >
-              {/* Background ambient radial glow */}
+        {/* ── Section 5: Start a private session ───────────────── */}
+        <Box component="section" sx={{ position: 'relative' }}>
+          <Rule />
+
+          {/* Colour sources that sit UNDER the glass, so the blur has something to refract */}
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: 'absolute',
+              top: '18%',
+              left: '-2%',
+              width: { xs: 230, md: 400 },
+              height: { xs: 230, md: 400 },
+              borderRadius: '50%',
+              backgroundColor: ORANGE,
+              opacity: isDark ? 0.5 : 0.4,
+              filter: 'blur(70px)',
+              pointerEvents: 'none',
+            }}
+          />
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: 'absolute',
+              bottom: '14%',
+              right: '-1%',
+              width: { xs: 210, md: 360 },
+              height: { xs: 210, md: 360 },
+              borderRadius: '50%',
+              backgroundColor: '#FFA53A',
+              opacity: isDark ? 0.44 : 0.38,
+              filter: 'blur(80px)',
+              pointerEvents: 'none',
+            }}
+          />
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: 'absolute',
+              top: '38%',
+              left: '44%',
+              width: { xs: 170, md: 290 },
+              height: { xs: 170, md: 290 },
+              borderRadius: '50%',
+              backgroundColor: '#FF5A1F',
+              opacity: isDark ? 0.34 : 0.24,
+              filter: 'blur(90px)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          <Box sx={{ position: 'relative', py: SECTION_PY }}>
+            <Reveal>
               <Box
                 sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255, 102, 0, 0.16) 0%, rgba(255, 102, 0, 0.02) 70%, transparent 100%)',
-                  pointerEvents: 'none',
-                }}
-              />
-
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  px: 2,
-                  py: 0.6,
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 102, 0, 0.1)',
-                  border: '1px solid rgba(255, 102, 0, 0.3)',
-                  color: '#FF6600',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  mb: 3,
                   position: 'relative',
-                  zIndex: 1,
+                  overflow: 'hidden',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.15fr) minmax(0, 0.85fr)' },
+                  borderRadius: { xs: '22px', md: '28px' },
+                  // Dark mode tints the glass dark, or the blur just turns it milky grey.
+                  backgroundColor: isDark ? 'rgba(16, 19, 26, 0.55)' : 'rgba(255, 255, 255, 0.4)',
+                  backdropFilter: 'blur(30px) saturate(190%)',
+                  WebkitBackdropFilter: 'blur(30px) saturate(190%)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.75)',
+                  boxShadow: isDark
+                    ? '0 24px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14)'
+                    : '0 24px 70px rgba(15, 23, 42, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 0.95)',
+                  // Sheen across the top edge, the way light catches a pane of glass
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    pointerEvents: 'none',
+                    background: isDark
+                      ? 'linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 38%)'
+                      : 'linear-gradient(160deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 45%)',
+                  },
                 }}
               >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Instant Access • No Credit Card Required
-              </Box>
-
-              <Typography
-                component="h2"
-                sx={{
-                  fontSize: { xs: '2.2rem', sm: '3rem', md: '3.6rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.03em',
-                  color: 'var(--text-heading)',
-                  maxWidth: '22ch',
-                  mb: 2.5,
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
-                Experience confidential AI with complete peace of mind.
-              </Typography>
-
-              <Typography
-                sx={{
-                  maxWidth: '54ch',
-                  fontSize: { xs: '1rem', md: '1.1rem' },
-                  lineHeight: 1.65,
-                  color: 'var(--text-secondary)',
-                  mb: 4.5,
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
-                Start an encrypted session in seconds. Access every flagship model with zero tracking and full zero-retention architecture.
-              </Typography>
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 2.5,
-                  justifyContent: 'center',
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
+                {/* Left pane: the invitation */}
                 <Box
-                  component="a"
-                  href="https://ais.openledger.xyz/chat"
-                  target="_blank"
-                  rel="noopener noreferrer"
                   sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    backgroundColor: '#FF6600',
-                    color: '#FFFFFF',
-                    px: 5,
-                    py: 1.8,
-                    borderRadius: '9999px',
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    letterSpacing: '0.02em',
-                    boxShadow: '0 8px 32px rgba(255,102,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25)',
-                    border: '1px solid rgba(255,102,0,0.45)',
-                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-                    '&:hover': {
-                      backgroundColor: '#e65c00',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 14px 44px rgba(255,102,0,0.55)',
-                    },
+                    position: 'relative',
+                    zIndex: 1,
+                    p: { xs: 3.5, sm: 5, md: 6 },
+                    borderBottom: { xs: '1px solid var(--border-subtle)', md: 'none' },
+                    borderRight: { md: '1px solid var(--border-subtle)' },
                   }}
                 >
-                  Launch Private Chat Now →
-                </Box>
-                <Link href="/models" passHref style={{ textDecoration: 'none' }}>
-                  <Box
-                    component="span"
+                  <SpecLine items={CLOSING_SPECS} sx={{ mb: 3 }} />
+
+                  <Typography
+                    component="h2"
                     sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      color: 'var(--text-primary)',
-                      px: 4,
-                      py: 1.8,
-                      borderRadius: '9999px',
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                      border: '1px solid var(--border-normal)',
-                      backgroundColor: 'var(--bg-glass)',
-                      backdropFilter: 'blur(12px)',
-                      transition: 'all 0.25s ease',
-                      '&:hover': {
-                        borderColor: '#FF6600',
-                        color: '#FF6600',
-                        transform: 'translateY(-2px)',
-                      },
+                      maxWidth: '16ch',
+                      fontSize: { xs: '1.9rem', sm: '2.3rem', md: '2.7rem' },
+                      fontWeight: 700,
+                      lineHeight: 1.14,
+                      letterSpacing: '-0.03em',
+                      color: 'var(--text-heading)',
+                      mb: 2,
                     }}
                   >
-                    Browse 50+ Models
+                    Ask the question you wouldn&apos;t type anywhere else.
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      maxWidth: '46ch',
+                      fontSize: { xs: '0.98rem', md: '1.05rem' },
+                      lineHeight: 1.65,
+                      color: 'var(--text-secondary)',
+                      mb: 4,
+                    }}
+                  >
+                    Open a session, pick any model, and keep every prompt on your side of the wire.
+                  </Typography>
+
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={PRIMARY_CTA_SX}>
+                      Start a Private Chat →
+                    </Box>
+                    <Link href="/capabilities" passHref legacyBehavior>
+                      <Box component="a" sx={GHOST_CTA_SX}>
+                        Explore All Capabilities
+                      </Box>
+                    </Link>
                   </Box>
-                </Link>
+                </Box>
+
+                {/* Right pane: where it runs */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    zIndex: 1,
+                    p: { xs: 3.5, sm: 5, md: 5 },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'var(--text-muted)',
+                      mb: 1,
+                    }}
+                  >
+                    Private on every surface
+                  </Typography>
+
+                  {SURFACES.map((s, i) => (
+                    <Box
+                      key={s.term}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.8,
+                        py: { xs: 1.5, md: 1.85 },
+                        borderTop: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      <GlassTile name={s.glyph} />
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-heading)' }}>
+                          {s.term}
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{s.sub}</Typography>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
               </Box>
-            </Box>
-          </Reveal>
+            </Reveal>
+          </Box>
         </Box>
       </Container>
 
