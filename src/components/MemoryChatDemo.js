@@ -5,6 +5,8 @@ import { BrandTile } from '@/components/ui/LedgerUI';
 
 const ORANGE = '#FF6600';
 
+const MODEL_ORDER = ['GG', 'AN', 'OA', 'DS'];
+
 export const MODELS = {
   GG: { code: 'GG', name: 'Gemini', full: 'Gemini 1.5 Pro' },
   AN: { code: 'AN', name: 'Claude', full: 'Claude 3.5 Sonnet' },
@@ -39,8 +41,8 @@ const SCRIPT = [
     ],
   },
 
-  { kind: 'user', text: 'Ask Claude where I should stay in Kyoto.' },
   { kind: 'switch', model: 'AN' },
+  { kind: 'user', text: 'Where should I stay in Kyoto?' },
   {
     kind: 'reply',
     model: 'AN',
@@ -56,8 +58,8 @@ const SCRIPT = [
     ],
   },
 
-  { kind: 'user', text: 'Now have GPT-4o plan day two.' },
   { kind: 'switch', model: 'OA' },
+  { kind: 'user', text: 'Continue where I left off — what should I do on day two?' },
   {
     kind: 'reply',
     model: 'OA',
@@ -134,6 +136,67 @@ function UserBubble({ text }) {
       >
         {text}
       </Box>
+    </Box>
+  );
+}
+
+/* The model picker, shown mid-selection: it opens, the incoming model is
+   highlighted, then it closes and the thread hands over. */
+function PickerMenu({ target }) {
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 'calc(100% - 6px)',
+        left: { xs: 14, sm: 20 },
+        zIndex: 6,
+        minWidth: 232,
+        p: 0.75,
+        borderRadius: '14px',
+        backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border-normal)',
+        boxShadow: 'var(--shadow-popup)',
+        animation: 'olMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both',
+      }}
+    >
+      {MODEL_ORDER.map((code) => {
+        const picked = code === target;
+        return (
+          <Box
+            key={code}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.3,
+              px: 1.25,
+              py: 1.05,
+              borderRadius: '10px',
+              backgroundColor: picked ? 'rgba(255, 102, 0, 0.12)' : 'transparent',
+              transition: 'background-color 0.25s ease',
+            }}
+          >
+            <BrandTile code={code} size={22} />
+            <Typography
+              sx={{
+                flex: 1,
+                fontSize: '0.86rem',
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
+                color: picked ? ORANGE : 'var(--text-primary)',
+              }}
+            >
+              {MODELS[code].full}
+            </Typography>
+            {picked && (
+              <Box sx={{ display: 'flex', flexShrink: 0, color: ORANGE }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </Box>
+            )}
+          </Box>
+        );
+      })}
     </Box>
   );
 }
@@ -226,7 +289,7 @@ export function MemoryChatDemo() {
 
     const next = SCRIPT[shown];
     if (next) {
-      const wait = shown === 0 ? 500 : { user: 1150, switch: 750, reply: 1450 }[next.kind];
+      const wait = shown === 0 ? 500 : { user: 1150, switch: 1900, reply: 1450 }[next.kind];
       const t = setTimeout(() => setShown((n) => n + 1), wait);
       return () => clearTimeout(t);
     }
@@ -238,12 +301,17 @@ export function MemoryChatDemo() {
   const thread = SCRIPT.slice(0, shown);
   const pending = SCRIPT[shown];
   const fetching = pending && pending.kind === 'reply' ? pending : null;
+  // A pending switch is the moment the picker is open and being chosen from.
+  const picking = pending && pending.kind === 'switch' ? pending.model : null;
   const lastReply = [...thread].reverse().find((m) => m.kind === 'reply');
+  const lastSwitch = [...thread].reverse().find((m) => m.kind === 'switch');
 
   const usedNow = lastReply ? lastReply.uses : [];
   const savedNow = lastReply && lastReply.saves ? lastReply.saves : [];
   const readingNow = fetching ? fetching.uses : [];
-  const activeModel = fetching ? fetching.model : lastReply ? lastReply.model : SCRIPT[1].model;
+  // The header shows whichever model is in effect — it only changes once the
+  // pick has landed, so you watch the name change as the menu closes.
+  const activeModel = lastSwitch ? lastSwitch.model : SCRIPT[1].model;
 
   return (
     <Box
@@ -270,6 +338,7 @@ export function MemoryChatDemo() {
         {/* Header — the model updates itself as the thread hands over */}
         <Box
           sx={{
+            position: 'relative',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -279,7 +348,20 @@ export function MemoryChatDemo() {
             borderBottom: '1px solid var(--border-subtle)',
           }}
         >
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, minWidth: 0 }}>
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1.2,
+              minWidth: 0,
+              px: 1,
+              py: 0.6,
+              ml: -1,
+              borderRadius: '10px',
+              backgroundColor: picking ? 'var(--bg-glass)' : 'transparent',
+              transition: 'background-color 0.25s ease',
+            }}
+          >
             <BrandTile code={activeModel} size={26} />
             <Typography
               sx={{
@@ -287,12 +369,26 @@ export function MemoryChatDemo() {
                 fontWeight: 700,
                 color: 'var(--text-heading)',
                 whiteSpace: 'nowrap',
-                transition: 'color 0.3s ease',
               }}
             >
               {MODELS[activeModel].name}
             </Typography>
+            <Box
+              aria-hidden="true"
+              sx={{
+                display: 'flex',
+                color: 'var(--text-muted)',
+                transform: picking ? 'rotate(180deg)' : 'none',
+                transition: 'transform 0.25s ease',
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </Box>
           </Box>
+
+          {picking && <PickerMenu target={picking} />}
 
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
             <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE, boxShadow: `0 0 8px ${ORANGE}` }} />
@@ -323,6 +419,10 @@ export function MemoryChatDemo() {
             @keyframes olDot {
               0%, 100% { opacity: 0.25; transform: translateY(0); }
               50%      { opacity: 1; transform: translateY(-2px); }
+            }
+            @keyframes olMenuIn {
+              from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+              to   { opacity: 1; transform: translateY(0) scale(1); }
             }
             @keyframes olReading {
               0%, 100% { border-color: rgba(255, 102, 0, 0.3); }
