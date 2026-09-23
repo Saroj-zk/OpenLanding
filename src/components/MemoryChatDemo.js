@@ -24,7 +24,7 @@ const MEMORY = [
 
 /* The visitor names the model they want; the thread hands over and the new
    model answers from memory. Each request after the first carries no context
-   at all — every detail in the answers comes out of the four saved facts,
+   at all, so every detail in the answers comes out of the four saved facts,
    which is the only way to show what unified memory is actually for. */
 const SCRIPT = [
   {
@@ -37,7 +37,7 @@ const SCRIPT = [
     saves: ['veg', 'budget', 'quiet', 'trip'],
     uses: [],
     parts: [
-      { t: "Saved — 7 days in Japan this October, $2,000 all in, vegetarian, and away from the crowds. I'll plan around that, and so will any model you switch to." },
+      { t: "Got it. I've saved four things: Japan for 7 days in October, a $2,000 budget, vegetarian, and quieter places. Any model you switch to reads the same notes, so you won't have to say this twice." },
     ],
   },
 
@@ -48,28 +48,28 @@ const SCRIPT = [
     model: 'AN',
     uses: ['quiet', 'budget', 'veg'],
     parts: [
-      { t: "Higashiyama or northern Kyoto — both stay " },
+      { t: 'Higashiyama and northern Kyoto both stay ' },
       { t: 'quiet', chip: true },
-      { t: ' once the day-trippers leave. Small ryokan there run about ¥12,000 a night, which keeps the week ' },
+      { t: ' once the day visitors leave. Small ryokan there are around ¥12,000 a night, so the week still fits ' },
       { t: 'inside $2,000', chip: true },
-      { t: ', and each has ' },
+      { t: ', and both areas have ' },
       { t: 'vegetarian', chip: true },
-      { t: ' kaiseki within walking distance.' },
+      { t: ' places within walking distance.' },
     ],
   },
 
   { kind: 'switch', model: 'OA' },
-  { kind: 'user', text: 'Continue where I left off — what should I do on day two?' },
+  { kind: 'user', text: 'Continue where I left off. What should I do on day two?' },
   {
     kind: 'reply',
     model: 'OA',
     uses: ['quiet', 'trip'],
     parts: [
-      { t: 'Nanzen-ji at opening, then the Philosopher\u2019s Path north to Shisen-d\u014d — all walkable, and it keeps you clear of the Fushimi Inari crowds, which is the ' },
+      { t: 'Start at Nanzen-ji when it opens, then walk the Philosopher\u2019s Path north to Shisen-d\u014d. It is a ' },
       { t: 'quieter', chip: true },
-      { t: ' way round. Worth doing early in ' },
+      { t: ' route than Fushimi Inari, and all of it is on foot. Early ' },
       { t: 'October', chip: true },
-      { t: ', before the maple crowds arrive.' },
+      { t: ' is the best window, before the maple crowds arrive.' },
     ],
   },
 ];
@@ -309,7 +309,7 @@ export function MemoryChatDemo() {
   const usedNow = lastReply ? lastReply.uses : [];
   const savedNow = lastReply && lastReply.saves ? lastReply.saves : [];
   const readingNow = fetching ? fetching.uses : [];
-  // The header shows whichever model is in effect — it only changes once the
+  // The header shows whichever model is in effect. It only changes once the
   // pick has landed, so you watch the name change as the menu closes.
   const activeModel = lastSwitch ? lastSwitch.model : SCRIPT[1].model;
 
@@ -335,7 +335,7 @@ export function MemoryChatDemo() {
           boxShadow: 'var(--shadow-card)',
         }}
       >
-        {/* Header — the model updates itself as the thread hands over */}
+        {/* Header: the model updates itself as the thread hands over */}
         <Box
           sx={{
             position: 'relative',
@@ -409,7 +409,7 @@ export function MemoryChatDemo() {
 
         {/* Thread. A hidden copy of the finished conversation holds the height
             open, so the window is exactly as tall as the full thread at any
-            width — it never grows as messages land, and never scrolls. */}
+            width, so it never grows as messages land and never scrolls. */}
         <Box sx={{ position: 'relative', flex: 1 }}>
           <style>{`
             @keyframes olMsgIn {
@@ -450,7 +450,7 @@ export function MemoryChatDemo() {
           </Box>
         </Box>
 
-        {/* Composer — part of the window, not a control. Nothing here is typable. */}
+        {/* Composer: part of the window, not a control. Nothing here is typable. */}
         <Box
           aria-hidden="true"
           sx={{
@@ -571,8 +571,8 @@ export function MemoryChatDemo() {
         </Box>
 
         <Typography sx={{ mt: 2.5, fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-          Written once, from the first message. Every model after it reads the same four facts — nobody had to repeat
-          them.
+          Written once, from the first message. Every model after it reads the same four facts, so nobody had to
+          repeat them.
         </Typography>
 
         <Box
