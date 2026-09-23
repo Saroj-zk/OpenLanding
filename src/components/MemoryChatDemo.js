@@ -219,15 +219,44 @@ export function MemoryChatDemo() {
   const [extra, setExtra] = React.useState([]);
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [draft, setDraft] = React.useState('');
+  const [auto, setAuto] = React.useState(true);
+  const [inView, setInView] = React.useState(false);
   const askCount = React.useRef(0);
   const scrollRef = React.useRef(null);
+  const rootRef = React.useRef(null);
 
-  // Play the scripted thread out once.
+  // Only run while the demo is actually on screen. Without this the thread
+  // plays out during page load and has already finished by the time anyone
+  // scrolls down to it.
   React.useEffect(() => {
-    if (shown >= SCRIPT.length) return undefined;
-    const t = setTimeout(() => setShown((n) => n + 1), shown === 0 ? 400 : 1150);
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return undefined;
+    }
+    const el = rootRef.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.25 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Play the thread, then hold a beat and run it again, so the window is never
+  // sitting still when someone arrives at it.
+  React.useEffect(() => {
+    if (!auto || !inView) return undefined;
+
+    if (shown < SCRIPT.length) {
+      const t = setTimeout(() => setShown((n) => n + 1), shown === 0 ? 500 : 1200);
+      return () => clearTimeout(t);
+    }
+
+    const t = setTimeout(() => {
+      setExtra([]);
+      askCount.current = 0;
+      setShown(0);
+    }, 3400);
     return () => clearTimeout(t);
-  }, [shown]);
+  }, [shown, auto, inView]);
 
   const thread = React.useMemo(() => [...SCRIPT.slice(0, shown), ...extra], [shown, extra]);
 
@@ -244,6 +273,7 @@ export function MemoryChatDemo() {
   const handoff = (code) => {
     setMenuOpen(false);
     if (code === activeModel) return;
+    setAuto(false);
     setShown(SCRIPT.length);
     setExtra((e) => [...e, { kind: 'switch', model: code }, { kind: 'reply', model: code, ...HANDOFF[code] }]);
   };
@@ -255,6 +285,7 @@ export function MemoryChatDemo() {
     const canned = ASK_REPLIES[askCount.current % ASK_REPLIES.length];
     askCount.current += 1;
     setDraft('');
+    setAuto(false);
     setShown(SCRIPT.length);
     setExtra((x) => [...x, { kind: 'user', text }, { kind: 'reply', model: activeModel, ...canned }]);
   };
@@ -263,10 +294,12 @@ export function MemoryChatDemo() {
     setExtra([]);
     askCount.current = 0;
     setShown(0);
+    setAuto(true);
   };
 
   return (
     <Box
+      ref={rootRef}
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.05fr) minmax(0, 0.62fr)' },
@@ -643,7 +676,7 @@ export function MemoryChatDemo() {
             component="button"
             type="button"
             onClick={replay}
-            disabled={!done}
+            disabled={!done && auto}
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -651,8 +684,8 @@ export function MemoryChatDemo() {
               px: 2.25,
               py: 1,
               borderRadius: '9999px',
-              cursor: done ? 'pointer' : 'default',
-              opacity: done ? 1 : 0.45,
+              cursor: done || !auto ? 'pointer' : 'default',
+              opacity: done || !auto ? 1 : 0.45,
               fontSize: '0.85rem',
               fontWeight: 600,
               fontFamily: 'inherit',
@@ -660,7 +693,7 @@ export function MemoryChatDemo() {
               border: '1px solid var(--border-normal)',
               backgroundColor: 'var(--bg-card)',
               transition: 'all 0.2s ease',
-              '&:hover': done ? { borderColor: ORANGE, color: ORANGE } : {},
+              '&:hover': done || !auto ? { borderColor: ORANGE, color: ORANGE } : {},
             }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
