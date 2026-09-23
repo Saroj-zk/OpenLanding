@@ -931,10 +931,11 @@ function Pipeline() {
 
   // The wire sits at your level for 01 and 04 and drops to ours for 02 and 03,
   // so the trust boundary is carried by the geometry rather than a label alone.
-  const RAIL_H = 132;
+  const GAP = 40;    // column gutter, shared by the grid and the connectors
+  const RAIL_H = 156; // leaves 44px under the lowest marker
   const NODE = 44;
-  const HIGH = 30;
-  const LOW = 74;
+  const HIGH = 28;
+  const LOW = 68;
   const cy = (i) => (STEPS[i].zone === 'you' ? HIGH : LOW) + NODE / 2;
 
   return (
@@ -943,7 +944,7 @@ function Pipeline() {
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' },
-          gap: { xs: 3.5, md: 4 },
+          gap: { xs: 3.5, md: `${GAP}px` },
         }}
       >
         {STEPS.map((s, i) => {
@@ -995,7 +996,7 @@ function Pipeline() {
                     display: { xs: 'none', md: 'block' },
                     position: 'absolute',
                     top: 18,
-                    right: -16,
+                    right: -GAP / 2,
                     width: 0,
                     height: RAIL_H - 28,
                     borderLeft: '1px dashed var(--border-strong)',
@@ -1016,7 +1017,7 @@ function Pipeline() {
                     position: 'absolute',
                     top: 0,
                     left: NODE / 2,
-                    width: 'calc(100% + 32px)',
+                    width: `calc(100% + ${GAP}px)`,
                     height: `${RAIL_H}px`,
                     overflow: 'visible',
                     pointerEvents: 'none',
@@ -1119,7 +1120,7 @@ function Pipeline() {
                 />
               )}
 
-              <Box sx={{ pr: { md: 3 } }}>
+              <Box sx={{ pr: { md: 3.5 } }}>
                 <Typography
                   sx={{ fontSize: '1.02rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--text-heading)' }}
                 >
@@ -1134,6 +1135,7 @@ function Pipeline() {
                     color: isActive ? ORANGE : 'var(--text-muted)',
                     mt: 0.6,
                     mb: 1.6,
+                    minHeight: { md: 35, lg: 0 },
                     transition: 'color 0.35s ease',
                   }}
                 >
@@ -1148,8 +1150,9 @@ function Pipeline() {
                     lineHeight: 1.65,
                     color: 'var(--text-secondary)',
                     // Reserve the tallest paragraph's height so all four
-                    // columns end on the same baseline.
-                    minHeight: { md: 96 },
+                    // columns end on the same baseline. Narrower desktops wrap
+                    // to more lines, so the floor is taller there.
+                    minHeight: { md: 120, lg: 100 },
                   }}
                 >
                   {s.detail}
