@@ -160,29 +160,35 @@ export default function ModelsPage() {
   const [providerFilter, setProviderFilter] = React.useState(null);
   const [expanded, setExpanded] = React.useState(false);
 
-  const kindCounts = React.useMemo(() => {
-    const c = {};
-    MODELS.forEach((m) => { c[m.kind] = (c[m.kind] || 0) + 1; });
-    return c;
-  }, []);
-
   const providerCounts = React.useMemo(() => {
     const c = {};
     MODELS.forEach((m) => { c[m.code] = (c[m.code] || 0) + 1; });
     return c;
   }, []);
 
-  const filteredModels = React.useMemo(() => {
+  /* Everything except the modality filter. The tab counts read from this, so a
+     tab never promises more rows than picking it would actually show. */
+  const baseModels = React.useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return MODELS.filter((m) => {
-      if (selectedKind !== 'all' && m.kind !== selectedKind) return false;
       if (providerFilter && m.code !== providerFilter) return false;
       if (!q) return true;
       return [m.name, m.provider, m.bestFor, m.description, m.detail]
         .filter(Boolean)
         .some((v) => v.toLowerCase().includes(q));
     });
-  }, [selectedKind, searchQuery, providerFilter]);
+  }, [searchQuery, providerFilter]);
+
+  const kindCounts = React.useMemo(() => {
+    const c = {};
+    baseModels.forEach((m) => { c[m.kind] = (c[m.kind] || 0) + 1; });
+    return c;
+  }, [baseModels]);
+
+  const filteredModels = React.useMemo(
+    () => (selectedKind === 'all' ? baseModels : baseModels.filter((m) => m.kind === selectedKind)),
+    [baseModels, selectedKind]
+  );
 
   /* Any change to the filters starts the list from the top again. */
   React.useEffect(() => { setExpanded(false); }, [selectedKind, searchQuery, providerFilter]);
@@ -658,7 +664,7 @@ export default function ModelsPage() {
                 mb: providerFilter ? 2.5 : 0,
               }}
             >
-              {[{ id: 'all', label: 'All', count: MODELS.length }]
+              {[{ id: 'all', label: 'All', count: baseModels.length }]
                 .concat(KINDS.map((k) => ({ id: k.id, label: k.label, count: kindCounts[k.id] || 0 })))
                 .map((tab) => {
                   const on = selectedKind === tab.id;
