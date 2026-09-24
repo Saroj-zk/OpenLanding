@@ -214,13 +214,15 @@ export default function ModelsPage() {
         />
       </Head>
 
-      <PageHeader />
+      <PageHeader spacer={false} />
 
       {/* ── Section 1: Hero ─────────────────────────────────────── */}
       <Box
         sx={{
           position: 'relative',
-          pt: { xs: 14, sm: 16, md: 19 },
+          /* 112/128/152px of hero padding plus the 78/92px the header spacer
+             used to contribute, so the copy sits where it did before. */
+          pt: { xs: '190px', sm: '206px', md: '244px' },
           pb: { xs: 13, md: 17 },
           backgroundImage: 'url(/images/hero_BG.png)',
           backgroundPosition: 'bottom center',
@@ -268,9 +270,9 @@ export default function ModelsPage() {
                 component="h1"
                 sx={{
                   fontFamily: '"Inter", -apple-system, sans-serif',
-                  fontSize: { xs: '2.8rem', sm: '3.8rem', md: '4.8rem' },
+                  fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.3rem' },
                   fontWeight: 700,
-                  lineHeight: 1.05,
+                  lineHeight: 1.07,
                   letterSpacing: '-0.035em',
                   color: HERO_INK,
                   mb: 3,
@@ -285,8 +287,8 @@ export default function ModelsPage() {
               <Typography
                 sx={{
                   mx: 'auto',
-                  maxWidth: '58ch',
-                  fontSize: { xs: '1.05rem', md: '1.2rem' },
+                  maxWidth: '54ch',
+                  fontSize: { xs: '1.05rem', md: '1.15rem' },
                   lineHeight: 1.65,
                   color: HERO_INK_2,
                   mb: 4.5,
