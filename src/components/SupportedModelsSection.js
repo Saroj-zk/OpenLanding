@@ -507,7 +507,7 @@ export default function SupportedModelsSection() {
               mb: 1.8,
             }}
           >
-            Every model you<br />already pay for.
+            Every model you need.<br />All in <span>One</span> place.
           </Typography>
 
           {/* Subtitle */}
@@ -519,7 +519,7 @@ export default function SupportedModelsSection() {
               maxWidth: 540,
             }}
           >
-            Reason with one model, draft with another, and hand the routine work to the cheapest.
+            Reason with one. Code with another. Create with a third. Choose from 100+ models and use the right one for whatever you're working on.
           </Typography>
         </Box>
 
@@ -614,8 +614,8 @@ export default function SupportedModelsSection() {
                       : (isDark ? 'rgba(20, 24, 30, 0.45)' : 'rgba(255, 255, 255, 0.45)'),
                     background: isSelected
                       ? (isDark
-                          ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)')
+                        ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%)'
+                        : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)')
                       : (isDark ? 'rgba(20, 24, 30, 0.45)' : 'rgba(255, 255, 255, 0.45)'),
                     color: isSelected
                       ? '#ff6600'
@@ -625,11 +625,11 @@ export default function SupportedModelsSection() {
                       : (isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.72)'),
                     boxShadow: isSelected
                       ? (isDark
-                          ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -0.5px 1px rgba(0, 0, 0, 0.2)'
-                          : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)')
+                        ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -0.5px 1px rgba(0, 0, 0, 0.2)'
+                        : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)')
                       : (isDark
-                          ? '0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)'
-                          : '0 2px 6px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8)'),
+                        ? '0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.08)'
+                        : '0 2px 6px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8)'),
                     transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
                     '&:hover': {
                       color: '#ff6600',
@@ -637,8 +637,8 @@ export default function SupportedModelsSection() {
                       background: isSelected
                         ? undefined
                         : (isDark
-                            ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)'
-                            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.8) 100%)'),
+                          ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)'
+                          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.8) 100%)'),
                       backdropFilter: 'blur(16px) saturate(200%)',
                       WebkitBackdropFilter: 'blur(16px) saturate(200%)',
                       boxShadow: isDark

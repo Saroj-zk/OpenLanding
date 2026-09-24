@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useThemeMode } from '@/context/ThemeContext';
 
 const NAV_LINKS = [
+  { label: 'Home', href: '/' },
   { label: 'Models', href: '/models' },
   { label: 'Memory', href: '/memory' },
   { label: 'Capabilities', href: '/capabilities' },
@@ -128,13 +129,14 @@ export default function PageHeader() {
               return (
                 <Link key={link.href} href={link.href} passHref style={{ textDecoration: 'none' }}>
                   <Box
-                    component="span"
+                    component="a"
                     sx={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 0.6,
                       fontSize: '0.94rem',
                       fontWeight: 600,
+                      cursor: 'pointer',
                       color: isActive
                         ? '#FF6600'
                         : isDark ? 'rgba(255,255,255,0.75)' : '#475569',
@@ -165,22 +167,6 @@ export default function PageHeader() {
                 </Link>
               );
             })}
-            {/* Back to home */}
-            <Link href="/" passHref style={{ textDecoration: 'none' }}>
-              <Box
-                component="span"
-                sx={{
-                  fontSize: '0.94rem',
-                  fontWeight: 600,
-                  color: isDark ? 'rgba(255,255,255,0.55)' : '#94a3b8',
-                  fontFamily: '"Inter", -apple-system, sans-serif',
-                  transition: 'color 0.2s ease',
-                  '&:hover': { color: isDark ? '#FFFFFF' : '#0F172A' },
-                }}
-              >
-                ← Home
-              </Box>
-            </Link>
           </Box>
 
           {/* Right — Actions */}

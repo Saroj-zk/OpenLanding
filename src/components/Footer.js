@@ -75,7 +75,7 @@ const SOCIAL_PLATFORMS = [
   { name: 'Bluesky', icon: SocialIcons.Bluesky, href: 'https://bsky.app/profile/openledger.xyz' },
 ];
 
-export default function Footer() {
+export default function Footer({ showCta = false }) {
   const { isDark } = useThemeMode();
   const [email, setEmail] = React.useState('');
   const [subscribed, setSubscribed] = React.useState(false);
@@ -105,203 +105,205 @@ export default function Footer() {
     >
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 } }}>
         {/* ==============================================================
-            1. TOP CTA BANNER CARD (Mirrors the lighting glow in Image 1)
+            1. TOP CTA BANNER CARD — homepage only, opt in with <Footer showCta />
            ============================================================== */}
-        <Box
-          sx={{
-            position: 'relative',
-            borderRadius: { xs: '22px', sm: '28px', md: '34px' },
-            overflow: 'hidden',
-            px: { xs: 3, sm: 6, md: 8 },
-            py: { xs: 8, sm: 10, md: 12 },
-            textAlign: 'center',
-            mb: { xs: 8, sm: 10, md: 12 },
-            // Ambient deep warm orange and amber light streaks matching OpenLedger brand
-            backgroundColor: '#120802',
-            backgroundImage: `
-              radial-gradient(ellipse 85% 65% at 50% 30%, rgba(255, 102, 0, 0.46) 0%, rgba(204, 75, 0, 0.22) 50%, rgba(18, 8, 2, 0.96) 85%),
-              linear-gradient(180deg, rgba(65, 25, 4, 0.42) 0%, rgba(10, 4, 1, 0.98) 100%)
-            `,
-            boxShadow: isDark
-              ? '0 24px 64px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 102, 0, 0.22), 0 0 40px rgba(255, 102, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
-              : '0 24px 64px -12px rgba(255, 102, 0, 0.25), 0 0 0 1px rgba(255, 102, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
-          }}
-        >
-          {/* Subtle directional warm orange rays effect */}
+        {showCta && (
           <Box
             sx={{
-              position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
+              position: 'relative',
+              borderRadius: { xs: '22px', sm: '28px', md: '34px' },
+              overflow: 'hidden',
+              px: { xs: 3, sm: 6, md: 8 },
+              py: { xs: 8, sm: 10, md: 12 },
+              textAlign: 'center',
+              mb: { xs: 8, sm: 10, md: 12 },
+              // Ambient deep warm orange and amber light streaks matching OpenLedger brand
+              backgroundColor: '#120802',
               backgroundImage: `
-                radial-gradient(circle at 50% 20%, rgba(255, 145, 50, 0.42) 0%, transparent 48%),
-                conic-gradient(from 225deg at 50% 30%, transparent 0deg, rgba(255, 120, 20, 0.18) 40deg, transparent 80deg, rgba(255, 165, 50, 0.22) 130deg, transparent 180deg)
+                radial-gradient(ellipse 85% 65% at 50% 30%, rgba(255, 102, 0, 0.46) 0%, rgba(204, 75, 0, 0.22) 50%, rgba(18, 8, 2, 0.96) 85%),
+                linear-gradient(180deg, rgba(65, 25, 4, 0.42) 0%, rgba(10, 4, 1, 0.98) 100%)
               `,
-              opacity: 0.9,
-              mixBlendMode: 'screen',
+              boxShadow: isDark
+                ? '0 24px 64px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 102, 0, 0.22), 0 0 40px rgba(255, 102, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
+                : '0 24px 64px -12px rgba(255, 102, 0, 0.25), 0 0 0 1px rgba(255, 102, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
             }}
-          />
-
-          {/* Vignette border shine */}
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
-              background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(12, 5, 2, 0.85) 100%)',
-            }}
-          />
-
-          {/* Content inside Banner */}
-          <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '820px', mx: 'auto' }}>
-            {/* Start Pill Badge */}
+          >
+            {/* Subtle directional warm orange rays effect */}
             <Box
               sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 1,
-                px: 2.2,
-                py: 0.6,
-                mb: 3,
-                borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 102, 0, 0.12)',
-                border: '1px solid rgba(255, 102, 0, 0.35)',
-                backdropFilter: 'blur(10px)',
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                backgroundImage: `
+                  radial-gradient(circle at 50% 20%, rgba(255, 145, 50, 0.42) 0%, transparent 48%),
+                  conic-gradient(from 225deg at 50% 30%, transparent 0deg, rgba(255, 120, 20, 0.18) 40deg, transparent 80deg, rgba(255, 165, 50, 0.22) 130deg, transparent 180deg)
+                `,
+                opacity: 0.9,
+                mixBlendMode: 'screen',
               }}
-            >
+            />
+
+            {/* Vignette border shine */}
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(12, 5, 2, 0.85) 100%)',
+              }}
+            />
+
+            {/* Content inside Banner */}
+            <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '820px', mx: 'auto' }}>
+              {/* Start Pill Badge */}
               <Box
                 sx={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: '50%',
-                  backgroundColor: '#FF6600',
-                  boxShadow: '0 0 10px #FF6600',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 2.2,
+                  py: 0.6,
+                  mb: 3,
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(255, 102, 0, 0.12)',
+                  border: '1px solid rgba(255, 102, 0, 0.35)',
+                  backdropFilter: 'blur(10px)',
                 }}
-              />
+              >
+                <Box
+                  sx={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: '50%',
+                    backgroundColor: '#FF6600',
+                    boxShadow: '0 0 10px #FF6600',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                    color: '#FFFFFF',
+                  }}
+                >
+                  Start
+                </Typography>
+              </Box>
+
+              {/* Headline */}
+              <Typography
+                component="h2"
+                sx={{
+                  fontSize: { xs: '2rem', sm: '2.8rem', md: '3.6rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.12,
+                  letterSpacing: '-0.03em',
+                  color: '#FFFFFF',
+                  mb: 1.5,
+                  textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                Models change every few weeks.
+              </Typography>
+
+              {/* Sub-headline italic serif */}
               <Typography
                 sx={{
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                  color: '#FFFFFF',
+                  fontSize: { xs: '1.4rem', sm: '1.9rem', md: '2.4rem' },
+                  fontFamily: 'serif',
+                  fontStyle: 'italic',
+                  color: 'rgba(255, 225, 200, 0.9)',
+                  mb: { xs: 4, sm: 5 },
+                  fontWeight: 400,
                 }}
               >
-                Start
+                Your interface shouldn’t.
+              </Typography>
+
+              {/* CTA Buttons */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 2,
+                }}
+              >
+                {/* Primary White Pill Button with warm orange glow */}
+                <Button
+                  variant="contained"
+                  onClick={() => window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer')}
+                  endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: '1.1rem !important' }} />}
+                  sx={{
+                    backgroundColor: '#FFFFFF',
+                    color: '#120802',
+                    fontSize: { xs: '0.95rem', sm: '1.05rem' },
+                    fontWeight: 700,
+                    py: 1.5,
+                    px: { xs: 4, sm: 5 },
+                    borderRadius: '9999px',
+                    textTransform: 'none',
+                    letterSpacing: '0.01em',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 102, 0, 0.42)',
+                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                    '&:hover': {
+                      backgroundColor: '#FFF7F2',
+                      transform: 'translateY(-2px) scale(1.02)',
+                      boxShadow: '0 12px 35px rgba(0, 0, 0, 0.5), 0 0 32px rgba(255, 102, 0, 0.65)',
+                    },
+                    '&:active': {
+                      transform: 'scale(0.97)',
+                    },
+                  }}
+                >
+                  Start a chat
+                </Button>
+
+                {/* Secondary API Key Button */}
+                <Button
+                  variant="outlined"
+                  href="#api"
+                  sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(10px)',
+                    color: '#FFFFFF',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    fontSize: { xs: '0.95rem', sm: '1.05rem' },
+                    fontWeight: 600,
+                    py: 1.45,
+                    px: { xs: 3.5, sm: 4.5 },
+                    borderRadius: '9999px',
+                    textTransform: 'none',
+                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 102, 0, 0.14)',
+                      borderColor: 'rgba(255, 102, 0, 0.55)',
+                      color: '#FF6600',
+                      transform: 'translateY(-2px)',
+                    },
+                  }}
+                >
+                  Get an API key
+                </Button>
+              </Box>
+
+              {/* Sub-text note */}
+              <Typography
+                sx={{
+                  fontSize: '0.85rem',
+                  color: 'rgba(255, 255, 255, 0.65)',
+                  mt: 3,
+                  letterSpacing: '0.02em',
+                }}
+              >
+                Free to start · No card · Nothing retained
               </Typography>
             </Box>
-
-            {/* Headline */}
-            <Typography
-              component="h2"
-              sx={{
-                fontSize: { xs: '2rem', sm: '2.8rem', md: '3.6rem' },
-                fontWeight: 700,
-                lineHeight: 1.12,
-                letterSpacing: '-0.03em',
-                color: '#FFFFFF',
-                mb: 1.5,
-                textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)',
-              }}
-            >
-              Models change every few weeks.
-            </Typography>
-
-            {/* Sub-headline italic serif */}
-            <Typography
-              sx={{
-                fontSize: { xs: '1.4rem', sm: '1.9rem', md: '2.4rem' },
-                fontFamily: 'serif',
-                fontStyle: 'italic',
-                color: 'rgba(255, 225, 200, 0.9)',
-                mb: { xs: 4, sm: 5 },
-                fontWeight: 400,
-              }}
-            >
-              Your interface shouldn’t.
-            </Typography>
-
-            {/* CTA Buttons */}
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 2,
-              }}
-            >
-              {/* Primary White Pill Button with warm orange glow */}
-              <Button
-                variant="contained"
-                onClick={() => window.open('https://ais.openledger.xyz/chat', '_blank', 'noopener,noreferrer')}
-                endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: '1.1rem !important' }} />}
-                sx={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#120802',
-                  fontSize: { xs: '0.95rem', sm: '1.05rem' },
-                  fontWeight: 700,
-                  py: 1.5,
-                  px: { xs: 4, sm: 5 },
-                  borderRadius: '9999px',
-                  textTransform: 'none',
-                  letterSpacing: '0.01em',
-                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 102, 0, 0.42)',
-                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                  '&:hover': {
-                    backgroundColor: '#FFF7F2',
-                    transform: 'translateY(-2px) scale(1.02)',
-                    boxShadow: '0 12px 35px rgba(0, 0, 0, 0.5), 0 0 32px rgba(255, 102, 0, 0.65)',
-                  },
-                  '&:active': {
-                    transform: 'scale(0.97)',
-                  },
-                }}
-              >
-                Start a chat
-              </Button>
-
-              {/* Secondary API Key Button */}
-              <Button
-                variant="outlined"
-                href="#api"
-                sx={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  backdropFilter: 'blur(10px)',
-                  color: '#FFFFFF',
-                  border: '1px solid rgba(255, 255, 255, 0.25)',
-                  fontSize: { xs: '0.95rem', sm: '1.05rem' },
-                  fontWeight: 600,
-                  py: 1.45,
-                  px: { xs: 3.5, sm: 4.5 },
-                  borderRadius: '9999px',
-                  textTransform: 'none',
-                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 102, 0, 0.14)',
-                    borderColor: 'rgba(255, 102, 0, 0.55)',
-                    color: '#FF6600',
-                    transform: 'translateY(-2px)',
-                  },
-                }}
-              >
-                Get an API key
-              </Button>
-            </Box>
-
-            {/* Sub-text note */}
-            <Typography
-              sx={{
-                fontSize: '0.85rem',
-                color: 'rgba(255, 255, 255, 0.65)',
-                mt: 3,
-                letterSpacing: '0.02em',
-              }}
-            >
-              Free to start · No card · Nothing retained
-            </Typography>
           </Box>
-        </Box>
+        )}
 
         {/* ==============================================================
             2. FOUR-COLUMN DIRECTORY SECTION (Layout matches Image 1)

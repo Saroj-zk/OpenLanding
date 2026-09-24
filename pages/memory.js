@@ -41,29 +41,86 @@ const MODEL_NAMES = {
   DS: 'DeepSeek',
 };
 
+const getPrimaryCtaSx = (isDark) => ({
+  position: 'relative',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  px: 4.5,
+  py: 1.7,
+  fontSize: { xs: '1rem', md: '1.05rem' },
+  fontWeight: 600,
+  borderRadius: '9999px',
+  color: '#ff6600',
+  fontFamily: '"Inter", -apple-system, sans-serif',
+  textDecoration: 'none',
+  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+  cursor: 'pointer',
+
+  // Liquid Glass Pill Base (from active tab in CoreFeaturesSection)
+  backgroundColor: isDark ? 'rgba(255, 102, 0, 0.12)' : 'rgba(255, 255, 255, 0.88)',
+  background: isDark
+      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%)'
+      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)',
+  backdropFilter: 'blur(16px)',
+  border: isDark
+    ? '1px solid rgba(255, 102, 0, 0.28)'
+    : '1px solid rgba(255, 102, 0, 0.2)',
+  boxShadow: isDark
+      ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.3), inset 0 -0.5px 1px rgba(0, 0, 0, 0.3)'
+      : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)',
+
+  // Specular rim highlight (simulated using ::before)
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '12%',
+    right: '12%',
+    height: '2px',
+    background: isDark
+      ? 'linear-gradient(90deg, transparent, rgba(255, 102, 0, 0.6), transparent)'
+      : 'linear-gradient(90deg, transparent, rgba(255, 102, 0, 0.45), transparent)',
+    borderRadius: '9999px',
+    opacity: isDark ? 0.8 : 0.6,
+    pointerEvents: 'none',
+  },
+
+  '&:hover': {
+    backgroundColor: isDark ? 'rgba(255, 102, 0, 0.18)' : 'rgba(255, 255, 255, 1)',
+    transform: 'translateY(-1px)',
+    boxShadow: isDark
+      ? '0 6px 18px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.35), inset 0 -0.5px 1px rgba(0, 0, 0, 0.3)'
+      : '0 6px 16px rgba(15, 23, 42, 0.08), inset 0 2px 3px rgba(255, 255, 255, 1), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)',
+  },
+  '&:active': {
+    transform: 'scale(0.97)',
+  },
+});
+
 const REMEMBERS = [
   {
     glyph: 'sliders',
     term: 'Preferences',
-    detail: 'How you like things written, explained, recommended, or structured.',
+    detail: 'How you like things done, from tone and formatting to the way you work.',
     entries: ['Vegetarian', 'Concise answers', 'Avoid crowded places'],
   },
   {
     glyph: 'layers',
     term: 'Ongoing Context',
-    detail: 'The projects, plans, research, and tasks you’re currently working on.',
+    detail: 'The projects, plans, and work you’re already in the middle of.',
     entries: ['Japan trip', 'October', '7 days'],
   },
   {
     glyph: 'note',
     term: 'Important Details',
-    detail: 'Information that helps future responses understand what you’re trying to do.',
+    detail: 'The details that matter, so you don’t have to repeat them.',
     entries: ['Budget: $2,000', 'Travelling solo'],
   },
   {
     glyph: 'check',
     term: 'Decisions',
-    detail: 'Choices you’ve already made, so AI doesn’t keep taking you back to the beginning.',
+    detail: 'The decisions you’ve already made, so you don’t have to make them twice.',
     entries: ['Kyoto added', 'Hotel selected'],
   },
 ];
@@ -73,25 +130,25 @@ const MECHANICS = [
     step: '01',
     term: 'Remember',
     line: 'Context worth keeping.',
-    detail: 'Useful preferences, decisions, and ongoing context are identified from your conversations.',
+    detail: 'OpenLedger remembers useful preferences, projects, decisions, and details.',
   },
   {
     step: '02',
     term: 'Unify',
-    line: 'One memory, independent of the model.',
-    detail: 'Your context lives in a shared memory layer instead of being locked inside individual AI models.',
+    line: 'One memory across models.',
+    detail: 'Your context isn’t stuck in one model or one conversation.',
   },
   {
     step: '03',
     term: 'Retrieve',
-    line: 'Only what’s relevant.',
-    detail: 'When you ask something new, relevant context is retrieved instead of passing your entire conversation history to the model.',
+    line: 'The right context, when you need it.',
+    detail: 'OpenLedger brings back what matters for the conversation you’re having now.',
   },
   {
     step: '04',
     term: 'Control',
     line: 'You decide what stays.',
-    detail: 'Review, update, or remove memories and control what context is available to AI.',
+    detail: 'Keep control over what your AI remembers and what it can use.',
   },
 ];
 
@@ -373,9 +430,9 @@ function MemoryStack() {
         </Box>
 
         <Typography component="div" sx={{ mt: 4.5, textAlign: 'center', fontSize: '0.92rem', color: 'var(--text-secondary)' }}>
-          The model gets the context it needs.{' '}
+          Models come and go.{' '}
           <Box component="span" sx={{ fontWeight: 700, color: '#FF6600' }}>
-            Your memory stays yours.
+            Your memory stays with you.
           </Box>
         </Typography>
       </Box>
@@ -442,7 +499,7 @@ export default function MemoryPage() {
           >
             {/* Left Copy */}
             <Reveal>
-              <Eyebrow>Universal Context Layer</Eyebrow>
+              <Eyebrow>UNIFIED MEMORY</Eyebrow>
               <Typography
                 component="h1"
                 sx={{
@@ -456,7 +513,7 @@ export default function MemoryPage() {
               >
                 Say it once.{' '}
                 <Box component="span" sx={{ color: '#FF6600' }}>
-                  Every model knows.
+                  Pick up anywhere.
                 </Box>
               </Typography>
 
@@ -469,7 +526,7 @@ export default function MemoryPage() {
                   mb: 4,
                 }}
               >
-                Your preferences, active projects, technical constraints, and decisions live in one private memory layer, independent of the model. Switch from Claude to DeepSeek to GPT-4o without repeating yourself.
+                Your preferences, projects, and context stay with you, even when you switch models.
               </Typography>
 
               <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2.5, mb: 5 }}>
@@ -504,7 +561,7 @@ export default function MemoryPage() {
                     '&:active': { transform: 'scale(0.98)' },
                   }}
                 >
-                  Try Interactive Demo ↓
+                  Try Memory ↓
                 </Box>
 
                 <Box
@@ -534,79 +591,209 @@ export default function MemoryPage() {
                     },
                   }}
                 >
-                  Start Live Chat →
+                  Start a Chat →
                 </Box>
               </Box>
 
               <SpecLine
-                items={['Zero-Retention Backing', 'Cross-Model Persistence', 'User Wiped Anytime']}
+                items={['PRIVATE BY DEFAULT', 'CROSS-MODEL MEMORY', 'YOUR MEMORY, YOURS']}
                 sx={{ pt: 3, borderTop: '1px solid var(--border-subtle)' }}
               />
             </Reveal>
 
-            {/* Right Visual Image Card Showcase */}
+            {/* Right: the memory layer itself. One store, read by every model,
+                which is the claim the headline makes. */}
             <Reveal delay={120}>
               <Box
                 sx={{
                   position: 'relative',
-                  borderRadius: { xs: 4, md: 5 },
                   overflow: 'hidden',
-                  border: '1px solid var(--border-normal)',
+                  borderRadius: { xs: '16px', md: '20px' },
+                  p: { xs: 2.5, sm: 3.5 },
+                  backgroundColor: isDark ? 'rgba(18, 21, 28, 0.55)' : 'rgba(255, 255, 255, 0.52)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.7)',
                   boxShadow: isDark
-                    ? '0 25px 60px -15px rgba(0,0,0,0.8), 0 0 35px rgba(255,102,0,0.15)'
-                    : '0 20px 45px -12px rgba(15,23,42,0.12)',
-                  backgroundColor: 'var(--bg-card)',
+                    ? '0 22px 55px -24px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.13)'
+                    : '0 22px 55px -26px rgba(15, 23, 42, 0.22), inset 0 1.5px 0 rgba(255, 255, 255, 0.95)',
+                  // Specular sheen across the top edge, the way light sits on glass
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    pointerEvents: 'none',
+                    background: isDark
+                      ? 'linear-gradient(158deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 42%)'
+                      : 'linear-gradient(158deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 46%)',
+                  },
                 }}
               >
                 <Box
-                  component="img"
-                  src="/images/Portable memory.jpg"
-                  alt="OpenLedger Portable Context and Unified Memory"
                   sx={{
-                    width: '100%',
-                    height: { xs: 280, sm: 340, md: 380 },
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-
-                {/* Floating telemetry HUD over image */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    right: 16,
+                    position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    p: 1.2,
-                    borderRadius: '9999px',
-                    backgroundColor: isDark ? 'rgba(10,12,16,0.85)' : 'rgba(255,255,255,0.9)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid var(--border-normal)',
+                    gap: 2,
+                    mb: 2.5,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 1 }}>
-                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 8px #FF6600' }} />
-                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-                      PORTABLE MEMORY VAULT
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 8px #FF6600' }} />
+                    <Typography
+                      sx={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.09em',
+                        textTransform: 'uppercase',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Unified memory
                     </Typography>
                   </Box>
-                  <Box
+                  <Typography
                     sx={{
-                      px: 1.5,
+                      px: 1.4,
                       py: 0.4,
                       borderRadius: '9999px',
-                      backgroundColor: 'rgba(255,102,0,0.15)',
-                      color: '#FF6600',
-                      fontSize: '0.72rem',
+                      fontSize: '0.68rem',
                       fontWeight: 700,
+                      whiteSpace: 'nowrap',
+                      color: '#FF6600',
+                      backgroundColor: 'rgba(255,102,0,0.1)',
+                      border: '1px solid rgba(255,102,0,0.3)',
                     }}
                   >
-                    Encrypted on Device
-                  </Box>
+                    Encrypted on device
+                  </Typography>
                 </Box>
+
+                {/* The store, showing the four kinds of thing the copy names */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    borderTop: '1px solid var(--border-subtle)',
+                    borderBottom: '1px solid var(--border-subtle)',
+                  }}
+                >
+                  {[
+                    ['Preference', 'Concise answers'],
+                    ['Active project', 'Payments API rewrite'],
+                    ['Constraint', 'Postgres, not Mongo'],
+                    ['Decision', 'Stripe over Adyen'],
+                  ].map(([label, value], i) => (
+                    <Box
+                      key={label}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.3,
+                        py: 1.35,
+                        borderTop: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', flexShrink: 0, color: '#FF6600' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </Box>
+                      <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-heading)', whiteSpace: 'nowrap' }}>
+                        {label}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: '0.82rem',
+                          color: 'var(--text-secondary)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* One store fanning out to every model */}
+                <Box aria-hidden="true" sx={{ position: 'relative', height: 44 }}>
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: 0,
+                      width: '2px',
+                      height: 21,
+                      ml: '-1px',
+                      backgroundColor: 'rgba(255,102,0,0.45)',
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: '12.5%',
+                      right: '12.5%',
+                      top: 21,
+                      height: '2px',
+                      backgroundColor: 'rgba(255,102,0,0.45)',
+                    }}
+                  />
+                  {['12.5%', '37.5%', '62.5%', '87.5%'].map((x) => (
+                    <Box
+                      key={x}
+                      sx={{
+                        position: 'absolute',
+                        left: x,
+                        top: 21,
+                        width: '2px',
+                        height: 23,
+                        ml: '-1px',
+                        backgroundColor: 'rgba(255,102,0,0.45)',
+                      }}
+                    />
+                  ))}
+                </Box>
+
+                <Box
+                  sx={{
+                    position: 'relative',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gap: 1,
+                  }}
+                >
+                  {[
+                    ['AN', 'Claude'],
+                    ['OA', 'GPT-4o'],
+                    ['GG', 'Gemini'],
+                    ['DS', 'DeepSeek'],
+                  ].map(([code, name]) => (
+                    <Box key={code} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                      <BrandTile code={code} size={34} />
+                      <Typography
+                        sx={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textAlign: 'center' }}
+                      >
+                        {name}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                <Typography
+                  sx={{
+                    position: 'relative',
+                    mt: 3,
+                    pt: 2.5,
+                    borderTop: '1px solid var(--border-subtle)',
+                    fontSize: '0.82rem',
+                    color: 'var(--text-secondary)',
+                    textAlign: 'center',
+                  }}
+                >
+                  Written once. Read by every model you switch to.
+                </Typography>
               </Box>
             </Reveal>
           </Box>
@@ -617,30 +804,40 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Eyebrow>Same context. Different model.</Eyebrow>
-              <Typography
-                component="h2"
-                sx={{
-                  maxWidth: '22ch',
-                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-heading)',
-                  mb: 4,
-                }}
-              >
-                Switch models without repeating yourself.
-              </Typography>
+              <Box sx={{ textAlign: 'center', maxWidth: '36rem', mx: 'auto', mb: { xs: 5, md: 6.5 } }}>
+                <Eyebrow>SAME CONTEXT. DIFFERENT MODEL.</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.28,
+                    letterSpacing: '-0.02em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  Switch models.<br />Keep the context.
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '1.05rem',
+                    lineHeight: 1.6,
+                    color: 'var(--text-secondary)',
+                    mt: 3,
+                  }}
+                >
+                  Tell one model. Pick up with another. OpenLedger brings the right context with you, so you don’t have to explain everything again.
+                </Typography>
+              </Box>
             </Reveal>
 
-            <Reveal delay={80} sx={{ mt: 2 }}>
+            <Reveal delay={80}>
               <MemoryChatDemo />
             </Reveal>
 
             <Reveal delay={140} sx={{ mt: 3.5, textAlign: 'center' }}>
               <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: '#FF6600' }}>
-                You only said it once. Every model had the context.
+                New model. Same context.
               </Typography>
             </Reveal>
           </Box>
@@ -651,32 +848,43 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Eyebrow>More than chat history</Eyebrow>
-              <Typography
-                component="h2"
+              <Box
                 sx={{
-                  maxWidth: '20ch',
-                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-heading)',
-                  mb: 2,
-                }}
-              >
-                It remembers what matters.
-              </Typography>
-              <Typography
-                sx={{
-                  maxWidth: '58ch',
-                  fontSize: '1.05rem',
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 0.9fr)' },
+                  gap: { xs: 2.5, md: 6 },
+                  alignItems: 'end',
                   mb: 6,
                 }}
               >
-                Unified Memory builds a private understanding of the context you choose to carry across conversations and models.
-              </Typography>
+                <Box>
+                  <Eyebrow>MORE THAN CHAT HISTORY</Eyebrow>
+                  <Typography
+                    component="h2"
+                    sx={{
+                      maxWidth: '16ch',
+                      fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                      fontWeight: 700,
+                      lineHeight: 1.28,
+                      letterSpacing: '-0.02em',
+                      color: 'var(--text-heading)',
+                    }}
+                  >
+                    It remembers what matters.
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{
+                    maxWidth: '46ch',
+                    fontSize: '1.05rem',
+                    lineHeight: 1.6,
+                    color: 'var(--text-secondary)',
+                    pb: { md: 0.75 },
+                  }}
+                >
+                  OpenLedger remembers the context that’s useful beyond a single conversation, so you don’t have to keep repeating yourself.
+                </Typography>
+              </Box>
             </Reveal>
 
             <Grid container spacing={2.5}>
@@ -760,38 +968,189 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: Architecture & Mechanics ───────────────── */}
+        {/* ── Section 4: What makes it different ─────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Eyebrow>How Unified Memory works</Eyebrow>
-              <Typography
-                component="h2"
+              <Box sx={{ textAlign: 'center', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Eyebrow>WHY UNIFIED MEMORY</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    maxWidth: '36ch',
+                    mx: 'auto',
+                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.28,
+                    letterSpacing: '-0.02em',
+                    color: 'var(--text-heading)',
+                    mb: 2,
+                  }}
+                >
+                  Most AI memory{' '}
+                  <Box component="span" sx={{ color: '#FF6600' }}>
+                    stops at the app.
+                  </Box>
+                </Typography>
+                <Typography
+                  sx={{
+                    maxWidth: '54ch',
+                    mx: 'auto',
+                    fontSize: '1.15rem',
+                    lineHeight: 1.55,
+                    color: 'var(--text-secondary)',
+                    mb: 6,
+                  }}
+                >
+                  Switch apps or models, and suddenly you’re explaining yourself all over again.
+                </Typography>
+              </Box>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <Box
                 sx={{
-                  maxWidth: '24ch',
-                  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-heading)',
-                  mb: 2,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  borderRadius: { xs: '14px', md: '16px' },
+                  overflow: 'hidden',
+                  border: '1px solid var(--border-normal)',
                 }}
               >
-                Your memory stays with you, not the model.
-              </Typography>
-              <Typography
-                sx={{
-                  maxWidth: '62ch',
-                  fontSize: '1.05rem',
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                  mb: 6,
-                }}
-              >
-                Your context lives in one private memory layer, independent of any AI model. When you switch models,
-                only the relevant context is made available so the conversation can continue without starting over.
-              </Typography>
+                {[
+                  {
+                    label: 'WITHOUT UNIFIED MEMORY',
+                    ours: false,
+                    points: [
+                      'Every model starts from scratch.',
+                      'Your context stays scattered.',
+                      'You repeat the same details.',
+                      'Switching models means starting over.',
+                    ],
+                  },
+                  {
+                    label: 'WITH UNIFIED MEMORY',
+                    ours: true,
+                    points: [
+                      'Pick up where you left off.',
+                      'Context follows the conversation.',
+                      'Important details stay available.',
+                      'Switch models without starting over.',
+                    ],
+                  },
+                ].map((col) => (
+                  <Box
+                    key={col.label}
+                    sx={{
+                      p: { xs: 2.5, sm: 3.5 },
+                      backgroundColor: col.ours ? 'rgba(255, 102, 0, 0.05)' : 'transparent',
+                      borderLeft: { md: col.ours ? '1px solid var(--border-normal)' : 'none' },
+                      borderTop: { xs: col.ours ? '1px solid var(--border-normal)' : 'none', md: 'none' },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: col.ours ? '#FF6600' : 'var(--text-muted)',
+                        pb: 2.5,
+                        borderBottom: '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      {col.label}
+                    </Typography>
+
+                    {col.points.map((point, i) => (
+                      <Box
+                        key={point}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.6,
+                          py: { xs: 2, md: 2.35 },
+                          borderTop: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 22,
+                            height: 22,
+                            flexShrink: 0,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: col.ours ? '#FFFFFF' : 'var(--text-muted)',
+                            backgroundColor: col.ours ? '#FF6600' : 'transparent',
+                            border: col.ours ? 'none' : '1px solid var(--border-normal)',
+                          }}
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            {col.ours ? (
+                              <polyline points="20 6 9 17 4 12" />
+                            ) : (
+                              <>
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                              </>
+                            )}
+                          </svg>
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontSize: '0.95rem',
+                            lineHeight: 1.5,
+                            fontWeight: col.ours ? 600 : 400,
+                            color: col.ours ? 'var(--text-primary)' : 'var(--text-secondary)',
+                          }}
+                        >
+                          {point}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+            </Reveal>
+          </Box>
+        </Box>
+
+        {/* ── Section 5: Architecture & Mechanics ───────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
+          <Rule />
+          <Box sx={{ py: { xs: 7, md: 9 } }}>
+            <Reveal>
+              <Box sx={{ textAlign: 'center', maxWidth: '46rem', mx: 'auto', mb: { xs: 5, md: 7 } }}>
+                <Eyebrow>HOW UNIFIED MEMORY WORKS</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.28,
+                    letterSpacing: '-0.02em',
+                    color: 'var(--text-heading)',
+                    mb: 3,
+                  }}
+                >
+                  Your memory belongs to you.<br />
+                  <Box component="span" sx={{ color: '#FF6600' }}>
+                    Not the model.
+                  </Box>
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '1.1rem',
+                    lineHeight: 1.65,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Your context lives in one private memory that works across models. Switch models, and the right context comes with you.
+                </Typography>
+              </Box>
             </Reveal>
 
             {/* Architecture Stack */}
@@ -861,7 +1220,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 5: Bottom Cinematic CTA Banner ─────────────── */}
+        {/* ── Section 6: Bottom Cinematic CTA Banner ─────────────── */}
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>
@@ -912,7 +1271,7 @@ export default function MemoryPage() {
                 }}
               >
                 <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Cross-Model Memory • Complete User Control
+                UNIFIED MEMORY · PRIVATE BY DEFAULT · WORKS ACROSS MODELS
               </Box>
 
               <Typography
@@ -929,7 +1288,7 @@ export default function MemoryPage() {
                   zIndex: 1,
                 }}
               >
-                Never re-explain your project to AI again.
+                Stop starting over with AI.
               </Typography>
 
               <Typography
@@ -943,7 +1302,7 @@ export default function MemoryPage() {
                   zIndex: 1,
                 }}
               >
-                Carry your preferences, coding guidelines, and active task context across 50+ models seamlessly.
+                Keep your projects, preferences, and context with you, no matter which model you use next.
               </Typography>
 
               <Box
@@ -961,27 +1320,7 @@ export default function MemoryPage() {
                   href="https://ais.openledger.xyz/chat"
                   target="_blank"
                   rel="noopener noreferrer"
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    backgroundColor: '#FF6600',
-                    color: '#FFFFFF',
-                    px: 5,
-                    py: 1.8,
-                    borderRadius: '9999px',
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    letterSpacing: '0.02em',
-                    boxShadow: '0 8px 32px rgba(255,102,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25)',
-                    border: '1px solid rgba(255,102,0,0.45)',
-                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-                    '&:hover': {
-                      backgroundColor: '#e65c00',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 14px 44px rgba(255,102,0,0.55)',
-                    },
-                  }}
+                  sx={getPrimaryCtaSx(isDark)}
                 >
                   Start Chatting with Memory →
                 </Box>
@@ -1008,7 +1347,7 @@ export default function MemoryPage() {
                       },
                     }}
                   >
-                    Explore All Capabilities
+                    Explore AI Capabilities
                   </Box>
                 </Link>
               </Box>

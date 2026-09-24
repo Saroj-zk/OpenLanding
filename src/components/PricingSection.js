@@ -12,12 +12,12 @@ import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
 
 export default function PricingSection() {
   const { isDark } = useThemeMode();
-  
+
   // Theme-adaptive colors
   const primaryText = isDark ? '#FFFFFF' : '#111111';
   const secondaryText = isDark ? '#9CA3AF' : '#667085';
   const mutedText = isDark ? '#6B7280' : '#9CA3AF';
-  
+
   // Elevated Glassmorphic Settings
   const cardBg = isDark ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)' : 'linear-gradient(180deg, #FFFFFF 0%, rgba(248, 250, 252, 0.6) 100%)';
   const cardBorder = isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.05)';
@@ -52,9 +52,9 @@ export default function PricingSection() {
   );
 
   const SubCard = ({ name, price, icon }) => (
-    <Box sx={{ 
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-      p: 2, 
+    <Box sx={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      p: 2,
       backgroundColor: cardBg,
       border: cardBorder,
       borderRadius: '16px',
@@ -94,37 +94,37 @@ export default function PricingSection() {
       <Box sx={{ position: 'absolute', top: -200, right: -200, width: 800, height: 800, background: 'radial-gradient(circle, rgba(255,102,0,0.03) 0%, transparent 60%)', zIndex: 0 }} />
 
       <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 }, position: 'relative' }}>
-        
+
         {/* HERO HEADER */}
         <Box sx={{ textAlign: 'center', mb: { xs: 8, md: 10 } }}>
           <Typography variant="h2" sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '3rem', lg: '3.5rem' }, lineHeight: 1.1, letterSpacing: '-0.02em', color: primaryText, mb: 2 }}>
-            You are already paying<br />for this four times.
+            One Subscription.<br />All your go-to AI models.
           </Typography>
           <Typography sx={{ color: secondaryText, fontSize: { xs: '1rem', md: '1.125rem' }, fontWeight: 500, maxWidth: 650, mx: 'auto', lineHeight: 1.6 }}>
-            One app per model, each with its own memory and its own bill.
+            Get the models you use in one place, under one subscription.
           </Typography>
         </Box>
 
         {/* COMPARISON LAYOUT (Flex Node Graph) */}
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', lg: 'row' }, 
-          alignItems: { xs: 'center', lg: 'flex-start' }, 
-          justifyContent: 'center', 
-          maxWidth: 1200, 
-          mx: 'auto', 
-          gap: { xs: 8, lg: 0 } 
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          alignItems: { xs: 'center', lg: 'flex-start' },
+          justifyContent: 'center',
+          maxWidth: 1200,
+          mx: 'auto',
+          gap: { xs: 8, lg: 0 }
         }}>
-          
+
           {/* LEFT COLUMN: Separate Subscriptions */}
           <Box sx={{ width: { xs: '100%', sm: 340 }, flexShrink: 0, position: 'relative' }}>
             <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: secondaryText, mb: 3, textAlign: 'center' }}>
               The Cost of Fragmentation
             </Typography>
-            
+
             {/* Cards container: Auto-Scrolling Carousel */}
-            <Box sx={{ 
-              position: 'relative', 
+            <Box sx={{
+              position: 'relative',
               height: 380,
               overflow: 'hidden',
               // Fade out top and bottom for a seamless entering/exiting effect
@@ -137,9 +137,9 @@ export default function PricingSection() {
                   100% { transform: translateY(-50%); }
                 }
               `}</style>
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
+              <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 1.5,
                 // The total height of one set must be exactly exactly 50% of this container's scrolling height.
                 // By duplicating the content, -50% translates exactly to the start of the second set!
@@ -157,7 +157,7 @@ export default function PricingSection() {
                 <SubCard name="Perplexity Pro" price="20" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#21B3A4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>P</Box>} />
                 <SubCard name="GitHub Copilot" price="10" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#000000', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>C</Box>} />
                 <SubCard name="Runway Gen-2" price="15" icon={<Box sx={{ width: 22, height: 22, backgroundColor: '#FFD700', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '10px', fontWeight: 'bold' }}>R</Box>} />
-                
+
                 {/* Duplicated Second Set for Seamless Looping */}
                 <SubCard name="ChatGPT Plus" price="20" icon={<GptIcon />} />
                 <SubCard name="Claude Pro" price="20" icon={<ClaudeIcon />} />
@@ -171,7 +171,7 @@ export default function PricingSection() {
             </Box>
 
             {/* Total Summary */}
-            <Box sx={{ 
+            <Box sx={{
               mt: 2, pt: 3, px: 2,
               borderTop: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
               display: 'flex', flexDirection: 'column', alignItems: 'center'
@@ -187,12 +187,12 @@ export default function PricingSection() {
                   /mo
                 </Typography>
               </Box>
-              
+
               {/* Embedded Badge */}
-              <Box sx={{ 
+              <Box sx={{
                 mt: 2,
                 display: 'inline-flex', alignItems: 'center', gap: 1,
-                backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', 
+                backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
                 px: 2, py: 0.75, borderRadius: '99px',
                 fontSize: '0.8rem', fontWeight: 600, color: secondaryText,
               }}>
@@ -202,9 +202,9 @@ export default function PricingSection() {
           </Box>
 
           {/* MIDDLE BRIDGE: Video ONLY */}
-          <Box sx={{ 
-            flexGrow: 1, 
-            height: 380, 
+          <Box sx={{
+            flexGrow: 1,
+            height: 380,
             mt: '38px',
             position: 'relative',
             display: { xs: 'none', lg: 'flex' },
@@ -216,14 +216,14 @@ export default function PricingSection() {
             overflow: 'hidden', // Crops the baked-in grey borders of the video
             borderRadius: '24px', // Soft rounded edges for the crop
           }}>
-            <video 
-              src="/pricing_video.mp4" 
-              autoPlay 
-              loop 
-              muted 
+            <video
+              src="/pricing_video.mp4"
+              autoPlay
+              loop
+              muted
               playsInline
-              style={{ 
-                width: '100%', 
+              style={{
+                width: '100%',
                 height: '100%',
                 objectFit: 'cover', // This stretches the video to touch the edges, cropping excess white padding
                 pointerEvents: 'none',
@@ -249,18 +249,18 @@ export default function PricingSection() {
               }
             `}</style>
 
-            <Box sx={{ 
+            <Box sx={{
               maxWidth: 380, mx: 'auto', position: 'relative',
-              animation: 'floatCard 6s ease-in-out infinite' 
+              animation: 'floatCard 6s ease-in-out infinite'
             }}>
-              
+
               {/* Animated Premium Glow Underlay */}
-              <Box sx={{ 
-                position: 'absolute', inset: -4, 
-                background: 'linear-gradient(180deg, #ff6600 0%, rgba(255,102,0,0) 100%)', 
-                borderRadius: '30px', 
+              <Box sx={{
+                position: 'absolute', inset: -4,
+                background: 'linear-gradient(180deg, #ff6600 0%, rgba(255,102,0,0) 100%)',
+                borderRadius: '30px',
                 animation: 'pulseGlow 4s ease-in-out infinite',
-                zIndex: 0 
+                zIndex: 0
               }} />
 
               {/* Animated Border Wrapper */}
@@ -276,8 +276,8 @@ export default function PricingSection() {
                 <Box sx={{
                   position: 'absolute',
                   top: '-50%', left: '-50%', width: '200%', height: '200%',
-                  background: isDark 
-                    ? 'conic-gradient(from 0deg, transparent 0 300deg, #ff6600 360deg)' 
+                  background: isDark
+                    ? 'conic-gradient(from 0deg, transparent 0 300deg, #ff6600 360deg)'
                     : 'conic-gradient(from 0deg, transparent 0 280deg, #ff6600 360deg)',
                   animation: 'spinBorder 4s linear infinite',
                   zIndex: 0
@@ -296,14 +296,14 @@ export default function PricingSection() {
                   zIndex: 1,
                   display: 'flex', flexDirection: 'column'
                 }}>
-                  
+
                   {/* Top Header Row */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography sx={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
                       <span style={{ color: primaryText }}>OPENLEDGER</span> <span style={{ color: '#ff6600' }}>PRO</span>
                     </Typography>
-                    <Box sx={{ 
-                      backgroundColor: 'rgba(255,102,0,0.1)', 
+                    <Box sx={{
+                      backgroundColor: 'rgba(255,102,0,0.1)',
                       border: '1px solid rgba(255,102,0,0.3)',
                       color: '#ff6600',
                       px: 1, py: 0.25, borderRadius: '99px',
@@ -359,10 +359,10 @@ export default function PricingSection() {
                   </Box>
 
                   {/* CTA Button Inside Card */}
-                  <Button 
+                  <Button
                     variant="contained"
                     fullWidth
-                    sx={{ 
+                    sx={{
                       borderRadius: '12px',
                       py: 1.2,
                       fontSize: '1rem',
@@ -386,7 +386,7 @@ export default function PricingSection() {
                     }}>
                     Upgrade to Pro
                   </Button>
-                  
+
                   <Typography sx={{ mt: 2, fontSize: '0.75rem', fontWeight: 600, color: secondaryText, textAlign: 'center' }}>
                     Cancel anytime. No lock-in.
                   </Typography>
@@ -399,7 +399,7 @@ export default function PricingSection() {
 
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: { xs: 8, md: 12 } }}>
-          <Button sx={{ 
+          <Button sx={{
             borderRadius: '9999px',
             py: 1.5,
             px: 4,
@@ -437,9 +437,10 @@ export default function PricingSection() {
         </Box>
 
       </Container>
-      
+
       {/* Keyframes for animations */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes float {
           0% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-10px) rotate(4deg); }

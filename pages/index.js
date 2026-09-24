@@ -37,7 +37,7 @@ export default function Home() {
         <TokenOptimizationSection />
         <ApiSection />
         <EnterpriseSection />
-        <Footer />
+        <Footer showCta />
       </Box>
     </>
   );
