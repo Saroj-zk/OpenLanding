@@ -81,6 +81,29 @@ export default function ModelsPage() {
   const [selectedKind, setSelectedKind] = React.useState('all');
   const [searchQuery, setSearchQuery] = React.useState('');
 
+  const getPrimaryCtaSx = (isDark) => ({
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 102, 0, 0.12)',
+    color: '#FF6600',
+    px: 4.5,
+    py: 1.8,
+    borderRadius: '9999px',
+    fontSize: '1rem',
+    fontWeight: 700,
+    textDecoration: 'none',
+    letterSpacing: '0.02em',
+    boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
+    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+    backdropFilter: 'blur(12px)',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 102, 0, 0.18)',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
+    },
+  });
+
   const filteredModels = React.useMemo(() => {
     return MODELS.filter((model) => {
       const matchesKind = selectedKind === 'all' || model.kind === selectedKind;
@@ -95,7 +118,8 @@ export default function ModelsPage() {
   }, [selectedKind, searchQuery]);
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(20px) saturate(180%)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
         <title>AI Models Catalog — 50+ Frontier Models in One Subscription | OpenLedger</title>
         <meta
@@ -106,149 +130,134 @@ export default function ModelsPage() {
 
       <PageHeader />
 
-      {/* Hero with backdrop image */}
+      {/* Hero with homepage styling */}
       <Box
         sx={{
           position: 'relative',
           pt: { xs: 14, sm: 16, md: 19 },
-          pb: { xs: 8, md: 12 },
-          backgroundImage: isDark
-            ? 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255, 102, 0, 0.15) 0%, transparent 70%), url(/images/model_bg_dark_theme.png)'
-            : 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255, 102, 0, 0.08) 0%, transparent 70%), url(/images/model_bg_light_theme.png)',
-          backgroundPosition: 'center top',
+          pb: { xs: 14, md: 18 },
+          backgroundImage: 'url(/images/hero_BG.png)',
+          backgroundPosition: 'bottom center',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
+          backgroundColor: '#EEF0F0',
+          overflow: 'hidden',
         }}
       >
         <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
           <Box
             sx={{
-              display: 'grid',
-              gap: { xs: 5, lg: 8 },
-              gridTemplateColumns: { lg: 'minmax(0,1.2fr) minmax(0,0.8fr)' },
+              display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
+              textAlign: 'center',
+              gap: { xs: 5, lg: 8 },
             }}
           >
-            {/* Left Copy */}
+            {/* Center Copy */}
             <Reveal>
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  color: '#FF6600',
-                  mb: 3,
-                  px: 1.8,
-                  py: 0.6,
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 102, 0, 0.08)',
-                  border: '1px solid rgba(255, 102, 0, 0.25)',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Unified AI Catalog
-              </Box>
-
-              <Typography
-                component="h1"
-                sx={{
-                  fontSize: { xs: '2.4rem', sm: '3.4rem', md: '4.2rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.08,
-                  letterSpacing: '-0.035em',
-                  color: 'var(--text-heading)',
-                  mb: 3,
-                }}
-              >
-                Every model.{' '}
-                <Box component="span" sx={{ color: '#FF6600' }}>
-                  One subscription.
-                </Box>
-              </Typography>
-
-              <Typography
-                sx={{
-                  maxWidth: '56ch',
-                  fontSize: { xs: '1.05rem', md: '1.15rem' },
-                  lineHeight: 1.65,
-                  color: 'var(--text-secondary)',
-                  mb: 4,
-                }}
-              >
-                Text, code, vision, images, audio, and music from every frontier provider. Pick any model by name, or use our smart router to automatically direct queries to the best model for the task.
-              </Typography>
-
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5 }}>
+              <Box sx={{ maxWidth: '56rem', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box
-                  component="a"
-                  href="https://ais.openledger.xyz/chat"
-                  target="_blank"
-                  rel="noopener noreferrer"
                   sx={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#FF6600',
-                    color: '#FFFFFF',
-                    px: 4.5,
-                    py: 1.8,
+                    gap: 1.2,
+                    color: '#FF6600',
+                    mb: 3,
+                    px: 1.8,
+                    py: 0.6,
                     borderRadius: '9999px',
-                    fontSize: '1rem',
+                    backgroundColor: 'rgba(255, 102, 0, 0.08)',
+                    border: '1px solid rgba(255, 102, 0, 0.25)',
+                    fontSize: '0.78rem',
                     fontWeight: 700,
-                    textDecoration: 'none',
-                    letterSpacing: '0.02em',
-                    boxShadow: '0 8px 32px rgba(255,102,0,0.38), inset 0 1px 0 rgba(255,255,255,0.25)',
-                    border: '1px solid rgba(255,102,0,0.4)',
-                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-                    '&:hover': {
-                      backgroundColor: '#e65c00',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 14px 40px rgba(255,102,0,0.52)',
-                    },
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
                   }}
                 >
-                  Launch All Models →
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
+                  Unified AI Catalog
                 </Box>
-                <Box
-                  component="a"
-                  href="#catalog-list"
+
+                <Typography
+                  component="h1"
                   sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    color: 'var(--text-secondary)',
-                    px: 3.5,
-                    py: 1.8,
-                    borderRadius: '9999px',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    border: '1px solid var(--border-normal)',
-                    backgroundColor: 'var(--bg-glass)',
-                    backdropFilter: 'blur(12px)',
-                    transition: 'all 0.25s ease',
-                    '&:hover': {
-                      borderColor: '#FF6600',
-                      color: '#FF6600',
-                      transform: 'translateY(-2px)',
-                    },
+                    fontFamily: '"Inter", -apple-system, sans-serif',
+                    fontSize: { xs: '2.8rem', sm: '3.8rem', md: '4.8rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.05,
+                    letterSpacing: '-0.035em',
+                    color: 'rgb(71, 85, 105)', // Homepage text color
+                    mb: 3,
                   }}
                 >
-                  Explore Model List ↓
+                  Every model.{' '}
+                  <Box component="span" sx={{ color: '#FF6600' }}>
+                    One subscription.
+                  </Box>
+                </Typography>
+
+                <Typography
+                  sx={{
+                    mx: 'auto',
+                    maxWidth: '56ch',
+                    fontSize: { xs: '1.05rem', md: '1.2rem' },
+                    lineHeight: 1.65,
+                    color: 'rgb(100, 116, 139)', // Homepage secondary text color
+                    mb: 4,
+                  }}
+                >
+                  Text, code, vision, images, audio, and music from every frontier provider. Pick any model by name, or use our smart router to automatically direct queries to the best model for the task.
+                </Typography>
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, justifyContent: 'center' }}>
+                  <Box
+                    component="a"
+                    href="https://ais.openledger.xyz/chat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={getPrimaryCtaSx(isDark)}
+                  >
+                    Launch All Models →
+                  </Box>
+                  <Box
+                    component="a"
+                    href="#catalog-list"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: 'rgb(71, 85, 105)',
+                      px: 3.5,
+                      py: 1.8,
+                      borderRadius: '9999px',
+                      fontSize: '0.95rem',
+                      fontWeight: 600,
+                      textDecoration: 'none',
+                      border: '1px solid rgba(0,0,0,0.1)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                      transition: 'all 0.25s ease',
+                      '&:hover': {
+                        borderColor: '#FF6600',
+                        color: '#FF6600',
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    Explore Model List ↓
+                  </Box>
                 </Box>
               </Box>
             </Reveal>
 
-            {/* Right Telemetry Cards */}
+            {/* Bottom Telemetry Cards */}
             <Reveal delay={110}>
               <Box
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr' },
+                  gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
                   gap: 2.5,
+                  width: '100%',
                 }}
               >
                 {[
@@ -260,29 +269,29 @@ export default function ModelsPage() {
                   <Box
                     key={stat.label}
                     sx={{
-                      p: 3,
-                      borderRadius: 3.5,
-                      border: '1px solid var(--border-normal)',
-                      backgroundColor: 'var(--bg-card)',
-                      backdropFilter: 'blur(16px)',
-                      boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.4)' : '0 10px 25px rgba(15,23,42,0.06)',
-                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                      p: { xs: 3, md: 3.5 },
+                      borderRadius: 4,
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                      backdropFilter: 'blur(20px) saturate(180%)',
+                      border: '1px solid rgba(255, 255, 255, 0.9)',
+                      boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
+                      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                       position: 'relative',
                       overflow: 'hidden',
+                      textAlign: 'left',
                       '&:hover': {
-                        borderColor: 'rgba(255, 102, 0, 0.4)',
-                        transform: 'translateY(-3px)',
-                        boxShadow: isDark
-                          ? '0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,102,0,0.15)'
-                          : '0 16px 36px rgba(15,23,42,0.1), 0 0 0 1px rgba(255,102,0,0.1)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: 'rgba(255, 102, 0, 0.3)',
+                        transform: 'translateY(-4px)',
+                        boxShadow: '0 16px 40px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255,102,0,0.1), inset 0 0 0 1px #FFF',
                       },
                       '&::before': {
                         content: '""',
                         position: 'absolute',
                         top: 0, left: 0, right: 0,
-                        height: '2px',
-                        background: i === 0 ? 'linear-gradient(90deg, #FF6600, rgba(255,102,0,0))' : 'transparent',
-                        borderRadius: '3.5px 3.5px 0 0',
+                        height: '3px',
+                        background: stat.accent ? 'linear-gradient(90deg, #FF6600, #ff8533)' : 'transparent',
+                        borderRadius: '4px 4px 0 0',
                       },
                     }}
                   >
@@ -298,10 +307,10 @@ export default function ModelsPage() {
                     >
                       {stat.value}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-heading)' }}>
+                    <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: 'rgb(71, 85, 105)' }}>
                       {stat.label}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.76rem', color: 'var(--text-secondary)', mt: 0.4 }}>
+                    <Typography sx={{ fontSize: '0.76rem', color: 'rgb(100, 116, 139)', mt: 0.4 }}>
                       {stat.desc}
                     </Typography>
                   </Box>
@@ -310,21 +319,48 @@ export default function ModelsPage() {
             </Reveal>
           </Box>
         </Container>
+
+        {/* Dynamic Curved Bottom Divider - matching homepage */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: -1,
+            left: 0,
+            width: '100%',
+            height: { xs: 40, sm: 60, md: 80 },
+            pointerEvents: 'none',
+            zIndex: 10,
+            overflow: 'hidden',
+          }}
+        >
+          <svg
+            viewBox="0 0 1440 80"
+            preserveAspectRatio="none"
+            style={{ width: '100%', height: '100%', display: 'block' }}
+          >
+            <path
+              d="M 0,80 Q 720,0 1440,80 L 1440,85 L 0,85 Z"
+              fill="#FFFFFF"
+            />
+          </svg>
+        </Box>
       </Box>
 
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 } }}>
         {/* ── Section 2: Flagship Models Showcase Grid ───────────── */}
         <Box sx={{ py: { xs: 7, md: 10 } }}>
           <Reveal>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 1.5 }}>
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600' }} />
-              <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#FF6600', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Premier Lineup
+            <Box sx={{ textAlign: 'center', maxWidth: '42rem', mx: 'auto', mb: { xs: 5, md: 6 } }}>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, mb: 2 }}>
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600' }} />
+                <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#FF6600', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  Premier Lineup
+                </Typography>
+              </Box>
+              <Typography component="h2" sx={{ fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.03em', lineHeight: 1.2 }}>
+                Flagship Intelligence<br />at your fingertips.
               </Typography>
             </Box>
-            <Typography component="h2" sx={{ fontSize: { xs: '1.8rem', md: '2.6rem' }, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.03em' }}>
-              Flagship Intelligence at your fingertips.
-            </Typography>
           </Reveal>
 
           <Box
@@ -342,17 +378,18 @@ export default function ModelsPage() {
                     width: '100%',
                     p: 3.5,
                     borderRadius: 4,
-                    border: '1px solid var(--border-normal)',
+                    border: '1px solid var(--border-subtle)',
                     backgroundColor: 'var(--bg-card)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    boxShadow: isDark ? '0 12px 32px rgba(0,0,0,0.5)' : '0 8px 24px rgba(15,23,42,0.06)',
+                    boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
                     transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
                     '&:hover': {
                       borderColor: '#FF6600',
                       transform: 'translateY(-4px)',
-                      boxShadow: '0 16px 40px rgba(255,102,0,0.15)',
+                      boxShadow: '0 16px 40px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255,102,0,0.1), inset 0 0 0 1px #FFF',
                     },
                   }}
                 >
@@ -366,7 +403,7 @@ export default function ModelsPage() {
                             height: 42,
                             borderRadius: 2.5,
                             backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-                            border: '1px solid var(--border-normal)',
+                            border: '1px solid var(--border-subtle)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -515,7 +552,8 @@ export default function ModelsPage() {
                   ['Optimal Cost Routing', 'Save up to 60% tokens by routing lighter queries to lightweight models.'],
                   ['Unified Context Memory', 'Your session memory persists regardless of which model you switch to.'],
                 ].map(([title, body]) => (
-                  <Box key={title} sx={{ p: 2, borderRadius: 2.5, border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-card)' }}>
+                  <Box key={title} sx={{ p: 2, borderRadius: 2.5, border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-card)',
+                    backdropFilter: 'blur(20px) saturate(180%)' }}>
                     <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', mb: 0.3 }}>
                       {title}
                     </Typography>
@@ -533,9 +571,10 @@ export default function ModelsPage() {
                 sx={{
                   borderRadius: 4,
                   overflow: 'hidden',
-                  border: '1px solid var(--border-normal)',
-                  boxShadow: isDark ? '0 20px 50px rgba(0,0,0,0.6)' : '0 12px 35px rgba(15,23,42,0.08)',
+                  border: '1px solid var(--border-subtle)',
+                  boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
                   backgroundColor: 'var(--bg-card)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
                 }}
               >
                 <Box
@@ -576,8 +615,9 @@ export default function ModelsPage() {
                   px: 2.5,
                   py: 1.2,
                   borderRadius: '9999px',
-                  border: '1px solid var(--border-normal)',
+                  border: '1px solid var(--border-subtle)',
                   backgroundColor: 'var(--bg-card)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
                   width: { xs: '100%', md: 340 },
                   transition: 'border-color 0.2s',
                   '&:focus-within': { borderColor: '#FF6600' },
@@ -645,82 +685,154 @@ export default function ModelsPage() {
           </Reveal>
 
           {/* Model rows */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {filteredModels.map((model, idx) => (
-              <Reveal key={model.name} delay={(idx % 15) * 30}>
+          {/* One table, not fifty-five cards. Hairline rows keep a long
+              catalogue scannable and let the columns line up down the page. */}
+          <Reveal delay={60}>
+            <Box
+              sx={{
+                borderRadius: { xs: '14px', md: '16px' },
+                border: '1px solid var(--border-normal)',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Column headings */}
+              <Box
+                sx={{
+                  display: { xs: 'none', md: 'grid' },
+                  gridTemplateColumns: 'auto minmax(0, 2.1fr) minmax(0, 1.15fr) 92px 84px',
+                  alignItems: 'center',
+                  gap: 3,
+                  px: 3,
+                  py: 1.75,
+                  backgroundColor: 'var(--bg-glass)',
+                  borderBottom: '1px solid var(--border-normal)',
+                }}
+              >
+                <Box sx={{ width: 32 }} />
+                {['Model', 'Best for', 'Context', ''].map((label, i) => (
+                  <Typography
+                    key={label || i}
+                    sx={{
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.09em',
+                      textTransform: 'uppercase',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
+                    {label}
+                  </Typography>
+                ))}
+              </Box>
+
+              {filteredModels.map((model, idx) => (
                 <Box
+                  key={model.name}
                   sx={{
-                    p: 2.5,
-                    borderRadius: 3,
-                    border: '1px solid var(--border-subtle)',
-                    backgroundColor: 'var(--bg-card)',
                     display: 'grid',
-                    gridTemplateColumns: { xs: 'auto 1fr', md: 'auto 1.8fr 1fr auto' },
-                    gap: { xs: 2, md: 3 },
-                    alignItems: 'center',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      borderColor: '#FF6600',
-                      backgroundColor: isDark ? 'rgba(255,102,0,0.03)' : 'rgba(255,102,0,0.02)',
-                      transform: 'translateY(-2px)',
+                    gridTemplateColumns: {
+                      xs: 'auto minmax(0, 1fr)',
+                      md: 'auto minmax(0, 2.1fr) minmax(0, 1.15fr) 92px 84px',
                     },
+                    alignItems: 'center',
+                    columnGap: 3,
+                    rowGap: 1,
+                    px: { xs: 2, md: 3 },
+                    py: { xs: 2.25, md: 2.5 },
+                    borderTop: idx === 0 ? 'none' : '1px solid var(--border-subtle)',
+                    transition: 'background-color 0.2s ease',
+                    '&:hover': { backgroundColor: 'var(--bg-glass)' },
+                    '&:hover .model-try': { borderColor: '#FF6600', color: '#FF6600' },
                   }}
                 >
-                  <ProviderTile code={model.code} size={36} />
+                  <ProviderTile code={model.code} size={32} />
 
                   <Box sx={{ minWidth: 0 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, flexWrap: 'wrap' }}>
-                      <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.2, flexWrap: 'wrap' }}>
+                      <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-heading)' }}>
                         {model.name}
                       </Typography>
-                      <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <Typography sx={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
                         {model.provider}
                       </Typography>
                     </Box>
-                    <Typography sx={{ fontSize: '0.84rem', color: 'var(--text-secondary)', mt: 0.5, lineHeight: 1.5 }}>
+                    <Typography
+                      sx={{
+                        fontSize: '0.82rem',
+                        color: 'var(--text-secondary)',
+                        lineHeight: 1.5,
+                        mt: 0.4,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }}
+                    >
                       {model.description}
                     </Typography>
                   </Box>
 
-                  <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                    <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      Best For
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.84rem', color: 'var(--text-primary)', mt: 0.3 }}>
-                      {model.detail || 'General Purpose'}
-                    </Typography>
-                  </Box>
+                  {/* Best for: the field that was going unused while this column
+                      showed the context size instead. */}
+                  <Typography
+                    sx={{
+                      gridColumn: { xs: '2 / -1', md: 'auto' },
+                      fontSize: '0.84rem',
+                      lineHeight: 1.5,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    {model.bestFor || 'General purpose'}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      display: { xs: 'none', md: 'block' },
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {model.detail || '—'}
+                  </Typography>
 
                   <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
                     <Box
                       component="a"
+                      className="model-try"
                       href="https://ais.openledger.xyz/chat"
                       target="_blank"
                       rel="noopener noreferrer"
                       sx={{
-                        px: 2.5,
-                        py: 0.8,
+                        px: 2,
+                        py: 0.7,
                         borderRadius: '9999px',
                         border: '1px solid var(--border-normal)',
-                        color: 'var(--text-primary)',
-                        fontSize: '0.82rem',
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.78rem',
                         fontWeight: 700,
                         textDecoration: 'none',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          backgroundColor: '#FF6600',
-                          borderColor: '#FF6600',
-                          color: '#fff',
-                        },
+                        whiteSpace: 'nowrap',
+                        transition: 'all 0.2s ease',
+                        '&:hover': { backgroundColor: '#FF6600', borderColor: '#FF6600', color: '#fff' },
                       }}
                     >
-                      Try →
+                      Try
                     </Box>
                   </Box>
                 </Box>
-              </Reveal>
-            ))}
-          </Box>
+              ))}
+
+              {filteredModels.length === 0 && (
+                <Box sx={{ px: 3, py: 6, textAlign: 'center' }}>
+                  <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)' }}>
+                    No models match that search.
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Reveal>
         </Box>
 
         {/* ── Section 5: Bottom Cinematic CTA Banner ─────────────── */}
@@ -734,10 +846,9 @@ export default function ModelsPage() {
                 p: { xs: 4, sm: 6, md: 8 },
                 overflow: 'hidden',
                 backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                boxShadow: isDark
-                  ? '0 25px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,102,0,0.15)'
-                  : '0 20px 45px rgba(15,23,42,0.1)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                border: '1px solid var(--border-subtle)',
+                boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -859,7 +970,7 @@ export default function ModelsPage() {
                       borderRadius: '9999px',
                       fontSize: '1rem',
                       fontWeight: 600,
-                      border: '1px solid var(--border-normal)',
+                      border: '1px solid var(--border-subtle)',
                       backgroundColor: 'var(--bg-glass)',
                       backdropFilter: 'blur(12px)',
                       transition: 'all 0.25s ease',
