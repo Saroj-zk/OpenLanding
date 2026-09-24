@@ -6,136 +6,216 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { useThemeMode } from '@/context/ThemeContext';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, ProviderTile } from '@/components/ui/LedgerUI';
 import { MODELS, KINDS, PROVIDERS, MODEL_TOTAL } from '@/data/catalog';
 
-/* Flagship showcase cards */
-const FLAGSHIP_MODELS = [
-  {
-    name: 'DeepSeek R1',
-    provider: 'DeepSeek',
-    code: 'DS',
-    logo: '/Models/DeepSeek.svg',
-    context: '64K',
-    tag: 'Deep Reasoning',
-    desc: 'Open weights, chain-of-thought mathematical proof, and unfiltered logic.',
-    color: '#4D6BFE',
-  },
-  {
-    name: 'Claude 3.5 Sonnet',
-    provider: 'Anthropic',
-    code: 'AN',
-    logo: '/Models/Claude.svg',
-    context: '200K',
-    tag: 'Code & Analysis',
-    desc: 'State-of-the-art programming, refactoring, and multi-file architecture.',
-    color: '#D97757',
-  },
-  {
-    name: 'GPT-4o',
-    provider: 'OpenAI',
-    code: 'OA',
-    logo: '/Models/Chatgpt.svg',
-    context: '128K',
-    tag: 'Multimodal Flagship',
-    desc: 'Rapid everyday reasoning, vision analysis, and audio understanding.',
-    color: '#10A37F',
-  },
-  {
-    name: 'Gemini 2.5 Pro',
-    provider: 'Google',
-    code: 'GG',
-    logo: '/Models/Gemini.svg',
-    context: '1M+',
-    tag: 'Massive Context',
-    desc: 'Ingest whole Git repositories, hours of video, and hundred-page PDFs.',
-    color: '#4B6FD8',
-  },
-  {
-    name: 'FLUX.1 [dev]',
-    provider: 'Black Forest Labs',
-    code: 'BF',
-    logo: '/Models/Flux.svg',
-    context: '2K Res',
-    tag: 'Photoreal Image',
-    desc: 'Superior typography rendering, prompt adherence, and photoreal output.',
-    color: '#FF6600',
-  },
-  {
-    name: 'Llama 3.3 70B',
-    provider: 'Meta',
-    code: 'MT',
-    logo: '/Models/Llama.svg',
-    context: '128K',
-    tag: 'Open Weights',
-    desc: 'High throughput, customizable agent workflows with zero lock-in.',
-    color: '#1d65c1',
-  },
+const ORANGE = '#FF6600';
+const SECTION_PY = { xs: 8, md: 12 };
+
+/* The hero sits on a permanently light background image, so it keeps literal
+   light colours. Everything below it reads from the theme tokens. */
+const HERO_INK = 'rgb(71, 85, 105)';
+const HERO_INK_2 = 'rgb(100, 116, 139)';
+const HERO_HAIRLINE = 'rgba(15, 23, 42, 0.14)';
+
+/* Section 3: what the router actually does with a prompt. Every lane is a real
+   entry in the catalogue below, so the claim and the list agree. */
+const LANES = [
+  { code: 'AN', model: 'Claude Opus 4', task: 'Refactor across forty files' },
+  { code: 'DS', model: 'DeepSeek R1', task: 'Prove it, and show the steps' },
+  { code: 'GG', model: 'Gemini 2.5 Pro', task: 'Read the whole repository' },
+  { code: 'BF', model: 'FLUX 1.1 Pro', task: 'Render the hero image' },
 ];
 
-export default function ModelsPage() {
-  const { isDark } = useThemeMode();
-  const [selectedKind, setSelectedKind] = React.useState('all');
-  const [searchQuery, setSearchQuery] = React.useState('');
+const ROUTER_NOTES = [
+  ['Pick by name', 'Choose any model on this page directly, the way you would inside its own app.'],
+  ['Or let it choose', 'Describe the task and the router sends it to whichever model handles it best.'],
+  ['Ask several at once', 'Run one prompt across three models and read the answers side by side.'],
+];
 
-  const getPrimaryCtaSx = (isDark) => ({
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 102, 0, 0.12)',
-    color: '#FF6600',
-    px: 4.5,
-    py: 1.8,
-    borderRadius: '9999px',
-    fontSize: '1rem',
-    fontWeight: 700,
-    textDecoration: 'none',
-    letterSpacing: '0.02em',
-    boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
-    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-    backdropFilter: 'blur(12px)',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 102, 0, 0.18)',
-      transform: 'translateY(-2px)',
-      boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
-    },
-  });
+const PAGE_SIZE = 40;
 
-  const filteredModels = React.useMemo(() => {
-    return MODELS.filter((model) => {
-      const matchesKind = selectedKind === 'all' || model.kind === selectedKind;
-      const matchesSearch =
-        !searchQuery.trim() ||
-        model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        model.provider.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (model.description && model.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (model.detail && model.detail.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesKind && matchesSearch;
-    });
-  }, [selectedKind, searchQuery]);
+function PromptRouter() {
+  const [active, setActive] = React.useState(0);
+  const [running, setRunning] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!ref.current) return undefined;
+    const io = new IntersectionObserver(([e]) => setRunning(e.isIntersecting), { threshold: 0.25 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (!running) return undefined;
+    const t = setInterval(() => setActive((a) => (a + 1) % LANES.length), 2300);
+    return () => clearInterval(t);
+  }, [running]);
+
+  const LANE_H = 74;
+  const HEAD_H = 46;
+  const trunkTop = HEAD_H / 2;
+  const laneCentre = (i) => HEAD_H + i * LANE_H + LANE_H / 2;
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                    backdropFilter: 'blur(20px) saturate(180%)', position: 'relative', overflowX: 'hidden' }}>
+    <Box ref={ref} sx={{ position: 'relative' }}>
+      {/* The trunk runs from the prompt down to the last lane */}
+      <Box
+        aria-hidden="true"
+        sx={{
+          position: 'absolute',
+          left: '19px',
+          top: `${trunkTop}px`,
+          height: `${laneCentre(LANES.length - 1) - trunkTop}px`,
+          width: '1px',
+          backgroundColor: 'var(--border-normal)',
+        }}
+      />
+      {/* The marker is the only thing that moves */}
+      <Box
+        aria-hidden="true"
+        sx={{
+          position: 'absolute',
+          left: '16px',
+          top: `${laneCentre(active) - 3.5}px`,
+          width: 7,
+          height: 7,
+          borderRadius: '50%',
+          backgroundColor: ORANGE,
+          boxShadow: '0 0 0 4px rgba(255, 102, 0, 0.16)',
+          transition: 'top 0.55s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      />
+
+      <Box sx={{ height: `${HEAD_H}px`, display: 'flex', alignItems: 'center' }}>
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1.2,
+            px: 1.8,
+            py: 0.7,
+            borderRadius: '10px',
+            border: '1px solid var(--border-normal)',
+            backgroundColor: 'var(--bg-card)',
+            fontSize: '0.82rem',
+            fontWeight: 600,
+            color: 'var(--text-primary)',
+          }}
+        >
+          <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE }} />
+          One prompt
+        </Box>
+      </Box>
+
+      {LANES.map((lane, i) => {
+        const on = i === active;
+        return (
+          <Box
+            key={lane.model}
+            sx={{ height: `${LANE_H}px`, display: 'flex', alignItems: 'center', gap: 2, pl: '19px' }}
+          >
+            {/* Branch stub off the trunk */}
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 21,
+                height: '1px',
+                flexShrink: 0,
+                backgroundColor: on ? ORANGE : 'var(--border-normal)',
+                transition: 'background-color 0.4s ease',
+              }}
+            />
+            <Box sx={{ opacity: on ? 1 : 0.55, transition: 'opacity 0.4s ease', flexShrink: 0 }}>
+              <ProviderTile code={lane.code} size={34} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                sx={{
+                  fontSize: '0.92rem',
+                  fontWeight: 700,
+                  color: on ? 'var(--text-heading)' : 'var(--text-secondary)',
+                  transition: 'color 0.4s ease',
+                }}
+              >
+                {lane.model}
+              </Typography>
+              <Typography sx={{ fontSize: '0.82rem', color: 'var(--text-muted)', mt: 0.2 }}>
+                {lane.task}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
+export default function ModelsPage() {
+  const [selectedKind, setSelectedKind] = React.useState('all');
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [providerFilter, setProviderFilter] = React.useState(null);
+  const [expanded, setExpanded] = React.useState(false);
+
+  const kindCounts = React.useMemo(() => {
+    const c = {};
+    MODELS.forEach((m) => { c[m.kind] = (c[m.kind] || 0) + 1; });
+    return c;
+  }, []);
+
+  const providerCounts = React.useMemo(() => {
+    const c = {};
+    MODELS.forEach((m) => { c[m.code] = (c[m.code] || 0) + 1; });
+    return c;
+  }, []);
+
+  const filteredModels = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return MODELS.filter((m) => {
+      if (selectedKind !== 'all' && m.kind !== selectedKind) return false;
+      if (providerFilter && m.code !== providerFilter) return false;
+      if (!q) return true;
+      return [m.name, m.provider, m.bestFor, m.description, m.detail]
+        .filter(Boolean)
+        .some((v) => v.toLowerCase().includes(q));
+    });
+  }, [selectedKind, searchQuery, providerFilter]);
+
+  /* Any change to the filters starts the list from the top again. */
+  React.useEffect(() => { setExpanded(false); }, [selectedKind, searchQuery, providerFilter]);
+
+  const visibleModels = expanded ? filteredModels : filteredModels.slice(0, PAGE_SIZE);
+  const activeProvider = providerFilter ? PROVIDERS.find((p) => p.code === providerFilter) : null;
+
+  const jumpToCatalog = (code) => {
+    setProviderFilter(code);
+    setSelectedKind('all');
+    setSearchQuery('');
+    const el = document.getElementById('catalog-list');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  return (
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>AI Models Catalog — 50+ Frontier Models in One Subscription | OpenLedger</title>
+        <title>{`AI Models Catalog, ${MODEL_TOTAL} Frontier Models in One Subscription | OpenLedger`}</title>
         <meta
           name="description"
-          content="Access GPT-4o, Claude 3.5 Sonnet, DeepSeek R1, Gemini 2.5, FLUX.1 and 50+ premier models in one unified subscription with zero tracking."
+          content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${MODEL_TOTAL} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
         />
       </Head>
 
       <PageHeader />
 
-      {/* Hero with homepage styling */}
+      {/* ── Section 1: Hero ─────────────────────────────────────── */}
       <Box
         sx={{
           position: 'relative',
           pt: { xs: 14, sm: 16, md: 19 },
-          pb: { xs: 14, md: 18 },
+          pb: { xs: 13, md: 17 },
           backgroundImage: 'url(/images/hero_BG.png)',
           backgroundPosition: 'bottom center',
           backgroundSize: 'cover',
@@ -145,182 +225,180 @@ export default function ModelsPage() {
         }}
       >
         <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: { xs: 5, lg: 8 },
-            }}
-          >
-            {/* Center Copy */}
-            <Reveal>
-              <Box sx={{ maxWidth: '56rem', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Reveal>
+            <Box
+              sx={{
+                maxWidth: '56rem',
+                mx: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1.2,
+                  color: ORANGE,
+                  mb: 3,
+                  px: 1.8,
+                  py: 0.6,
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(255, 102, 0, 0.08)',
+                  border: '1px solid rgba(255, 102, 0, 0.25)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                }}
+              >
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE, boxShadow: `0 0 10px ${ORANGE}` }} />
+                Unified AI Catalog
+              </Box>
+
+              <Typography
+                component="h1"
+                sx={{
+                  fontFamily: '"Inter", -apple-system, sans-serif',
+                  fontSize: { xs: '2.8rem', sm: '3.8rem', md: '4.8rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.05,
+                  letterSpacing: '-0.035em',
+                  color: HERO_INK,
+                  mb: 3,
+                }}
+              >
+                Every model.{' '}
+                <Box component="span" sx={{ color: ORANGE }}>
+                  One subscription.
+                </Box>
+              </Typography>
+
+              <Typography
+                sx={{
+                  mx: 'auto',
+                  maxWidth: '58ch',
+                  fontSize: { xs: '1.05rem', md: '1.2rem' },
+                  lineHeight: 1.65,
+                  color: HERO_INK_2,
+                  mb: 4.5,
+                }}
+              >
+                Text, code, images, video, audio and music from every frontier lab. Pick a model by
+                name, or describe the task and let the router send it to whichever one handles it best.
+              </Typography>
+
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, justifyContent: 'center' }}>
                 <Box
+                  component="a"
+                  href="https://ais.openledger.xyz/chat"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   sx={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: 1.2,
-                    color: '#FF6600',
-                    mb: 3,
-                    px: 1.8,
-                    py: 0.6,
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(255, 102, 0, 0.12)',
+                    color: ORANGE,
+                    px: 4.5,
+                    py: 1.8,
                     borderRadius: '9999px',
-                    backgroundColor: 'rgba(255, 102, 0, 0.08)',
-                    border: '1px solid rgba(255, 102, 0, 0.25)',
-                    fontSize: '0.78rem',
+                    fontSize: '1rem',
                     fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
+                    textDecoration: 'none',
+                    letterSpacing: '0.02em',
+                    boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
+                    backdropFilter: 'blur(12px)',
+                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 102, 0, 0.18)',
+                      transform: 'translateY(-2px)',
+                    },
                   }}
                 >
-                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                  Unified AI Catalog
+                  Launch all models →
                 </Box>
-
-                <Typography
-                  component="h1"
+                <Box
+                  component="a"
+                  href="#catalog-list"
                   sx={{
-                    fontFamily: '"Inter", -apple-system, sans-serif',
-                    fontSize: { xs: '2.8rem', sm: '3.8rem', md: '4.8rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.05,
-                    letterSpacing: '-0.035em',
-                    color: 'rgb(71, 85, 105)', // Homepage text color
-                    mb: 3,
-                  }}
-                >
-                  Every model.{' '}
-                  <Box component="span" sx={{ color: '#FF6600' }}>
-                    One subscription.
-                  </Box>
-                </Typography>
-
-                <Typography
-                  sx={{
-                    mx: 'auto',
-                    maxWidth: '56ch',
-                    fontSize: { xs: '1.05rem', md: '1.2rem' },
-                    lineHeight: 1.65,
-                    color: 'rgb(100, 116, 139)', // Homepage secondary text color
-                    mb: 4,
-                  }}
-                >
-                  Text, code, vision, images, audio, and music from every frontier provider. Pick any model by name, or use our smart router to automatically direct queries to the best model for the task.
-                </Typography>
-
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, justifyContent: 'center' }}>
-                  <Box
-                    component="a"
-                    href="https://ais.openledger.xyz/chat"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={getPrimaryCtaSx(isDark)}
-                  >
-                    Launch All Models →
-                  </Box>
-                  <Box
-                    component="a"
-                    href="#catalog-list"
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      color: 'rgb(71, 85, 105)',
-                      px: 3.5,
-                      py: 1.8,
-                      borderRadius: '9999px',
-                      fontSize: '0.95rem',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      border: '1px solid rgba(0,0,0,0.1)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    color: HERO_INK,
+                    px: 3.5,
+                    py: 1.8,
+                    borderRadius: '9999px',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    border: `1px solid ${HERO_HAIRLINE}`,
+                    backgroundColor: 'rgba(255, 255, 255, 0.55)',
                     backdropFilter: 'blur(20px) saturate(180%)',
-                      transition: 'all 0.25s ease',
-                      '&:hover': {
-                        borderColor: '#FF6600',
-                        color: '#FF6600',
-                        transform: 'translateY(-2px)',
-                      },
-                    }}
-                  >
-                    Explore Model List ↓
-                  </Box>
+                    transition: 'all 0.25s ease',
+                    '&:hover': { borderColor: ORANGE, color: ORANGE, transform: 'translateY(-2px)' },
+                  }}
+                >
+                  See all {MODEL_TOTAL} ↓
                 </Box>
               </Box>
-            </Reveal>
+            </Box>
+          </Reveal>
 
-            {/* Bottom Telemetry Cards */}
-            <Reveal delay={110}>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
-                  gap: 2.5,
-                  width: '100%',
-                }}
-              >
-                {[
-                  { value: `${MODEL_TOTAL}+`, label: 'Active Models', desc: 'Frontier reasoning, vision & media', accent: true },
-                  { value: `${PROVIDERS.length}`, label: 'Compute Providers', desc: 'OpenAI, Anthropic, Google & more', accent: false },
-                  { value: '1M+', label: 'Max Context', desc: 'Ingest massive codebases & books', accent: false },
-                  { value: '0s', label: 'Data Retention', desc: 'Stateless execution in RAM only', accent: false },
-                ].map((stat, i) => (
-                  <Box
-                    key={stat.label}
+          {/* Counts sit on a hairline rail rather than four floating cards */}
+          <Reveal delay={110}>
+            <Box
+              sx={{
+                mt: { xs: 7, md: 9 },
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
+                borderTop: `1px solid ${HERO_HAIRLINE}`,
+              }}
+            >
+              {[
+                [`${MODEL_TOTAL}`, 'Models', 'Reasoning, vision and media'],
+                [`${PROVIDERS.length}`, 'Providers', 'Every major lab, one bill'],
+                ['10M', 'Longest context', 'Tokens in a single prompt'],
+                [`${KINDS.length}`, 'Modalities', 'Text, image, video, audio, music'],
+              ].map(([value, label, note], i) => (
+                <Box
+                  key={label}
+                  sx={{
+                    px: { xs: 2, md: 3.5 },
+                    py: { xs: 3, md: 3.5 },
+                    textAlign: 'left',
+                    borderLeft: `1px solid ${HERO_HAIRLINE}`,
+                    borderTop: { xs: i > 1 ? `1px solid ${HERO_HAIRLINE}` : 'none', md: 'none' },
+                    '&:nth-of-type(2n+1)': { borderLeft: { xs: 'none', md: `1px solid ${HERO_HAIRLINE}` } },
+                    '&:first-of-type': { borderLeft: 'none' },
+                  }}
+                >
+                  <Typography
                     sx={{
-                      p: { xs: 3, md: 3.5 },
-                      borderRadius: 4,
-                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                      backdropFilter: 'blur(20px) saturate(180%)',
-                      border: '1px solid rgba(255, 255, 255, 0.9)',
-                      boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
-                      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      textAlign: 'left',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        borderColor: 'rgba(255, 102, 0, 0.3)',
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 16px 40px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255,102,0,0.1), inset 0 0 0 1px #FFF',
-                      },
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0, left: 0, right: 0,
-                        height: '3px',
-                        background: stat.accent ? 'linear-gradient(90deg, #FF6600, #ff8533)' : 'transparent',
-                        borderRadius: '4px 4px 0 0',
-                      },
+                      fontSize: { xs: '2rem', md: '2.6rem' },
+                      fontWeight: 700,
+                      color: ORANGE,
+                      lineHeight: 1,
+                      letterSpacing: '-0.03em',
+                      mb: 1.2,
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: { xs: '2rem', md: '2.5rem' },
-                        fontWeight: 800,
-                        color: '#FF6600',
-                        lineHeight: 1,
-                        letterSpacing: '-0.03em',
-                        mb: 1,
-                      }}
-                    >
-                      {stat.value}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: 'rgb(71, 85, 105)' }}>
-                      {stat.label}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.76rem', color: 'rgb(100, 116, 139)', mt: 0.4 }}>
-                      {stat.desc}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Reveal>
-          </Box>
+                    {value}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: HERO_INK }}>
+                    {label}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.78rem', color: HERO_INK_2, mt: 0.3, lineHeight: 1.45 }}>
+                    {note}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Reveal>
         </Container>
 
-        {/* Dynamic Curved Bottom Divider - matching homepage */}
+        {/* Curved divider, matching the homepage */}
         <Box
           sx={{
             position: 'absolute',
@@ -333,303 +411,235 @@ export default function ModelsPage() {
             overflow: 'hidden',
           }}
         >
-          <svg
-            viewBox="0 0 1440 80"
-            preserveAspectRatio="none"
-            style={{ width: '100%', height: '100%', display: 'block' }}
-          >
-            <path
-              d="M 0,80 Q 720,0 1440,80 L 1440,85 L 0,85 Z"
-              fill="#FFFFFF"
-            />
+          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ width: '100%', height: '100%', display: 'block' }}>
+            <path d="M 0,80 Q 720,0 1440,80 L 1440,85 L 0,85 Z" fill="var(--bg-page)" />
           </svg>
         </Box>
       </Box>
 
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 } }}>
-        {/* ── Section 2: Flagship Models Showcase Grid ───────────── */}
-        <Box sx={{ py: { xs: 7, md: 10 } }}>
+        {/* ── Section 2: The provider index ───────────────────────── */}
+        <Box sx={{ py: SECTION_PY }}>
           <Reveal>
-            <Box sx={{ textAlign: 'center', maxWidth: '42rem', mx: 'auto', mb: { xs: 5, md: 6 } }}>
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, mb: 2 }}>
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600' }} />
-                <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#FF6600', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  Premier Lineup
-                </Typography>
-              </Box>
-              <Typography component="h2" sx={{ fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.03em', lineHeight: 1.2 }}>
-                Flagship Intelligence<br />at your fingertips.
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+                gap: { xs: 2, md: 6 },
+                alignItems: 'end',
+                mb: { xs: 4, md: 5 },
+              }}
+            >
+              <Typography
+                component="h2"
+                sx={{
+                  fontSize: { xs: '1.9rem', sm: '2.3rem', md: '2.7rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.22,
+                  letterSpacing: '-0.03em',
+                  color: 'var(--text-heading)',
+                }}
+              >
+                {PROVIDERS.length} labs. One account.
+              </Typography>
+              <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+                Every provider below is live today. Pick one to filter the catalogue, or scroll past
+                and browse the whole list.
               </Typography>
             </Box>
           </Reveal>
 
-          <Box
-            sx={{
-              mt: 4.5,
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(3, 1fr)' },
-              gap: 3,
-            }}
-          >
-            {FLAGSHIP_MODELS.map((model, i) => (
-              <Reveal key={model.name} delay={i * 80} sx={{ display: 'flex' }}>
+          <Reveal delay={80}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' },
+                borderBottom: '1px solid var(--border-subtle)',
+              }}
+            >
+              {PROVIDERS.map((p) => (
                 <Box
+                  key={p.code}
+                  component="button"
+                  type="button"
+                  onClick={() => jumpToCatalog(p.code)}
                   sx={{
-                    width: '100%',
-                    p: 3.5,
-                    borderRadius: 4,
-                    border: '1px solid var(--border-subtle)',
-                    backgroundColor: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px) saturate(180%)',
+                    font: 'inherit',
+                    textAlign: 'left',
+                    cursor: 'pointer',
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
-                    transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
-                    '&:hover': {
-                      borderColor: '#FF6600',
-                      transform: 'translateY(-4px)',
-                      boxShadow: '0 16px 40px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255,102,0,0.1), inset 0 0 0 1px #FFF',
-                    },
+                    alignItems: 'center',
+                    gap: 1.4,
+                    px: { xs: 1, md: 1.75 },
+                    py: 1.9,
+                    border: 0,
+                    borderTop: '1px solid var(--border-subtle)',
+                    backgroundColor: 'transparent',
+                    transition: 'background-color 0.2s ease',
+                    '&:hover': { backgroundColor: 'var(--bg-glass)' },
+                    '&:hover .p-name': { color: ORANGE },
                   }}
                 >
-                  <Box>
-                    {/* Top Row: Logo, Provider, Context badge */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Box
-                          sx={{
-                            width: 42,
-                            height: 42,
-                            borderRadius: 2.5,
-                            backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-                            border: '1px solid var(--border-subtle)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            p: 1,
-                          }}
-                        >
-                          <Box
-                            component="img"
-                            src={model.logo}
-                            alt={model.provider}
-                            sx={{
-                              width: 24,
-                              height: 24,
-                              objectFit: 'contain',
-                              filter: isDark && model.provider === 'OpenAI' ? 'invert(1)' : 'none',
-                            }}
-                          />
-                        </Box>
-                        <Box>
-                          <Typography sx={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-                            {model.name}
-                          </Typography>
-                          <Typography sx={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                            {model.provider}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          px: 1.4,
-                          py: 0.4,
-                          borderRadius: '9999px',
-                          backgroundColor: 'rgba(255,102,0,0.1)',
-                          border: '1px solid rgba(255,102,0,0.25)',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          color: '#FF6600',
-                        }}
-                      >
-                        {model.context}
-                      </Box>
-                    </Box>
-
-                    {/* Tag & Description */}
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                        color: 'var(--text-primary)',
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                        px: 1.4,
-                        py: 0.3,
-                        borderRadius: '9999px',
-                        mb: 1.5,
-                      }}
-                    >
-                      {model.tag}
-                    </Box>
-                    <Typography sx={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                      {model.desc}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#10B981' }} />
-                      <Typography sx={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                        Live on API & Chat
-                      </Typography>
-                    </Box>
-                    <Box
-                      component="a"
-                      href="https://ais.openledger.xyz/chat"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        color: '#FF6600',
-                        textDecoration: 'none',
-                        '&:hover': { textDecoration: 'underline' },
-                      }}
-                    >
-                      Chat →
-                    </Box>
-                  </Box>
+                  <ProviderTile code={p.code} size={26} />
+                  <Typography
+                    className="p-name"
+                    sx={{
+                      flex: 1,
+                      minWidth: 0,
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      transition: 'color 0.2s ease',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {p.name}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                    {providerCounts[p.code] || 0}
+                  </Typography>
                 </Box>
-              </Reveal>
-            ))}
-          </Box>
+              ))}
+            </Box>
+          </Reveal>
         </Box>
 
-        {/* ── Section 3: Multi-Model Consensus Visual Feature ────── */}
+        {/* ── Section 3: Routing ──────────────────────────────────── */}
         <Rule />
-        <Box sx={{ py: { xs: 8, md: 12 } }}>
+        <Box sx={{ py: SECTION_PY }}>
           <Box
             sx={{
               display: 'grid',
-              gap: { xs: 6, lg: 8 },
-              gridTemplateColumns: { lg: 'minmax(0,1.1fr) minmax(0,0.9fr)' },
+              gap: { xs: 6, lg: 10 },
+              gridTemplateColumns: { lg: 'minmax(0, 1.05fr) minmax(0, 0.95fr)' },
               alignItems: 'center',
             }}
           >
             <Reveal>
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  color: '#FF6600',
-                  mb: 2,
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Smart Routing & Consensus
-              </Box>
-              <Typography
-                component="h2"
-                sx={{
-                  fontSize: { xs: '2rem', sm: '2.6rem', md: '3rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.03em',
-                  color: 'var(--text-heading)',
-                  maxWidth: '22ch',
-                  mb: 2.5,
-                }}
-              >
-                Ask one model.{' '}
-                <Box component="span" sx={{ color: 'var(--text-secondary)', fontWeight: 400 }}>
-                  Or query the whole council.
+              <Box>
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1.2,
+                    color: ORANGE,
+                    mb: 2,
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE }} />
+                  Routing
                 </Box>
-              </Typography>
-              <Typography sx={{ maxWidth: '56ch', fontSize: '1.05rem', lineHeight: 1.6, color: 'var(--text-secondary)', mb: 4 }}>
-                No single AI model is best at everything. Claude dominates code refactors; DeepSeek R1 dominates math and proofs; GPT-4o excels at everyday speed; Gemini handles whole codebases.
-              </Typography>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '2rem', sm: '2.4rem', md: '2.9rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.18,
+                    letterSpacing: '-0.03em',
+                    color: 'var(--text-heading)',
+                    maxWidth: '20ch',
+                    mb: 2.5,
+                  }}
+                >
+                  No model wins at everything.
+                </Typography>
+                <Typography sx={{ maxWidth: '54ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', mb: 4.5 }}>
+                  Claude holds a long refactor together. DeepSeek shows its working on a proof.
+                  Gemini swallows a whole repository. Knowing which one to reach for is most of the
+                  skill, so you can hand that part over.
+                </Typography>
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {[
-                  ['Parallel Comparison', 'Run the same prompt simultaneously across Claude, GPT-4o, and DeepSeek.'],
-                  ['Optimal Cost Routing', 'Save up to 60% tokens by routing lighter queries to lightweight models.'],
-                  ['Unified Context Memory', 'Your session memory persists regardless of which model you switch to.'],
-                ].map(([title, body]) => (
-                  <Box key={title} sx={{ p: 2, borderRadius: 2.5, border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px) saturate(180%)' }}>
-                    <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', mb: 0.3 }}>
-                      {title}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                      {body}
-                    </Typography>
-                  </Box>
-                ))}
+                <Box>
+                  {ROUTER_NOTES.map(([title, body], i) => (
+                    <Box
+                      key={title}
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', sm: '180px minmax(0, 1fr)' },
+                        gap: { xs: 0.4, sm: 3 },
+                        py: 2.25,
+                        borderTop: i === 0 ? '1px solid var(--border-normal)' : '1px solid var(--border-subtle)',
+                        borderBottom: i === ROUTER_NOTES.length - 1 ? '1px solid var(--border-normal)' : 'none',
+                      }}
+                    >
+                      <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-heading)' }}>
+                        {title}
+                      </Typography>
+                      <Typography sx={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+                        {body}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
               </Box>
             </Reveal>
 
-            {/* Right Visual Image Card */}
             <Reveal delay={120}>
-              <Box
-                sx={{
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                  border: '1px solid var(--border-subtle)',
-                  boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
-                  backgroundColor: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px) saturate(180%)',
-                }}
-              >
-                <Box
-                  component="img"
-                  src="/images/multimodel.jpg"
-                  alt="OpenLedger Multi-Model Consensus Architecture"
-                  sx={{
-                    width: '100%',
-                    height: 'auto',
-                    display: 'block',
-                  }}
-                />
-              </Box>
+              <PromptRouter />
             </Reveal>
           </Box>
         </Box>
 
-        {/* ── Section 4: Searchable Full Catalog Table ──────────── */}
+        {/* ── Section 4: The catalogue ────────────────────────────── */}
         <Rule />
-        <Box id="catalog-list" sx={{ py: { xs: 8, md: 12 } }}>
+        <Box id="catalog-list" sx={{ py: SECTION_PY, scrollMarginTop: '96px' }}>
           <Reveal>
-            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 3, mb: 4 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: { md: 'flex-end' },
+                justifyContent: 'space-between',
+                gap: 3,
+                mb: 4,
+              }}
+            >
               <Box>
-                <Typography component="h2" sx={{ fontSize: { xs: '1.8rem', md: '2.4rem' }, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.03em' }}>
-                  Full Model Catalog
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.9rem', md: '2.5rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    letterSpacing: '-0.03em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  The whole catalogue
                 </Typography>
-                <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.5 }}>
-                  Showing {filteredModels.length} of {MODELS.length} available models
+                <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.8 }}>
+                  {filteredModels.length === MODELS.length
+                    ? `All ${MODELS.length} models`
+                    : `${filteredModels.length} of ${MODELS.length} models`}
                 </Typography>
               </Box>
 
-              {/* Search Box */}
+              {/* An underlined field rather than a pill, to keep the page flat */}
               <Box
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1.5,
-                  px: 2.5,
-                  py: 1.2,
-                  borderRadius: '9999px',
-                  border: '1px solid var(--border-subtle)',
-                  backgroundColor: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px) saturate(180%)',
-                  width: { xs: '100%', md: 340 },
+                  pb: 1,
+                  borderBottom: '1px solid var(--border-normal)',
+                  width: { xs: '100%', md: 320 },
                   transition: 'border-color 0.2s',
-                  '&:focus-within': { borderColor: '#FF6600' },
+                  '&:focus-within': { borderColor: ORANGE },
                 }}
               >
-                <SearchIcon sx={{ fontSize: '1.2rem', color: 'var(--text-muted)' }} />
+                <SearchIcon sx={{ fontSize: '1.15rem', color: 'var(--text-muted)' }} />
                 <InputBase
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search model, provider, keyword..."
+                  placeholder="Search model, provider or task"
                   sx={{
-                    fontSize: '0.88rem',
+                    fontSize: '0.9rem',
                     color: 'var(--text-primary)',
                     width: '100%',
                     '& input::placeholder': { color: 'var(--text-muted)', opacity: 1 },
@@ -638,77 +648,99 @@ export default function ModelsPage() {
               </Box>
             </Box>
 
-            {/* Filter Pills */}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 4 }}>
-              <Box
-                onClick={() => setSelectedKind('all')}
-                sx={{
-                  px: 2.2,
-                  py: 0.8,
-                  borderRadius: '9999px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderColor: selectedKind === 'all' ? '#FF6600' : 'var(--border-normal)',
-                  backgroundColor: selectedKind === 'all' ? '#FF6600' : 'var(--bg-card)',
-                  color: selectedKind === 'all' ? '#fff' : 'var(--text-secondary)',
-                  transition: 'all 0.2s ease',
-                  '&:hover': { borderColor: '#FF6600', color: selectedKind === 'all' ? '#fff' : '#FF6600' },
-                }}
-              >
-                All Modalities ({MODELS.length})
-              </Box>
-              {KINDS.map((k) => (
-                <Box
-                  key={k.id}
-                  onClick={() => setSelectedKind(k.id)}
-                  sx={{
-                    px: 2.2,
-                    py: 0.8,
-                    borderRadius: '9999px',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    border: '1px solid',
-                    borderColor: selectedKind === k.id ? '#FF6600' : 'var(--border-normal)',
-                    backgroundColor: selectedKind === k.id ? '#FF6600' : 'var(--bg-card)',
-                    color: selectedKind === k.id ? '#fff' : 'var(--text-secondary)',
-                    transition: 'all 0.2s ease',
-                    '&:hover': { borderColor: '#FF6600', color: selectedKind === k.id ? '#fff' : '#FF6600' },
-                  }}
-                >
-                  {k.label} ({MODELS.filter((m) => m.kind === k.id).length})
-                </Box>
-              ))}
-            </Box>
-          </Reveal>
-
-          {/* Model rows */}
-          {/* One table, not fifty-five cards. Hairline rows keep a long
-              catalogue scannable and let the columns line up down the page. */}
-          <Reveal delay={60}>
+            {/* Modality tabs */}
             <Box
               sx={{
-                borderRadius: { xs: '14px', md: '16px' },
-                border: '1px solid var(--border-normal)',
-                overflow: 'hidden',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: { xs: 2.5, md: 3.5 },
+                borderBottom: '1px solid var(--border-subtle)',
+                mb: providerFilter ? 2.5 : 0,
               }}
             >
+              {[{ id: 'all', label: 'All', count: MODELS.length }]
+                .concat(KINDS.map((k) => ({ id: k.id, label: k.label, count: kindCounts[k.id] || 0 })))
+                .map((tab) => {
+                  const on = selectedKind === tab.id;
+                  return (
+                    <Box
+                      key={tab.id}
+                      component="button"
+                      type="button"
+                      onClick={() => setSelectedKind(tab.id)}
+                      sx={{
+                        font: 'inherit',
+                        cursor: 'pointer',
+                        border: 0,
+                        backgroundColor: 'transparent',
+                        px: 0,
+                        pb: 1.4,
+                        mb: '-1px',
+                        display: 'inline-flex',
+                        alignItems: 'baseline',
+                        gap: 0.8,
+                        borderBottom: `2px solid ${on ? ORANGE : 'transparent'}`,
+                        color: on ? 'var(--text-heading)' : 'var(--text-secondary)',
+                        fontSize: '0.92rem',
+                        fontWeight: on ? 700 : 500,
+                        transition: 'color 0.2s ease, border-color 0.2s ease',
+                        '&:hover': { color: 'var(--text-heading)' },
+                      }}
+                    >
+                      {tab.label}
+                      <Box component="span" sx={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                        {tab.count}
+                      </Box>
+                    </Box>
+                  );
+                })}
+            </Box>
+
+            {/* Only rendered when a provider filter is actually on */}
+            {activeProvider && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 1 }}>
+                <Typography sx={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  Filtered to {activeProvider.name}
+                </Typography>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => setProviderFilter(null)}
+                  sx={{
+                    font: 'inherit',
+                    cursor: 'pointer',
+                    border: 0,
+                    backgroundColor: 'transparent',
+                    p: 0,
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    color: ORANGE,
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '3px',
+                  }}
+                >
+                  Clear
+                </Box>
+              </Box>
+            )}
+          </Reveal>
+
+          {/* One table. Hairline rows keep a long catalogue scannable and let the
+              columns line up all the way down the page. */}
+          <Reveal delay={60}>
+            <Box sx={{ mt: 4 }}>
               {/* Column headings */}
               <Box
                 sx={{
                   display: { xs: 'none', md: 'grid' },
-                  gridTemplateColumns: 'auto minmax(0, 2.1fr) minmax(0, 1.15fr) 92px 84px',
+                  gridTemplateColumns: '30px minmax(0, 2fr) minmax(0, 1.25fr) 86px 64px',
                   alignItems: 'center',
-                  gap: 3,
-                  px: 3,
-                  py: 1.75,
-                  backgroundColor: 'var(--bg-glass)',
-                  borderBottom: '1px solid var(--border-normal)',
+                  columnGap: 3,
+                  pb: 1.4,
+                  borderBottom: '1px solid var(--border-strong)',
                 }}
               >
-                <Box sx={{ width: 32 }} />
+                <Box />
                 {['Model', 'Best for', 'Context', ''].map((label, i) => (
                   <Typography
                     key={label || i}
@@ -725,27 +757,26 @@ export default function ModelsPage() {
                 ))}
               </Box>
 
-              {filteredModels.map((model, idx) => (
+              {visibleModels.map((model) => (
                 <Box
                   key={model.name}
                   sx={{
                     display: 'grid',
                     gridTemplateColumns: {
-                      xs: 'auto minmax(0, 1fr)',
-                      md: 'auto minmax(0, 2.1fr) minmax(0, 1.15fr) 92px 84px',
+                      xs: '30px minmax(0, 1fr)',
+                      md: '30px minmax(0, 2fr) minmax(0, 1.25fr) 86px 64px',
                     },
                     alignItems: 'center',
-                    columnGap: 3,
-                    rowGap: 1,
-                    px: { xs: 2, md: 3 },
-                    py: { xs: 2.25, md: 2.5 },
-                    borderTop: idx === 0 ? 'none' : '1px solid var(--border-subtle)',
+                    columnGap: { xs: 1.75, md: 3 },
+                    rowGap: 0.75,
+                    py: { xs: 2, md: 2.1 },
+                    borderBottom: '1px solid var(--border-subtle)',
                     transition: 'background-color 0.2s ease',
                     '&:hover': { backgroundColor: 'var(--bg-glass)' },
-                    '&:hover .model-try': { borderColor: '#FF6600', color: '#FF6600' },
+                    '&:hover .model-open': { color: ORANGE },
                   }}
                 >
-                  <ProviderTile code={model.code} size={32} />
+                  <ProviderTile code={model.code} size={30} />
 
                   <Box sx={{ minWidth: 0 }}>
                     <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.2, flexWrap: 'wrap' }}>
@@ -761,9 +792,9 @@ export default function ModelsPage() {
                         fontSize: '0.82rem',
                         color: 'var(--text-secondary)',
                         lineHeight: 1.5,
-                        mt: 0.4,
+                        mt: 0.25,
                         display: '-webkit-box',
-                        WebkitLineClamp: 2,
+                        WebkitLineClamp: 1,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
                       }}
@@ -772,13 +803,11 @@ export default function ModelsPage() {
                     </Typography>
                   </Box>
 
-                  {/* Best for: the field that was going unused while this column
-                      showed the context size instead. */}
                   <Typography
                     sx={{
                       gridColumn: { xs: '2 / -1', md: 'auto' },
                       fontSize: '0.84rem',
-                      lineHeight: 1.5,
+                      lineHeight: 1.45,
                       color: 'var(--text-primary)',
                     }}
                   >
@@ -794,141 +823,101 @@ export default function ModelsPage() {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {model.detail || '—'}
+                    {model.detail}
                   </Typography>
 
-                  <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
-                    <Box
-                      component="a"
-                      className="model-try"
-                      href="https://ais.openledger.xyz/chat"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        px: 2,
-                        py: 0.7,
-                        borderRadius: '9999px',
-                        border: '1px solid var(--border-normal)',
-                        color: 'var(--text-secondary)',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        textDecoration: 'none',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.2s ease',
-                        '&:hover': { backgroundColor: '#FF6600', borderColor: '#FF6600', color: '#fff' },
-                      }}
-                    >
-                      Try
-                    </Box>
+                  <Box
+                    component="a"
+                    className="model-open"
+                    href="https://ais.openledger.xyz/chat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      display: { xs: 'none', md: 'block' },
+                      textAlign: 'right',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      color: 'var(--text-muted)',
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap',
+                      transition: 'color 0.2s ease',
+                    }}
+                  >
+                    Open →
                   </Box>
                 </Box>
               ))}
 
               {filteredModels.length === 0 && (
-                <Box sx={{ px: 3, py: 6, textAlign: 'center' }}>
-                  <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)' }}>
-                    No models match that search.
+                <Box sx={{ py: 7, textAlign: 'center' }}>
+                  <Typography sx={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
+                    Nothing matches that. Try a provider name, or clear the search.
                   </Typography>
+                </Box>
+              )}
+
+              {!expanded && filteredModels.length > PAGE_SIZE && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', pt: 4 }}>
+                  <Box
+                    component="button"
+                    type="button"
+                    onClick={() => setExpanded(true)}
+                    sx={{
+                      font: 'inherit',
+                      cursor: 'pointer',
+                      px: 3.5,
+                      py: 1.3,
+                      borderRadius: '9999px',
+                      border: '1px solid var(--border-normal)',
+                      backgroundColor: 'transparent',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
+                      transition: 'all 0.2s ease',
+                      '&:hover': { borderColor: ORANGE, color: ORANGE },
+                    }}
+                  >
+                    Show the remaining {filteredModels.length - PAGE_SIZE}
+                  </Box>
                 </Box>
               )}
             </Box>
           </Reveal>
         </Box>
 
-        {/* ── Section 5: Bottom Cinematic CTA Banner ─────────────── */}
+        {/* ── Section 5: Closing ──────────────────────────────────── */}
         <Rule />
-        <Box sx={{ py: { xs: 8, md: 14 } }}>
+        <Box sx={{ py: { xs: 9, md: 14 } }}>
           <Reveal>
-            <Box
-              sx={{
-                position: 'relative',
-                borderRadius: { xs: 4, md: 6 },
-                p: { xs: 4, sm: 6, md: 8 },
-                overflow: 'hidden',
-                backgroundColor: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px) saturate(180%)',
-                border: '1px solid var(--border-subtle)',
-                boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.6)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-              }}
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255, 102, 0, 0.16) 0%, rgba(255, 102, 0, 0.02) 70%, transparent 100%)',
-                  pointerEvents: 'none',
-                }}
-              />
-
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  px: 2,
-                  py: 0.6,
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 102, 0, 0.1)',
-                  border: '1px solid rgba(255, 102, 0, 0.3)',
-                  color: '#FF6600',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  mb: 3,
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                Instant Switching • Zero Account Headaches
-              </Box>
-
+            <Box sx={{ maxWidth: '44rem', mx: 'auto', textAlign: 'center' }}>
               <Typography
                 component="h2"
                 sx={{
-                  fontSize: { xs: '2.2rem', sm: '3rem', md: '3.6rem' },
+                  fontSize: { xs: '2.1rem', sm: '2.8rem', md: '3.3rem' },
                   fontWeight: 700,
-                  lineHeight: 1.1,
+                  lineHeight: 1.14,
                   letterSpacing: '-0.03em',
                   color: 'var(--text-heading)',
-                  maxWidth: '22ch',
                   mb: 2.5,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
-                Start chatting with any of these models right now.
+                All {MODEL_TOTAL} of them, behind one login.
               </Typography>
-
               <Typography
                 sx={{
-                  maxWidth: '54ch',
+                  maxWidth: '52ch',
+                  mx: 'auto',
                   fontSize: { xs: '1rem', md: '1.1rem' },
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
-                  mb: 4.5,
-                  position: 'relative',
-                  zIndex: 1,
+                  mb: 5,
                 }}
               >
-                No separate accounts, no API setup, and no recurring commitments per provider. Try OpenLedger with a single click.
+                No separate accounts, no API keys to rotate, and no per provider subscription to
+                cancel later. Open the chat and start with whichever model you like.
               </Typography>
 
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 2.5,
-                  justifyContent: 'center',
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, justifyContent: 'center' }}>
                 <Box
                   component="a"
                   href="https://ais.openledger.xyz/chat"
@@ -937,7 +926,7 @@ export default function ModelsPage() {
                   sx={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    backgroundColor: '#FF6600',
+                    backgroundColor: ORANGE,
                     color: '#FFFFFF',
                     px: 5,
                     py: 1.8,
@@ -946,17 +935,16 @@ export default function ModelsPage() {
                     fontWeight: 700,
                     textDecoration: 'none',
                     letterSpacing: '0.02em',
-                    boxShadow: '0 8px 32px rgba(255,102,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25)',
-                    border: '1px solid rgba(255,102,0,0.45)',
+                    boxShadow: '0 8px 30px rgba(255,102,0,0.32), inset 0 1px 0 rgba(255,255,255,0.25)',
                     transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
                     '&:hover': {
                       backgroundColor: '#e65c00',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 14px 44px rgba(255,102,0,0.55)',
+                      boxShadow: '0 14px 40px rgba(255,102,0,0.45)',
                     },
                   }}
                 >
-                  Launch OpenLedger Studio →
+                  Open the chat →
                 </Box>
                 <Link href="/private" passHref style={{ textDecoration: 'none' }}>
                   <Box
@@ -970,18 +958,12 @@ export default function ModelsPage() {
                       borderRadius: '9999px',
                       fontSize: '1rem',
                       fontWeight: 600,
-                      border: '1px solid var(--border-subtle)',
-                      backgroundColor: 'var(--bg-glass)',
-                      backdropFilter: 'blur(12px)',
+                      border: '1px solid var(--border-normal)',
                       transition: 'all 0.25s ease',
-                      '&:hover': {
-                        borderColor: '#FF6600',
-                        color: '#FF6600',
-                        transform: 'translateY(-2px)',
-                      },
+                      '&:hover': { borderColor: ORANGE, color: ORANGE, transform: 'translateY(-2px)' },
                     }}
                   >
-                    Learn About Private AI
+                    How privacy works
                   </Box>
                 </Link>
               </Box>
