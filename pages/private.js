@@ -19,44 +19,44 @@ const ROW_PY = { xs: 3.5, md: 4 };    // ledger rows and divided columns
 
 /* ── Content ─────────────────────────────────────────────────────── */
 
-const GUARANTEES = ['Local-Only History', 'Zero Retention', 'No Training'];
+const GUARANTEES = ['Private History', 'Zero Retention', 'No Training'];
 
 const DEFAULTS = [
-  { term: 'Zero Retention', detail: 'Prompts not stored after inference' },
-  { term: 'No Training', detail: "Models don't learn from your data" },
-  { term: 'Local-Only History', detail: 'Vault saved on device' },
+  { term: 'Zero Retention', detail: 'We don’t keep your prompts or responses after they’re processed.' },
+  { term: 'No Training', detail: 'Your conversations aren’t used to train AI models.' },
+  { term: 'Private History', detail: 'Your conversations stay available to you in your browser.' },
 ];
 
 const TELEMETRY = [
-  { label: 'Retention', value: '0 seconds' },
-  { label: 'AI Training', value: 'Disabled' },
-  { label: 'Profiling', value: 'None' },
+  { label: 'Retention', value: 'NONE' },
+  { label: 'AI Training', value: 'OFF' },
+  { label: 'Profiling', value: 'NONE' },
 ];
 
 const PILLARS = [
   {
     glyph: 'device',
-    term: 'Local-Only History',
-    detail: 'Your conversation history stays on your device, where you control it.',
-    status: 'Stored on device',
+    term: 'Private History',
+    detail: 'Your conversations stay available to you in your browser.',
+    status: 'STAYS WITH YOU',
   },
   {
     glyph: 'nostore',
     term: 'Zero Retention',
-    detail: "Prompts and responses aren't stored on our servers after processing.",
-    status: 'Discarded after use',
+    detail: 'We don’t keep your prompts or responses after they’re processed.',
+    status: 'NOT RETAINED',
   },
   {
     glyph: 'notrain',
     term: 'No Training',
-    detail: "Your conversations aren't collected or used to train AI models.",
-    status: 'Excluded from datasets',
+    detail: 'What you say isn’t used to train AI models.',
+    status: 'NEVER USED FOR TRAINING',
   },
   {
     glyph: 'noprofile',
     term: 'No Profiling',
-    detail: "What you ask isn't used to build an advertising or behavioral profile.",
-    status: 'No behavioral graph',
+    detail: 'What you ask isn’t used to build a profile about you.',
+    status: 'NO PROFILING',
   },
 ];
 
@@ -65,51 +65,51 @@ const STEPS = [
     step: '01',
     glyph: 'device',
     zone: 'you',
-    term: 'Your Device',
-    line: 'Query originates',
-    detail: 'Your conversation starts and remains on your device, with chat history saved locally.',
+    term: 'You Ask',
+    line: 'START HERE',
+    detail: 'Start a conversation or pick up where you left off.',
   },
   {
     step: '02',
     glyph: 'shield',
     zone: 'openledger',
-    term: 'Secure Node',
-    line: 'End-to-end routing',
+    term: 'Secure Routing',
+    line: 'SENT SECURELY',
     detail:
-      'When you send a prompt, it travels through an encrypted connection to a secure server that routes the request.',
+      'Your request is securely routed to the model you choose.',
   },
   {
     step: '03',
     glyph: 'cpu',
     zone: 'openledger',
     term: 'Private Inference',
-    line: 'RAM-only execution',
+    line: 'PRIVATELY PROCESSED',
     detail:
-      'The request is sent to the selected AI model for processing without recording your identity or the contents.',
+      'The model handles your request without OpenLedger keeping your conversation.',
   },
   {
     step: '04',
     glyph: 'reply',
     zone: 'you',
-    term: 'Straight Back to You',
-    line: 'Back on the wire',
+    term: 'Back to You',
+    line: 'ANSWER DELIVERED',
     detail:
-      'The generated response is streamed back through the secure proxy to your device, leaving no trace behind.',
+      'The answer comes back, and your conversation stays available in your browser.',
   },
 ];
 
-const PIPELINE_CHIPS = ['Encrypted in transit', 'RAM-only execution', 'No trace left behind'];
+const PIPELINE_CHIPS = ['SECURE IN TRANSIT', 'PRIVATE BY DEFAULT', 'ZERO RETENTION'];
 
 const FLOWS = [
   {
     label: 'Most platforms',
     accent: false,
-    note: 'An extra moderation layer sits between your prompt and the model.',
+    note: 'Another layer decides what reaches the model.',
   },
   {
     label: 'OpenLedger',
     accent: true,
-    note: 'Nothing is inserted in between. Your prompt reaches the model as written.',
+    note: 'Your request goes straight to the model without an added platform moderation layer.',
   },
 ];
 
@@ -117,17 +117,17 @@ const FREEDOMS = [
   {
     glyph: 'chat',
     term: 'Ask Freely',
-    detail: 'Explore questions and topics without unnecessary filters getting in the way.',
+    detail: 'Ask the questions you actually want to ask, without an extra platform layer getting in the way.',
   },
   {
     glyph: 'pen',
     term: 'Create Freely',
-    detail: 'Write, research, brainstorm, code, and create with fewer restrictions.',
+    detail: 'Write, research, brainstorm, code, and create without unnecessary restrictions.',
   },
   {
     glyph: 'layers',
     term: 'Choose Your Model',
-    detail: 'Access leading AI models based on what works best for you, without being locked into a single provider.',
+    detail: 'Choose from leading AI models based on what you’re doing, not what one platform wants you to use.',
   },
 ];
 
@@ -416,29 +416,62 @@ function GlyphTile({ name, size = 44 }) {
   );
 }
 
-const PRIMARY_CTA_SX = {
+const getPrimaryCtaSx = (isDark) => ({
+  position: 'relative',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: ORANGE,
-  color: '#FFFFFF',
   px: 4.5,
   py: 1.7,
+  fontSize: { xs: '1rem', md: '1.05rem' },
+  fontWeight: 600,
   borderRadius: '9999px',
-  fontSize: '1rem',
-  fontWeight: 700,
-  letterSpacing: '0.02em',
+  color: '#ff6600',
+  fontFamily: '"Inter", -apple-system, sans-serif',
   textDecoration: 'none',
-  border: '1px solid rgba(255, 102, 0, 0.45)',
-  boxShadow: '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-  '&:hover': {
-    backgroundColor: '#E65C00',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 14px 44px rgba(255, 102, 0, 0.5)',
+  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+  cursor: 'pointer',
+
+  // Liquid Glass Pill Base (from active tab in CoreFeaturesSection)
+  backgroundColor: isDark ? 'rgba(255, 102, 0, 0.12)' : 'rgba(255, 255, 255, 0.88)',
+  background: isDark
+      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%)'
+      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)',
+  backdropFilter: 'blur(16px)',
+  border: isDark
+    ? '1px solid rgba(255, 102, 0, 0.28)'
+    : '1px solid rgba(255, 102, 0, 0.2)',
+  boxShadow: isDark
+      ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.3), inset 0 -0.5px 1px rgba(0, 0, 0, 0.3)'
+      : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)',
+
+  // Specular rim highlight (simulated using ::before)
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '12%',
+    right: '12%',
+    height: '2px',
+    background: isDark
+      ? 'linear-gradient(90deg, transparent, rgba(255, 102, 0, 0.6), transparent)'
+      : 'linear-gradient(90deg, transparent, rgba(255, 102, 0, 0.45), transparent)',
+    borderRadius: '9999px',
+    opacity: isDark ? 0.8 : 0.6,
+    pointerEvents: 'none',
   },
-  '&:active': { transform: 'scale(0.97)' },
-};
+
+  '&:hover': {
+    backgroundColor: isDark ? 'rgba(255, 102, 0, 0.18)' : 'rgba(255, 255, 255, 1)',
+    transform: 'translateY(-1px)',
+    boxShadow: isDark
+      ? '0 6px 18px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.35), inset 0 -0.5px 1px rgba(0, 0, 0, 0.3)'
+      : '0 6px 16px rgba(15, 23, 42, 0.08), inset 0 2px 3px rgba(255, 255, 255, 1), inset 0 -0.5px 1px rgba(0, 0, 0, 0.04)',
+  },
+  '&:active': {
+    transform: 'scale(0.97)',
+  },
+});
 
 const GHOST_CTA_SX = {
   display: 'inline-flex',
@@ -755,7 +788,7 @@ function PrivacyConsole() {
             <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.01em' }}>
               Privacy Defaults
             </Typography>
-            <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Applied to every session</Typography>
+            <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Built into every private session.</Typography>
           </Box>
         </Box>
         <Box
@@ -1240,12 +1273,11 @@ export default function PrivatePage() {
                   mb: 4.5,
                 }}
               >
-                Use powerful AI without giving up your privacy. Your conversations stay private, aren&apos;t used for
-                training, and aren&apos;t stored on our servers.
+                Ask anything. Your conversations stay private, your prompts aren’t used for training, and OpenLedger doesn’t keep your chat history on its servers.
               </Typography>
 
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 5 }}>
-                <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={PRIMARY_CTA_SX}>
+                <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
                   Start a Private Chat
                 </Box>
                 <Box component="a" href="#how-it-works" sx={GHOST_CTA_SX}>
@@ -1298,9 +1330,9 @@ export default function PrivatePage() {
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
             <SectionHead
-              eyebrow="Privacy Pillars"
+              eyebrow="PRIVACY, BUILT IN"
               title="Your conversations aren't the product."
-              lede="Your prompts, documents, files, and spreadsheets remain exclusively yours. They stay on your device instead of becoming a permanent record on our servers."
+              lede="Your chats stay yours. They remain available in your browser without becoming another copy sitting on our servers."
             />
 
             {/* A ledger, not a card grid — hairline rows carry the rhythm. */}
@@ -1413,8 +1445,8 @@ export default function PrivatePage() {
           <Box sx={{ py: SECTION_PY }}>
             <SectionHead
               eyebrow="How it works"
-              title="Your request travels. Your data doesn't stay."
-              lede="Privacy is built into every step of the process. Your data securely traverses our architecture and routes back to you just as you left it."
+              title="Your request goes in. Your data doesn’t stick around."
+              lede="Ask your question, get your answer, keep your conversation. OpenLedger handles the request without keeping a permanent copy on its servers."
             />
             <Reveal delay={120}>
               <Pipeline />
@@ -1429,7 +1461,7 @@ export default function PrivatePage() {
             <SectionHead
               eyebrow="Uncensored by design"
               title="Private enough to ask. Free enough to explore."
-              lede="Privacy protects what you ask. Uncensored AI gives you the freedom to ask it — explore ideas, research difficult topics, create, and code without unnecessary platform-level restrictions."
+              lede="Privacy protects what you ask. Uncensored access gives you room to explore, challenge ideas, research difficult topics, create, and code without unnecessary restrictions."
             />
 
             {/* Filter-layer comparison */}
@@ -1510,7 +1542,7 @@ export default function PrivatePage() {
                 }}
               >
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={PRIMARY_CTA_SX}>
+                  <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
                     Start Chatting
                   </Box>
                   <Link href="/models" passHref legacyBehavior>
@@ -1541,8 +1573,8 @@ export default function PrivatePage() {
               height: { xs: 230, md: 400 },
               borderRadius: '50%',
               backgroundColor: ORANGE,
-              opacity: isDark ? 0.5 : 0.4,
-              filter: 'blur(70px)',
+              opacity: isDark ? 0.15 : 0.08,
+              filter: 'blur(100px)',
               pointerEvents: 'none',
             }}
           />
@@ -1556,8 +1588,8 @@ export default function PrivatePage() {
               height: { xs: 210, md: 360 },
               borderRadius: '50%',
               backgroundColor: '#FFA53A',
-              opacity: isDark ? 0.44 : 0.38,
-              filter: 'blur(80px)',
+              opacity: isDark ? 0.12 : 0.06,
+              filter: 'blur(100px)',
               pointerEvents: 'none',
             }}
           />
@@ -1571,8 +1603,8 @@ export default function PrivatePage() {
               height: { xs: 170, md: 290 },
               borderRadius: '50%',
               backgroundColor: '#FF5A1F',
-              opacity: isDark ? 0.34 : 0.24,
-              filter: 'blur(90px)',
+              opacity: isDark ? 0.10 : 0.04,
+              filter: 'blur(120px)',
               pointerEvents: 'none',
             }}
           />
@@ -1630,7 +1662,7 @@ export default function PrivatePage() {
                       mb: 2,
                     }}
                   >
-                    Ask the question you wouldn&apos;t type anywhere else.
+                    Ask freely.<br />Leave nothing behind.
                   </Typography>
 
                   <Typography
@@ -1642,16 +1674,16 @@ export default function PrivatePage() {
                       mb: 4,
                     }}
                   >
-                    Open a session, pick any model, and keep every prompt on your side of the wire.
+                    Choose your model, start a private session, and ask what you want without leaving a permanent chat history on OpenLedger’s servers.
                   </Typography>
 
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={PRIMARY_CTA_SX}>
+                    <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
                       Start a Private Chat →
                     </Box>
                     <Link href="/capabilities" passHref legacyBehavior>
                       <Box component="a" sx={GHOST_CTA_SX}>
-                        Explore All Capabilities
+                        Explore AI Capabilities
                       </Box>
                     </Link>
                   </Box>

@@ -34,7 +34,7 @@ export default function TokenOptimizationSection() {
   const { isDark } = useThemeMode();
 
   return (
-    <Container maxWidth="xl" sx={{ pb: 15, overflow: 'hidden' }}>
+    <Container maxWidth="xl" sx={{ pb: { xs: 8, md: 10 }, overflow: 'hidden' }}>
       {/* NEW TOKEN OPTIMIZATION LAYOUT */}
       <Box sx={{ maxWidth: 1400, mx: 'auto', mt: 4 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 4, alignItems: 'stretch' }}>
@@ -46,7 +46,7 @@ export default function TokenOptimizationSection() {
                 Token Optimisation
               </Typography>
               <Typography variant="h3" sx={{ fontSize: { xs: '2.5rem', md: '3rem' }, fontWeight: 700, color: 'var(--text-primary)', mb: 2, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-                And it keeps getting cheaper.
+                And it keeps getting efficient.
               </Typography>
               <Typography sx={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                 The router spends what a request needs, not what the biggest model charges.

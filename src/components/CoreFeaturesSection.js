@@ -28,7 +28,7 @@ const TABS = [
     shortLabel: 'Private AI',
     icon: LockIcon,
     tagline: 'Private and uncensored, from the start.',
-    description: 'Ask freely without your prompts being stored or used for training.',
+    description: 'Ask anything without your prompts being stored, used for training, or tied back to you.',
     hasExplore: true,
     exploreLink: '/private',
     video: '/Videos/Why Openledger/Private AI.webm',
@@ -41,8 +41,8 @@ const TABS = [
     fullLabel: 'Multi-Model & Tokens',
     shortLabel: 'Multi-Model',
     icon: AutoAwesomeIcon,
-    tagline: 'More models. Fewer wasted tokens.',
-    description: 'Access leading AI models from one place, with optimized token usage to reduce costs and keep every request efficient.',
+    tagline: 'More models to choose from. Fewer tokens wasted.',
+    description: 'Use leading AI models from one place. Choose your own, or let Auto match each request with the right model.',
     hasExplore: true,
     exploreLink: '/models',
     video: '/Videos/Why Openledger/Multimodel & Token.webm',
@@ -55,8 +55,8 @@ const TABS = [
     fullLabel: 'Unified Memory',
     shortLabel: 'Memory',
     icon: MemoryIcon,
-    tagline: 'Say it once. Every model knows.',
-    description: 'Your context stays consistent across models, so you never have to start over.',
+    tagline: 'Say it once. Every model remembers.',
+    description: 'Your Your memory moves with you, so you can change models without starting the conversation over.',
     hasExplore: true,
     exploreLink: '/memory',
     video: '/Videos/Why Openledger/Unified Memory.webm',
@@ -69,8 +69,8 @@ const TABS = [
     fullLabel: 'Built for Agents',
     shortLabel: 'Agents',
     icon: SmartToyIcon,
-    tagline: 'Connect once. Access any model.',
-    description: 'Give agents direct access to leading AI models with x402, enabling seamless interactions across models without complex integrations.',
+    tagline: 'Give your agents more ways to get things done.',
+    description: 'Connect agents to leading models through one API, with x402-ready access for agent-to-agent interactions and transactions.',
     hasExplore: true,
     exploreLink: '/capabilities',
     video: '/Videos/Why Openledger/Built For Agents.webm',
@@ -362,8 +362,7 @@ export default function CoreFeaturesSection() {
                 pt: { md: 0.8 },
               }}
             >
-              Private access to leading AI models, shared memory, and agents without the usual switching or setup.
-            </Typography>
+              Private conversations, the models you want, memory that follows you, and agents that can actually get things done.            </Typography>
           </Box>
 
           {/* Apple Liquid Glass Floating Tab Bar with Lens Optics & Stretching Pill */}
