@@ -20,7 +20,11 @@ const NAV_LINKS = [
   { label: 'Token', href: '/token' },
 ];
 
-export default function PageHeader() {
+/* `spacer` pushes page content clear of the fixed header. Pages whose first
+   section is a full bleed background pass spacer={false} and absorb the
+   offset into their own padding, so the background runs up behind the
+   header instead of leaving a bar of page colour above it. */
+export default function PageHeader({ spacer = true }) {
   const { isDark, toggleTheme } = useThemeMode();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -398,7 +402,7 @@ export default function PageHeader() {
       )}
 
       {/* ── Spacer so page content doesn't sit under the fixed header ── */}
-      <Box sx={{ height: { xs: 78, md: 92 } }} />
+      {spacer && <Box sx={{ height: { xs: 78, md: 92 } }} />}
     </>
   );
 }
