@@ -73,6 +73,7 @@ export default function TrustBadges({ onIosClick, onAndroidClick }) {
           mt: 'auto',
           pt: { xs: 2, md: 3 },
           pb: { xs: 2.5, md: 3.5 },
+          mb: { xs: 8, md: 12 },
           zIndex: 5,
         }}
       >

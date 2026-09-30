@@ -22,20 +22,6 @@ if (typeof window !== 'undefined') {
 
 const TABS = [
   {
-    id: 'private',
-    label: 'Private AI',
-    fullLabel: 'Private AI',
-    shortLabel: 'Private AI',
-    icon: LockIcon,
-    tagline: 'Private and uncensored, from the start.',
-    description: 'Ask anything without your prompts being stored, used for training, or tied back to you.',
-    hasExplore: true,
-    exploreLink: '/private',
-    video: '/Videos/Why Openledger/Private AI.webm',
-    tagLeft: 'ZERO RETENTION',
-    tagRight: 'UNCENSORED',
-  },
-  {
     id: 'multimodel',
     label: 'Multi-Model',
     fullLabel: 'Multi-Model & Tokens',
@@ -51,21 +37,35 @@ const TABS = [
   },
   {
     id: 'memory',
-    label: 'Unified Memory',
-    fullLabel: 'Unified Memory',
+    label: 'Universal Memory',
+    fullLabel: 'Universal Memory',
     shortLabel: 'Memory',
     icon: MemoryIcon,
-    tagline: 'Say it once. Every model remembers.',
-    description: 'Your Your memory moves with you, so you can change models without starting the conversation over.',
+    tagline: 'One memory. You decide what stays.',
+    description: 'Switch models without losing context. Delete any memory you don’t want kept, or turn memory off so it isn’t used.',
     hasExplore: true,
     exploreLink: '/memory',
     video: '/Videos/Why Openledger/Unified Memory.webm',
     tagLeft: 'ONE MEMORY',
-    tagRight: 'SHARED CONTEXT',
+    tagRight: 'FULL CONTROL',
+  },
+  {
+    id: 'private',
+    label: 'Private AI',
+    fullLabel: 'Private AI',
+    shortLabel: 'Private AI',
+    icon: LockIcon,
+    tagline: 'Private and uncensored, from the start.',
+    description: 'Ask anything without your prompts being stored, used for training, or tied back to you.',
+    hasExplore: true,
+    exploreLink: '/private',
+    video: '/Videos/Why Openledger/Private AI.webm',
+    tagLeft: 'ZERO RETENTION',
+    tagRight: 'UNCENSORED',
   },
   {
     id: 'agents',
-    label: 'Built for Agents',
+    label: 'Built for agents. x402 native.',
     fullLabel: 'Built for Agents',
     shortLabel: 'Agents',
     icon: SmartToyIcon,
@@ -332,7 +332,7 @@ export default function CoreFeaturesSection() {
               mb: { xs: 2.5, md: 3.2 },
             }}
           >
-            {/* Headline: Private by default. Uncensored by design. */}
+            {/* Headline: From multi-model access to private, uncensored AI. */}
             <Typography
               variant="h2"
               sx={{
@@ -344,10 +344,10 @@ export default function CoreFeaturesSection() {
               }}
             >
               <Box component="span" sx={{ color: 'var(--text-heading)', display: 'block' }}>
-                Private by default.
+                From multi-model access to
               </Box>
               <Box component="span" sx={{ color: 'var(--text-secondary)', display: 'block' }}>
-                Uncensored by design.
+                private, uncensored AI.
               </Box>
             </Typography>
 
@@ -362,7 +362,8 @@ export default function CoreFeaturesSection() {
                 pt: { md: 0.8 },
               }}
             >
-              Private conversations, the models you want, memory that follows you, and agents that can actually get things done.            </Typography>
+              Choose from 100+ models, keep your conversations private, explore without unnecessary restrictions, and carry your context wherever you go.
+            </Typography>
           </Box>
 
           {/* Apple Liquid Glass Floating Tab Bar with Lens Optics & Stretching Pill */}

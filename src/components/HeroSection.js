@@ -161,7 +161,7 @@ export default function HeroSection() {
               display: 'block',
             }}
           >
-            Ask Open...
+            Hey Open..
           </Typography>
         </Box>
 

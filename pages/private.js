@@ -135,6 +135,40 @@ const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
 
 const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
 
+/* Four independent controls, ordered by how far your request has travelled.
+   Every claim here is one the page already makes elsewhere; this section
+   reframes them by where they apply rather than adding anything new. */
+const LAYERS = [
+  {
+    n: '01',
+    term: 'In transit',
+    status: 'Encrypted in transit',
+    detail:
+      'Your request leaves your device over an encrypted connection. Nobody sitting between you and the model can read what you sent.',
+  },
+  {
+    n: '02',
+    term: 'In processing',
+    status: 'Nothing kept',
+    detail:
+      'The model reads your prompt only to answer it. Once the response is on its way back, there is no working copy left on our side.',
+  },
+  {
+    n: '03',
+    term: 'At rest',
+    status: 'Nothing stored',
+    detail:
+      'There is no stored transcript to leak, to hand over, or to sell. Your history lives in your browser, where you can clear it yourself.',
+  },
+  {
+    n: '04',
+    term: 'Over time',
+    status: 'No training, no profile',
+    detail:
+      'Nothing you ask is used to train a model, and nothing is stitched together into a profile that follows you from one session to the next.',
+  },
+];
+
 const SURFACES = [
   { glyph: 'globe', term: 'Web', sub: 'Any browser' },
   { glyph: 'laptop', term: 'Native App', sub: 'macOS · Windows · Linux' },
@@ -1170,6 +1204,197 @@ function Pipeline() {
 
 /* ── Page ────────────────────────────────────────────────────────── */
 
+/* Concentric rings, innermost first: layer 01 sits closest to the prompt and
+   layer 04 furthest out. The rings are a readout of the list beside them, so
+   there is one place to interact and nothing decorative to click. */
+function LayerRings({ active }) {
+  const ring = (depth) => {
+    const idx = LAYERS.length - 1 - depth; // depth 0 is the outermost ring
+    const on = active === idx;
+
+    return (
+      <Box
+        key={idx}
+        sx={{
+          p: { xs: '15px', md: '21px' },
+          borderRadius: `${20 - depth * 3}px`,
+          border: `1px solid ${on ? ORANGE : 'var(--border-normal)'}`,
+          backgroundColor: on ? 'rgba(255, 102, 0, 0.05)' : 'transparent',
+          boxShadow: on ? '0 0 0 3px rgba(255, 102, 0, 0.09)' : 'none',
+          transition: 'border-color 0.45s ease, background-color 0.45s ease, box-shadow 0.45s ease',
+        }}
+      >
+        {depth === LAYERS.length - 1 ? (
+          <Box
+            sx={{
+              width: { xs: 54, md: 62 },
+              height: { xs: 54, md: 62 },
+              borderRadius: '9px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: ORANGE,
+              border: '1px solid var(--border-strong)',
+              backgroundColor: 'var(--bg-card)',
+            }}
+          >
+            <Glyph name="lock" size={22} />
+          </Box>
+        ) : (
+          ring(depth + 1)
+        )}
+      </Box>
+    );
+  };
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2.5 }}>
+      {ring(0)}
+      <Typography
+        sx={{
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: 'var(--text-muted)',
+          textAlign: 'center',
+        }}
+      >
+        Your prompt at the center
+      </Typography>
+    </Box>
+  );
+}
+
+function PrivacyLayers() {
+  const [active, setActive] = React.useState(0);
+  const [running, setRunning] = React.useState(false);
+  const [held, setHeld] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!ref.current) return undefined;
+    const io = new IntersectionObserver(([e]) => setRunning(e.isIntersecting), { threshold: 0.2 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+
+  /* Cycles on its own, and holds still while a row is being read. */
+  React.useEffect(() => {
+    if (!running || held) return undefined;
+    const t = setInterval(() => setActive((a) => (a + 1) % LAYERS.length), 2600);
+    return () => clearInterval(t);
+  }, [running, held]);
+
+  return (
+    <Box
+      ref={ref}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 0.78fr) minmax(0, 1.22fr)' },
+        gap: { xs: 6, md: 9 },
+        alignItems: 'center',
+      }}
+    >
+      <LayerRings active={active} />
+
+      <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+        {LAYERS.map((layer, i) => {
+          const on = active === i;
+          return (
+            <Box
+              key={layer.n}
+              tabIndex={0}
+              onMouseEnter={() => { setActive(i); setHeld(true); }}
+              onMouseLeave={() => setHeld(false)}
+              onFocus={() => { setActive(i); setHeld(true); }}
+              onBlur={() => setHeld(false)}
+              sx={{
+                position: 'relative',
+                py: ROW_PY,
+                pl: { xs: 2, md: 2.75 },
+                pr: { xs: 0, md: 1 },
+                borderBottom: '1px solid var(--border-subtle)',
+                outline: 'none',
+                transition: 'background-color 0.3s ease',
+                backgroundColor: on ? 'var(--bg-glass)' : 'transparent',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  left: 0,
+                  top: -1,
+                  bottom: -1,
+                  width: '2px',
+                  backgroundColor: on ? ORANGE : 'transparent',
+                  transition: 'background-color 0.3s ease',
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  justifyContent: 'space-between',
+                  gap: 2,
+                  mb: 0.9,
+                }}
+              >
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: on ? ORANGE : 'var(--text-muted)',
+                    transition: 'color 0.3s ease',
+                  }}
+                >
+                  Layer {layer.n}
+                </Typography>
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: '0.7rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.07em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-muted)',
+                    textAlign: 'right',
+                  }}
+                >
+                  {layer.status}
+                </Typography>
+              </Box>
+              <Typography
+                sx={{
+                  fontSize: { xs: '1.15rem', md: '1.3rem' },
+                  fontWeight: 700,
+                  letterSpacing: '-0.015em',
+                  color: 'var(--text-heading)',
+                  mb: 0.6,
+                }}
+              >
+                {layer.term}
+              </Typography>
+              <Typography
+                sx={{
+                  maxWidth: '58ch',
+                  fontSize: { xs: '0.9rem', md: '0.95rem' },
+                  lineHeight: 1.65,
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                {layer.detail}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+}
+
 export default function PrivatePage() {
   const { isDark } = useThemeMode();
 
@@ -1454,7 +1679,22 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: Freedom to ask ────────────────────────── */}
+        {/* ── Section 4: Layers of protection ───────────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px' }}>
+          <Rule />
+          <Box sx={{ py: SECTION_PY }}>
+            <SectionHead
+              eyebrow="Layers of protection"
+              title="Every layer assumes the one above it failed."
+              lede="Most privacy claims rest on a single control, and everything behind it is exposed the moment that control slips. These four are independent, so none of them is carrying your privacy alone."
+            />
+            <Reveal delay={100}>
+              <PrivacyLayers />
+            </Reveal>
+          </Box>
+        </Box>
+
+        {/* ── Section 5: Freedom to ask ─────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1558,7 +1798,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 5: Start a private session ───────────────── */}
+        {/* ── Section 6: Start a private session ────────────────── */}
         <Box component="section" sx={{ position: 'relative' }}>
           <Rule />
 
