@@ -135,37 +135,29 @@ const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
 
 const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
 
-/* Four named guarantees rather than four stages of a request. Each one holds
-   on its own, which is what the concentric rings are there to show.
-   TEE is the only claim here not already made elsewhere on the site. */
-const LAYERS = [
+/* Slot 2 states the promises in plain terms and stops. The pillars ledger
+   below it does the detail, so nothing here needs a qualifier.
+   TEE is the only claim not already made elsewhere on the site. */
+const PROMISES = [
   {
     n: '01',
     term: 'Anonymous',
-    status: 'No account needed',
-    detail:
-      'Start asking without signing up. There is no account, no email, and no identity for your questions to be attached to, so a session leaves nothing behind it that points back at you.',
+    detail: 'No account, no email, nothing tied back to you.',
   },
   {
     n: '02',
     term: 'Private',
-    status: 'Zero retention',
-    detail:
-      'Your prompts and responses aren’t kept once they’re processed. They aren’t used to train models, and they aren’t stitched into a profile that follows you between sessions.',
+    detail: 'Nothing you send is kept, trained on, or profiled.',
   },
   {
     n: '03',
     term: 'Confidential',
-    status: 'Trusted execution',
-    detail:
-      'Requests are processed inside a trusted execution environment, a hardware isolated enclave. The infrastructure running around the model has no window into what you sent it.',
+    detail: 'Every request runs inside a hardware isolated enclave.',
   },
   {
     n: '04',
     term: 'Unfiltered',
-    status: 'No content filter',
-    detail:
-      'No moderation layer sits between you and the model. Research difficult subjects, write mature or NSFW material, and ask the things you would otherwise talk yourself out of asking.',
+    detail: 'No filter between you and the model, NSFW included.',
   },
 ];
 
@@ -1204,193 +1196,61 @@ function Pipeline() {
 
 /* ── Page ────────────────────────────────────────────────────────── */
 
-/* Concentric rings, innermost first: layer 01 sits closest to the prompt and
-   layer 04 furthest out. The rings are a readout of the list beside them, so
-   there is one place to interact and nothing decorative to click. */
-function LayerRings({ active }) {
-  const ring = (depth) => {
-    const idx = LAYERS.length - 1 - depth; // depth 0 is the outermost ring
-    const on = active === idx;
-
-    return (
-      <Box
-        key={idx}
-        sx={{
-          p: { xs: '15px', md: '21px' },
-          borderRadius: `${20 - depth * 3}px`,
-          border: `1px solid ${on ? ORANGE : 'var(--border-normal)'}`,
-          backgroundColor: on ? 'rgba(255, 102, 0, 0.05)' : 'transparent',
-          boxShadow: on ? '0 0 0 3px rgba(255, 102, 0, 0.09)' : 'none',
-          transition: 'border-color 0.45s ease, background-color 0.45s ease, box-shadow 0.45s ease',
-        }}
-      >
-        {depth === LAYERS.length - 1 ? (
+/* Four statements, nothing to operate. The type is deliberately large so this
+   reads as the headline promise and the pillars ledger below it reads as the
+   detail, rather than the two looking like the same list twice. */
+function PlainPromises() {
+  return (
+    <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+      {PROMISES.map((item, i) => (
+        <Reveal key={item.term} delay={i * 70}>
           <Box
             sx={{
-              width: { xs: 54, md: 62 },
-              height: { xs: 54, md: 62 },
-              borderRadius: '9px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: ORANGE,
-              border: '1px solid var(--border-strong)',
-              backgroundColor: 'var(--bg-card)',
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '68px minmax(0, 1fr)' },
+              gap: { xs: 1.25, md: 4 },
+              alignItems: 'baseline',
+              py: { xs: 4, md: 5 },
+              borderBottom: '1px solid var(--border-subtle)',
             }}
           >
-            <Glyph name="lock" size={22} />
-          </Box>
-        ) : (
-          ring(depth + 1)
-        )}
-      </Box>
-    );
-  };
-
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2.5 }}>
-      {ring(0)}
-      <Typography
-        sx={{
-          fontSize: '0.72rem',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: 'var(--text-muted)',
-          textAlign: 'center',
-        }}
-      >
-        Your prompt at the center
-      </Typography>
-    </Box>
-  );
-}
-
-function PrivacyLayers() {
-  const [active, setActive] = React.useState(0);
-  const [running, setRunning] = React.useState(false);
-  const [held, setHeld] = React.useState(false);
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    if (!ref.current) return undefined;
-    const io = new IntersectionObserver(([e]) => setRunning(e.isIntersecting), { threshold: 0.2 });
-    io.observe(ref.current);
-    return () => io.disconnect();
-  }, []);
-
-  /* Cycles on its own, and holds still while a row is being read. */
-  React.useEffect(() => {
-    if (!running || held) return undefined;
-    const t = setInterval(() => setActive((a) => (a + 1) % LAYERS.length), 2600);
-    return () => clearInterval(t);
-  }, [running, held]);
-
-  return (
-    <Box
-      ref={ref}
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 0.78fr) minmax(0, 1.22fr)' },
-        gap: { xs: 6, md: 9 },
-        alignItems: 'center',
-      }}
-    >
-      <LayerRings active={active} />
-
-      <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
-        {LAYERS.map((layer, i) => {
-          const on = active === i;
-          return (
-            <Box
-              key={layer.n}
-              tabIndex={0}
-              onMouseEnter={() => { setActive(i); setHeld(true); }}
-              onMouseLeave={() => setHeld(false)}
-              onFocus={() => { setActive(i); setHeld(true); }}
-              onBlur={() => setHeld(false)}
+            <Typography
               sx={{
-                position: 'relative',
-                py: ROW_PY,
-                pl: { xs: 2, md: 2.75 },
-                pr: { xs: 0, md: 1 },
-                borderBottom: '1px solid var(--border-subtle)',
-                outline: 'none',
-                transition: 'background-color 0.3s ease',
-                backgroundColor: on ? 'var(--bg-glass)' : 'transparent',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  top: -1,
-                  bottom: -1,
-                  width: '2px',
-                  backgroundColor: on ? ORANGE : 'transparent',
-                  transition: 'background-color 0.3s ease',
-                },
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                color: 'var(--text-muted)',
               }}
             >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  justifyContent: 'space-between',
-                  gap: 2,
-                  mb: 0.9,
-                }}
-              >
-                <Typography
-                  component="span"
-                  sx={{
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: on ? ORANGE : 'var(--text-muted)',
-                    transition: 'color 0.3s ease',
-                  }}
-                >
-                  Layer {layer.n}
-                </Typography>
-                <Typography
-                  component="span"
-                  sx={{
-                    fontSize: '0.7rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.07em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-muted)',
-                    textAlign: 'right',
-                  }}
-                >
-                  {layer.status}
-                </Typography>
-              </Box>
+              {item.n}
+            </Typography>
+            <Box>
               <Typography
                 sx={{
-                  fontSize: { xs: '1.15rem', md: '1.3rem' },
+                  fontSize: { xs: '1.7rem', sm: '2.1rem', md: '2.4rem' },
                   fontWeight: 700,
-                  letterSpacing: '-0.015em',
+                  lineHeight: 1.15,
+                  letterSpacing: '-0.025em',
                   color: 'var(--text-heading)',
-                  mb: 0.6,
+                  mb: 1,
                 }}
               >
-                {layer.term}
+                {item.term}
               </Typography>
               <Typography
                 sx={{
-                  maxWidth: '58ch',
-                  fontSize: { xs: '0.9rem', md: '0.95rem' },
-                  lineHeight: 1.65,
+                  maxWidth: '46ch',
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  lineHeight: 1.6,
                   color: 'var(--text-secondary)',
                 }}
               >
-                {layer.detail}
+                {item.detail}
               </Typography>
             </Box>
-          );
-        })}
-      </Box>
+          </Box>
+        </Reveal>
+      ))}
     </Box>
   );
 }
@@ -1450,7 +1310,7 @@ export default function PrivatePage() {
       <PageHeader />
 
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
-        {/* ── Section 1: Hero ──────────────────────────────────── */}
+        {/* ── Section 1: Hero ───────────────────────────────────── */}
         <Box component="section" sx={{ pt: { xs: 14, sm: 16, md: 18 }, pb: SECTION_PY }}>
           <Box
             sx={{
@@ -1550,7 +1410,20 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 2: Privacy Pillars ───────────────────────── */}
+        {/* ── Section 2: Four promises ───────────────────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px' }}>
+          <Rule />
+          <Box sx={{ py: SECTION_PY }}>
+            <SectionHead
+              eyebrow="WHAT YOU GET"
+              title="Four promises, in plain terms."
+              lede="No hedging, no footnotes, and nothing buried in a policy page. This is what OpenLedger does and doesn’t do with what you ask."
+            />
+            <PlainPromises />
+          </Box>
+        </Box>
+
+        {/* ── Section 3: Privacy Pillars ────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1664,7 +1537,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 3: How it works ──────────────────────────── */}
+        {/* ── Section 4: How it works ───────────────────────────── */}
         <Box component="section" id="how-it-works" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1679,22 +1552,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: Layers of protection ───────────────────── */}
-        <Box component="section" sx={{ scrollMarginTop: '96px' }}>
-          <Rule />
-          <Box sx={{ py: SECTION_PY }}>
-            <SectionHead
-              eyebrow="Layers of protection"
-              title="Four guarantees that don’t lean on each other."
-              lede="Anonymity, zero retention, hardware isolation, and no content filter. Each one holds on its own, so none of them is left carrying your privacy alone."
-            />
-            <Reveal delay={100}>
-              <PrivacyLayers />
-            </Reveal>
-          </Box>
-        </Box>
-
-        {/* ── Section 5: Freedom to ask ─────────────────────────── */}
+        {/* ── Section 5: Freedom to ask ──────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1798,7 +1656,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 6: Start a private session ────────────────── */}
+        {/* ── Section 6: Start a private session ─────────────────── */}
         <Box component="section" sx={{ position: 'relative' }}>
           <Rule />
 
