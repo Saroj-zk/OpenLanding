@@ -35,34 +35,34 @@ const TELEMETRY = [
 
 const PILLARS = [
   {
-    glyph: 'device',
-    term: 'Private History',
-    detail: 'Your conversations stay available to you in your browser.',
-    status: 'STAYS WITH YOU',
+    glyph: 'user',
+    term: 'Anonymous',
+    detail: 'No account, no email, nothing tied back to you.',
+    status: 'NO SIGN UP',
   },
   {
-    glyph: 'lock',
-    term: 'Trusted Execution',
-    detail: 'Your request is processed inside a hardware isolated enclave.',
-    status: 'TEE ENABLED',
+    glyph: 'shield',
+    term: 'Encrypted',
+    detail: 'Encrypted from your device all the way to the model.',
+    status: 'IN TRANSIT',
+  },
+  {
+    glyph: 'cpu',
+    term: 'TEE',
+    detail: 'Every request runs inside a hardware isolated enclave.',
+    status: 'TRUSTED EXECUTION',
   },
   {
     glyph: 'nostore',
-    term: 'Zero Retention',
-    detail: 'We don’t keep your prompts or responses after they’re processed.',
-    status: 'NOT RETAINED',
+    term: 'Private',
+    detail: 'Nothing kept, nothing trained on, no profile built.',
+    status: 'ZERO RETENTION',
   },
   {
-    glyph: 'notrain',
-    term: 'No Training',
-    detail: 'What you say isn’t used to train AI models.',
-    status: 'NEVER USED FOR TRAINING',
-  },
-  {
-    glyph: 'noprofile',
-    term: 'No Profiling',
-    detail: 'What you ask isn’t used to build a profile about you.',
-    status: 'NO PROFILING',
+    glyph: 'chat',
+    term: 'Unfiltered',
+    detail: 'No filter between you and the model, NSFW included.',
+    status: 'NSFW ALLOWED',
   },
 ];
 
@@ -140,32 +140,6 @@ const FREEDOMS = [
 const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
 
 const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
-
-/* Slot 2 states the promises in plain terms and stops. The pillars ledger
-   below it does the detail, so nothing here needs a qualifier.
-   TEE is the only claim not already made elsewhere on the site. */
-const PROMISES = [
-  {
-    n: '01',
-    term: 'Anonymous',
-    detail: 'No account, no email, nothing tied back to you.',
-  },
-  {
-    n: '02',
-    term: 'Private',
-    detail: 'Nothing you send is kept, trained on, or profiled.',
-  },
-  {
-    n: '03',
-    term: 'Confidential',
-    detail: 'Every request runs inside a hardware isolated enclave.',
-  },
-  {
-    n: '04',
-    term: 'Unfiltered',
-    detail: 'No filter between you and the model, NSFW included.',
-  },
-];
 
 const SURFACES = [
   { glyph: 'globe', term: 'Web', sub: 'Any browser' },
@@ -1202,65 +1176,6 @@ function Pipeline() {
 
 /* ── Page ────────────────────────────────────────────────────────── */
 
-/* Four statements, nothing to operate. The type is deliberately large so this
-   reads as the headline promise and the pillars ledger below it reads as the
-   detail, rather than the two looking like the same list twice. */
-function PlainPromises() {
-  return (
-    <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
-      {PROMISES.map((item, i) => (
-        <Reveal key={item.term} delay={i * 70}>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: '68px minmax(0, 1fr)' },
-              gap: { xs: 1.25, md: 4 },
-              alignItems: 'baseline',
-              py: { xs: 4, md: 5 },
-              borderBottom: '1px solid var(--border-subtle)',
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                letterSpacing: '0.1em',
-                color: 'var(--text-muted)',
-              }}
-            >
-              {item.n}
-            </Typography>
-            <Box>
-              <Typography
-                sx={{
-                  fontSize: { xs: '1.7rem', sm: '2.1rem', md: '2.4rem' },
-                  fontWeight: 700,
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.025em',
-                  color: 'var(--text-heading)',
-                  mb: 1,
-                }}
-              >
-                {item.term}
-              </Typography>
-              <Typography
-                sx={{
-                  maxWidth: '46ch',
-                  fontSize: { xs: '1rem', md: '1.1rem' },
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                }}
-              >
-                {item.detail}
-              </Typography>
-            </Box>
-          </Box>
-        </Reveal>
-      ))}
-    </Box>
-  );
-}
-
 export default function PrivatePage() {
   const { isDark } = useThemeMode();
 
@@ -1316,7 +1231,7 @@ export default function PrivatePage() {
       <PageHeader />
 
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
-        {/* ── Section 1: Hero ───────────────────────────────────── */}
+        {/* ── Section 1: Hero ────────────────────────────────────── */}
         <Box component="section" sx={{ pt: { xs: 14, sm: 16, md: 18 }, pb: SECTION_PY }}>
           <Box
             sx={{
@@ -1416,52 +1331,17 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 2: Four promises ───────────────────────────── */}
+        {/* ── Section 2: What you get ────────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
+          {/* One list now. The promises and the ledger said the same things
+              twice, so they are a single set of rows. */}
           <Box sx={{ py: SECTION_PY }}>
             <SectionHead
               eyebrow="WHAT YOU GET"
-              title="Four promises, in plain terms."
-              lede="No hedging, no footnotes, and nothing buried in a policy page. This is what OpenLedger does and doesn’t do with what you ask."
+              title="Your conversations aren't the product."
+              lede="Five things that hold for every request you send, with nothing hidden behind a policy page."
             />
-            <PlainPromises />
-          </Box>
-        </Box>
-
-        {/* ── Section 3: Privacy Pillars ────────────────────────── */}
-        <Box component="section" sx={{ scrollMarginTop: '96px' }}>
-          <Rule />
-          {/* Section 2 carries the statement, so this one is a compact
-              reference strip: small head, tight rows, no lede. */}
-          <Box sx={{ py: { xs: 5, md: 7 } }}>
-            <Box sx={{ mb: { xs: 3, md: 3.5 } }}>
-              <Eyebrow>PRIVACY, BUILT IN</Eyebrow>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
-                  gap: { xs: 0.75, md: 5 },
-                  alignItems: 'baseline',
-                }}
-              >
-                <Typography
-                  component="h2"
-                  sx={{
-                    fontSize: { xs: '1.2rem', md: '1.4rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.3,
-                    letterSpacing: '-0.015em',
-                    color: 'var(--text-heading)',
-                  }}
-                >
-                  Your conversations aren't the product.
-                </Typography>
-                <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                  Available in your browser, never a second copy sitting on our servers.
-                </Typography>
-              </Box>
-            </Box>
 
             {/* A ledger, not a card grid — hairline rows carry the rhythm. */}
             <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
@@ -1481,7 +1361,7 @@ export default function PrivatePage() {
                       rowGap: { xs: 1.2, md: 0 },
                       alignItems: { md: 'center' },
                       position: 'relative',
-                      py: { xs: 2.25, md: 2.5 },
+                      py: { xs: 2.5, md: 3 },
                       borderBottom: '1px solid var(--border-normal)',
                       // Hover tint bleeds past the text, but the hairline stays
                       // flush with the container so every rule on the page lines up.
@@ -1567,7 +1447,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: How it works ───────────────────────────── */}
+        {/* ── Section 3: How it works ────────────────────────────── */}
         <Box component="section" id="how-it-works" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1582,7 +1462,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 5: Freedom to ask ──────────────────────────── */}
+        {/* ── Section 4: Freedom to ask ───────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1686,7 +1566,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 6: Start a private session ─────────────────── */}
+        {/* ── Section 5: Start a private session ──────────────────── */}
         <Box component="section" sx={{ position: 'relative' }}>
           <Rule />
 
