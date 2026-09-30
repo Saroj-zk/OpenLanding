@@ -135,37 +135,37 @@ const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
 
 const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
 
-/* Four independent controls, ordered by how far your request has travelled.
-   Every claim here is one the page already makes elsewhere; this section
-   reframes them by where they apply rather than adding anything new. */
+/* Four named guarantees rather than four stages of a request. Each one holds
+   on its own, which is what the concentric rings are there to show.
+   TEE is the only claim here not already made elsewhere on the site. */
 const LAYERS = [
   {
     n: '01',
-    term: 'In transit',
-    status: 'Encrypted in transit',
+    term: 'Anonymous',
+    status: 'No account needed',
     detail:
-      'Your request leaves your device over an encrypted connection. Nobody sitting between you and the model can read what you sent.',
+      'Start asking without signing up. There is no account, no email, and no identity for your questions to be attached to, so a session leaves nothing behind it that points back at you.',
   },
   {
     n: '02',
-    term: 'In processing',
-    status: 'Nothing kept',
+    term: 'Private',
+    status: 'Zero retention',
     detail:
-      'The model reads your prompt only to answer it. Once the response is on its way back, there is no working copy left on our side.',
+      'Your prompts and responses aren’t kept once they’re processed. They aren’t used to train models, and they aren’t stitched into a profile that follows you between sessions.',
   },
   {
     n: '03',
-    term: 'At rest',
-    status: 'Nothing stored',
+    term: 'Confidential',
+    status: 'Trusted execution',
     detail:
-      'There is no stored transcript to leak, to hand over, or to sell. Your history lives in your browser, where you can clear it yourself.',
+      'Requests are processed inside a trusted execution environment, a hardware isolated enclave. The infrastructure running around the model has no window into what you sent it.',
   },
   {
     n: '04',
-    term: 'Over time',
-    status: 'No training, no profile',
+    term: 'Unfiltered',
+    status: 'No content filter',
     detail:
-      'Nothing you ask is used to train a model, and nothing is stitched together into a profile that follows you from one session to the next.',
+      'No moderation layer sits between you and the model. Research difficult subjects, write mature or NSFW material, and ask the things you would otherwise talk yourself out of asking.',
   },
 ];
 
@@ -1685,8 +1685,8 @@ export default function PrivatePage() {
           <Box sx={{ py: SECTION_PY }}>
             <SectionHead
               eyebrow="Layers of protection"
-              title="Every layer assumes the one above it failed."
-              lede="Most privacy claims rest on a single control, and everything behind it is exposed the moment that control slips. These four are independent, so none of them is carrying your privacy alone."
+              title="Four guarantees that don’t lean on each other."
+              lede="Anonymity, zero retention, hardware isolation, and no content filter. Each one holds on its own, so none of them is left carrying your privacy alone."
             />
             <Reveal delay={100}>
               <PrivacyLayers />
