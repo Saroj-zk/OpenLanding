@@ -121,25 +121,7 @@ const FLOWS = [
   },
 ];
 
-const FREEDOMS = [
-  {
-    glyph: 'chat',
-    term: 'Ask Freely',
-    detail: 'Ask the questions you actually want to ask, without an extra platform layer getting in the way.',
-  },
-  {
-    glyph: 'pen',
-    term: 'Create Freely',
-    detail: 'Write, research, brainstorm, code, and create without unnecessary restrictions.',
-  },
-  {
-    glyph: 'layers',
-    term: 'Choose Your Model',
-    detail: 'Choose from leading AI models based on what you’re doing, not what one platform wants you to use.',
-  },
-];
 
-const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
 
 const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
 
@@ -1472,88 +1454,6 @@ export default function PrivatePage() {
                 {FLOWS.map((flow) => (
                   <FlowRow key={flow.label} flow={flow} />
                 ))}
-              </Box>
-            </Reveal>
-
-            {/* Three columns divided by hairlines — no card chrome. */}
-            <Box
-              sx={{
-                mt: BLOCK_GAP,
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                borderTop: '1px solid var(--border-normal)',
-                borderBottom: { md: '1px solid var(--border-normal)' },
-              }}
-            >
-              {FREEDOMS.map((card, i) => (
-                <Reveal key={card.term} delay={i * 80}>
-                  <Box
-                    sx={{
-                      height: '100%',
-                      py: ROW_PY,
-                      pr: { md: 4 },
-                      pl: { md: i === 0 ? 0 : 4 },
-                      borderBottom: { xs: '1px solid var(--border-normal)', md: 'none' },
-                      borderLeft: { md: i === 0 ? 'none' : '1px solid var(--border-normal)' },
-                      '&:hover .freedom-glyph': { transform: 'translateY(-2px)' },
-                    }}
-                  >
-                    <Box
-                      className="freedom-glyph"
-                      sx={{
-                        display: 'flex',
-                        color: ORANGE,
-                        mb: 2.25,
-                        transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                      }}
-                    >
-                      <Glyph name={card.glyph} size={26} />
-                    </Box>
-
-                    <Typography
-                      sx={{
-                        fontSize: '1.18rem',
-                        fontWeight: 700,
-                        letterSpacing: '-0.01em',
-                        color: 'var(--text-heading)',
-                        mb: 1.2,
-                      }}
-                    >
-                      {card.term}
-                    </Typography>
-
-                    <Typography sx={{ maxWidth: '34ch', fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-                      {card.detail}
-                    </Typography>
-                  </Box>
-                </Reveal>
-              ))}
-            </Box>
-
-            {/* Section footer: actions + spec line */}
-            <Reveal delay={160}>
-              <Box
-                sx={{
-                  mt: BLOCK_GAP,
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: { xs: 3, md: 4 },
-                }}
-              >
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
-                    Start Chatting
-                  </Box>
-                  <Link href="/models" passHref legacyBehavior>
-                    <Box component="a" sx={GHOST_CTA_SX}>
-                      See every model
-                    </Box>
-                  </Link>
-                </Box>
-
-                <SpecLine items={FREEDOM_SPECS} />
               </Box>
             </Reveal>
           </Box>
