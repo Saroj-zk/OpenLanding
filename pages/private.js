@@ -33,38 +33,38 @@ const TELEMETRY = [
   { label: 'Profiling', value: 'NONE' },
 ];
 
-/* A definition list: the term, what it stands for, and what it does. The
-   middle field is why TEE can be spelled out without a parenthetical. */
+/* Five properties of a single request, in the order they apply. The middle
+   field is what lets TEE be spelled out without a parenthetical. */
 const PILLARS = [
   {
     n: '01',
     term: 'Anonymous',
     sub: 'No account, no sign up',
-    detail: 'There is no identity attached to what you ask, because there is no account to attach it to.',
+    detail: 'Nothing to tie a question back to you.',
   },
   {
     n: '02',
     term: 'Encrypted',
     sub: 'Encrypted in transit',
-    detail: 'Your request is encrypted from the moment it leaves your device until it reaches the model.',
+    detail: 'Nobody in between can read what you sent.',
   },
   {
     n: '03',
     term: 'TEE',
     sub: 'Trusted Execution Environment',
-    detail: 'Every request is processed inside a hardware isolated enclave.',
+    detail: 'Processed inside a hardware isolated enclave.',
   },
   {
     n: '04',
     term: 'Private',
     sub: 'Zero retention',
-    detail: 'Nothing is kept once it is processed, nothing is trained on, and no profile is built.',
+    detail: 'Nothing kept, trained on, or profiled.',
   },
   {
     n: '05',
     term: 'Unfiltered',
     sub: 'NSFW allowed',
-    detail: 'No content filter sits between you and the model.',
+    detail: 'No content filter between you and the model.',
   },
 ];
 
@@ -1335,31 +1335,31 @@ export default function PrivatePage() {
                   mb: BLOCK_GAP,
                 }}
               >
-                <Eyebrow>WHAT YOU GET</Eyebrow>
+                <Eyebrow>THE ARCHITECTURE</Eyebrow>
                 <Typography
                   component="h2"
                   sx={{
                     maxWidth: '19ch',
-                    fontSize: { xs: '2.1rem', sm: '2.8rem', md: '3.4rem' },
+                    fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.4rem' },
                     fontWeight: 700,
-                    lineHeight: 1.12,
-                    letterSpacing: '-0.03em',
+                    lineHeight: 1.18,
+                    letterSpacing: '-0.025em',
                     color: 'var(--text-heading)',
                   }}
                 >
-                  Your conversations aren't the product.
+                  Privacy that is built, not promised.
                 </Typography>
                 <Typography
                   sx={{
-                    mt: 2.25,
-                    maxWidth: '52ch',
-                    fontSize: { xs: '1rem', md: '1.1rem' },
+                    mt: 2,
+                    maxWidth: '54ch',
+                    fontSize: { xs: '0.95rem', md: '1rem' },
                     lineHeight: 1.7,
                     color: 'var(--text-secondary)',
                   }}
                 >
-                  Five things that hold for every request you send, with nothing hidden behind a
-                  policy page.
+                  Five properties that hold for every request you send, from the moment it leaves
+                  your device to the moment the answer comes back.
                 </Typography>
               </Box>
             </Reveal>
@@ -1382,7 +1382,7 @@ export default function PrivatePage() {
                       columnGap: { md: 5 },
                       rowGap: { xs: 1.5, md: 0 },
                       alignItems: 'start',
-                      py: { xs: 3.5, md: 4 },
+                      py: { xs: 2.5, md: 2.75 },
                       borderBottom: '1px solid var(--border-subtle)',
                       transition: 'background-color 0.3s ease',
                       '&::before': {
@@ -1403,10 +1403,10 @@ export default function PrivatePage() {
                       className="def-n"
                       sx={{
                         display: { xs: 'none', md: 'block' },
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.1em',
-                        lineHeight: 2.6,
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
+                        lineHeight: 1.9,
                         color: 'var(--text-muted)',
                         transition: 'color 0.3s ease',
                       }}
@@ -1417,10 +1417,10 @@ export default function PrivatePage() {
                     <Box>
                       <Typography
                         sx={{
-                          fontSize: { xs: '1.9rem', sm: '2.2rem', md: '2.5rem' },
+                          fontSize: { xs: '1.2rem', md: '1.3rem' },
                           fontWeight: 700,
-                          lineHeight: 1.1,
-                          letterSpacing: '-0.03em',
+                          lineHeight: 1.25,
+                          letterSpacing: '-0.015em',
                           color: 'var(--text-heading)',
                         }}
                       >
@@ -1428,10 +1428,10 @@ export default function PrivatePage() {
                       </Typography>
                       <Typography
                         sx={{
-                          mt: 0.8,
-                          fontSize: '0.74rem',
-                          fontWeight: 700,
-                          letterSpacing: '0.09em',
+                          mt: 0.5,
+                          fontSize: '0.68rem',
+                          fontWeight: 600,
+                          letterSpacing: '0.07em',
                           textTransform: 'uppercase',
                           color: ORANGE,
                         }}
@@ -1442,11 +1442,11 @@ export default function PrivatePage() {
 
                     <Typography
                       sx={{
-                        maxWidth: '46ch',
+                        maxWidth: '48ch',
                         pl: { md: 5 },
-                        borderLeft: { md: '1px solid var(--border-normal)' },
-                        fontSize: { xs: '1rem', md: '1.05rem' },
-                        lineHeight: 1.65,
+                        borderLeft: { md: '1px solid var(--border-subtle)' },
+                        fontSize: { xs: '0.92rem', md: '0.95rem' },
+                        lineHeight: 1.7,
                         color: 'var(--text-secondary)',
                       }}
                     >
