@@ -41,6 +41,12 @@ const PILLARS = [
     status: 'STAYS WITH YOU',
   },
   {
+    glyph: 'lock',
+    term: 'Trusted Execution',
+    detail: 'Your request is processed inside a hardware isolated enclave.',
+    status: 'TEE ENABLED',
+  },
+  {
     glyph: 'nostore',
     term: 'Zero Retention',
     detail: 'We don’t keep your prompts or responses after they’re processed.',
@@ -1426,12 +1432,36 @@ export default function PrivatePage() {
         {/* ── Section 3: Privacy Pillars ────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
-          <Box sx={{ py: SECTION_PY }}>
-            <SectionHead
-              eyebrow="PRIVACY, BUILT IN"
-              title="Your conversations aren't the product."
-              lede="Your chats stay yours. They remain available in your browser without becoming another copy sitting on our servers."
-            />
+          {/* Section 2 carries the statement, so this one is a compact
+              reference strip: small head, tight rows, no lede. */}
+          <Box sx={{ py: { xs: 5, md: 7 } }}>
+            <Box sx={{ mb: { xs: 3, md: 3.5 } }}>
+              <Eyebrow>PRIVACY, BUILT IN</Eyebrow>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+                  gap: { xs: 0.75, md: 5 },
+                  alignItems: 'baseline',
+                }}
+              >
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.2rem', md: '1.4rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.3,
+                    letterSpacing: '-0.015em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  Your conversations aren't the product.
+                </Typography>
+                <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+                  Available in your browser, never a second copy sitting on our servers.
+                </Typography>
+              </Box>
+            </Box>
 
             {/* A ledger, not a card grid — hairline rows carry the rhythm. */}
             <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
@@ -1451,7 +1481,7 @@ export default function PrivatePage() {
                       rowGap: { xs: 1.2, md: 0 },
                       alignItems: { md: 'center' },
                       position: 'relative',
-                      py: ROW_PY,
+                      py: { xs: 2.25, md: 2.5 },
                       borderBottom: '1px solid var(--border-normal)',
                       // Hover tint bleeds past the text, but the hairline stays
                       // flush with the container so every rule on the page lines up.
@@ -1473,12 +1503,12 @@ export default function PrivatePage() {
                       className="pillar-glyph"
                       sx={{ display: 'flex', color: ORANGE, transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
                     >
-                      <Glyph name={pillar.glyph} size={24} />
+                      <Glyph name={pillar.glyph} size={20} />
                     </Box>
 
                     <Typography
                       sx={{
-                        fontSize: { xs: '1.05rem', md: '1.18rem' },
+                        fontSize: { xs: '0.98rem', md: '1.05rem' },
                         fontWeight: 700,
                         letterSpacing: '-0.01em',
                         color: 'var(--text-heading)',
@@ -1490,7 +1520,7 @@ export default function PrivatePage() {
                     <Typography
                       sx={{
                         gridColumn: { xs: '1 / -1', md: 'auto' },
-                        fontSize: '0.95rem',
+                        fontSize: '0.9rem',
                         lineHeight: 1.6,
                         color: 'var(--text-secondary)',
                       }}
