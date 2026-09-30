@@ -33,36 +33,38 @@ const TELEMETRY = [
   { label: 'Profiling', value: 'NONE' },
 ];
 
+/* A definition list: the term, what it stands for, and what it does. The
+   middle field is why TEE can be spelled out without a parenthetical. */
 const PILLARS = [
   {
-    glyph: 'user',
+    n: '01',
     term: 'Anonymous',
-    detail: 'No account, no email, nothing tied back to you.',
-    status: 'NO SIGN UP',
+    sub: 'No account, no sign up',
+    detail: 'There is no identity attached to what you ask, because there is no account to attach it to.',
   },
   {
-    glyph: 'shield',
+    n: '02',
     term: 'Encrypted',
-    detail: 'Encrypted from your device all the way to the model.',
-    status: 'IN TRANSIT',
+    sub: 'Encrypted in transit',
+    detail: 'Your request is encrypted from the moment it leaves your device until it reaches the model.',
   },
   {
-    glyph: 'cpu',
+    n: '03',
     term: 'TEE',
-    detail: 'Every request runs inside a hardware isolated enclave.',
-    status: 'TRUSTED EXECUTION',
+    sub: 'Trusted Execution Environment',
+    detail: 'Every request is processed inside a hardware isolated enclave.',
   },
   {
-    glyph: 'nostore',
+    n: '04',
     term: 'Private',
-    detail: 'Nothing kept, nothing trained on, no profile built.',
-    status: 'ZERO RETENTION',
+    sub: 'Zero retention',
+    detail: 'Nothing is kept once it is processed, nothing is trained on, and no profile is built.',
   },
   {
-    glyph: 'chat',
+    n: '05',
     term: 'Unfiltered',
-    detail: 'No filter between you and the model, NSFW included.',
-    status: 'NSFW ALLOWED',
+    sub: 'NSFW allowed',
+    detail: 'No content filter sits between you and the model.',
   },
 ];
 
@@ -1343,32 +1345,31 @@ export default function PrivatePage() {
               lede="Five things that hold for every request you send, with nothing hidden behind a policy page."
             />
 
-            {/* A ledger, not a card grid — hairline rows carry the rhythm. */}
-            <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+            {/* Definition rows. The term carries the weight, the expansion
+                sits under it, and the meaning runs in the second column across
+                a vertical rule. No icons and no status column, so this reads
+                as a glossary rather than another hairline table. */}
+            <Box sx={{ borderTop: '1px solid var(--border-strong)' }}>
               {PILLARS.map((pillar, i) => (
                 <Reveal key={pillar.term} delay={i * 60}>
                   <Box
                     sx={{
-                      display: 'grid',
-                      // Every track is a fixed size or a fraction — nothing is
-                      // content-sized, so all four rows resolve to identical
-                      // columns instead of each row measuring its own text.
-                      gridTemplateColumns: {
-                        xs: 'auto minmax(0, 1fr)',
-                        md: '28px minmax(0, 0.78fr) minmax(0, 1.45fr) 190px',
-                      },
-                      columnGap: { xs: 2, md: 4 },
-                      rowGap: { xs: 1.2, md: 0 },
-                      alignItems: { md: 'center' },
                       position: 'relative',
-                      py: { xs: 2.5, md: 3 },
-                      borderBottom: '1px solid var(--border-normal)',
-                      // Hover tint bleeds past the text, but the hairline stays
-                      // flush with the container so every rule on the page lines up.
+                      display: 'grid',
+                      gridTemplateColumns: {
+                        xs: '1fr',
+                        md: '46px minmax(0, 0.82fr) minmax(0, 1.3fr)',
+                      },
+                      columnGap: { md: 5 },
+                      rowGap: { xs: 1.5, md: 0 },
+                      alignItems: 'start',
+                      py: { xs: 3.5, md: 4 },
+                      borderBottom: '1px solid var(--border-subtle)',
+                      transition: 'background-color 0.3s ease',
                       '&::before': {
                         content: '""',
                         position: 'absolute',
-                        inset: '0 -16px',
+                        inset: '0 -20px',
                         zIndex: 0,
                         backgroundColor: 'transparent',
                         transition: 'background-color 0.3s ease',
@@ -1376,70 +1377,62 @@ export default function PrivatePage() {
                       },
                       '& > *': { position: 'relative', zIndex: 1 },
                       '&:hover::before': { backgroundColor: 'var(--bg-glass)' },
-                      '&:hover .pillar-glyph': { transform: 'translateY(-2px)' },
+                      '&:hover .def-n': { color: ORANGE },
                     }}
                   >
-                    <Box
-                      className="pillar-glyph"
-                      sx={{ display: 'flex', color: ORANGE, transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                    <Typography
+                      className="def-n"
+                      sx={{
+                        display: { xs: 'none', md: 'block' },
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.1em',
+                        lineHeight: 2.6,
+                        color: 'var(--text-muted)',
+                        transition: 'color 0.3s ease',
+                      }}
                     >
-                      <Glyph name={pillar.glyph} size={20} />
+                      {pillar.n}
+                    </Typography>
+
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: '1.9rem', sm: '2.2rem', md: '2.5rem' },
+                          fontWeight: 700,
+                          lineHeight: 1.1,
+                          letterSpacing: '-0.03em',
+                          color: 'var(--text-heading)',
+                        }}
+                      >
+                        {pillar.term}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          mt: 0.8,
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          letterSpacing: '0.09em',
+                          textTransform: 'uppercase',
+                          color: ORANGE,
+                        }}
+                      >
+                        {pillar.sub}
+                      </Typography>
                     </Box>
 
                     <Typography
                       sx={{
-                        fontSize: { xs: '0.98rem', md: '1.05rem' },
-                        fontWeight: 700,
-                        letterSpacing: '-0.01em',
-                        color: 'var(--text-heading)',
-                      }}
-                    >
-                      {pillar.term}
-                    </Typography>
-
-                    <Typography
-                      sx={{
-                        gridColumn: { xs: '1 / -1', md: 'auto' },
-                        fontSize: '0.9rem',
-                        lineHeight: 1.6,
+                        maxWidth: '46ch',
+                        pl: { md: 5 },
+                        borderLeft: { md: '1px solid var(--border-normal)' },
+                        fontSize: { xs: '1rem', md: '1.05rem' },
+                        lineHeight: 1.65,
                         color: 'var(--text-secondary)',
                       }}
                     >
                       {pillar.detail}
                     </Typography>
-
-                    <Box
-                      sx={{
-                        gridColumn: { xs: '1 / -1', md: 'auto' },
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 1.1,
-                        justifySelf: 'start',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 5,
-                          height: 5,
-                          borderRadius: '50%',
-                          flexShrink: 0,
-                          backgroundColor: ORANGE,
-                          boxShadow: '0 0 6px rgba(255, 102, 0, 0.6)',
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          letterSpacing: '0.07em',
-                          textTransform: 'uppercase',
-                          color: 'var(--text-muted)',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {pillar.status}
-                      </Typography>
-                    </Box>
                   </Box>
                 </Reveal>
               ))}
