@@ -1321,11 +1321,48 @@ export default function PrivatePage() {
           {/* One list now. The promises and the ledger said the same things
               twice, so they are a single set of rows. */}
           <Box sx={{ py: SECTION_PY }}>
-            <SectionHead
-              eyebrow="WHAT YOU GET"
-              title="Your conversations aren't the product."
-              lede="Five things that hold for every request you send, with nothing hidden behind a policy page."
-            />
+            {/* Centred and stacked, unlike the split head the later sections
+                use, so the page's main claim sits on its own axis. */}
+            <Reveal>
+              <Box
+                sx={{
+                  maxWidth: '44rem',
+                  mx: 'auto',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  mb: BLOCK_GAP,
+                }}
+              >
+                <Eyebrow>WHAT YOU GET</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    maxWidth: '19ch',
+                    fontSize: { xs: '2.1rem', sm: '2.8rem', md: '3.4rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.12,
+                    letterSpacing: '-0.03em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  Your conversations aren't the product.
+                </Typography>
+                <Typography
+                  sx={{
+                    mt: 2.25,
+                    maxWidth: '52ch',
+                    fontSize: { xs: '1rem', md: '1.1rem' },
+                    lineHeight: 1.7,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Five things that hold for every request you send, with nothing hidden behind a
+                  policy page.
+                </Typography>
+              </Box>
+            </Reveal>
 
             {/* Definition rows. The term carries the weight, the expansion
                 sits under it, and the meaning runs in the second column across
@@ -1449,7 +1486,14 @@ export default function PrivatePage() {
 
             {/* Filter-layer comparison */}
             <Reveal>
-              <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+              {/* The closing Rule of the next section already draws a line
+                  here, so the last row drops its own. */}
+              <Box
+                sx={{
+                  borderTop: '1px solid var(--border-normal)',
+                  '& > *:last-child': { borderBottom: 'none' },
+                }}
+              >
                 <FlowKeyframes />
                 {FLOWS.map((flow) => (
                   <FlowRow key={flow.label} flow={flow} />
