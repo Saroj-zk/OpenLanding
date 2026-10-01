@@ -94,7 +94,7 @@ const MEMORY = [
 /* The visitor names the model they want; the thread hands over and the new
    model answers from memory. Each request after the first carries no context
    at all, so every detail in the answers comes out of the four saved facts,
-   which is the only way to show what unified memory is actually for. */
+   which is the only way to show what universal memory is actually for. */
 const SCRIPT = [
   {
     kind: 'user',

@@ -196,7 +196,7 @@ export default function ProductMatrixSection() {
                 <AppsRoundedIcon sx={{ fontSize: '1rem', color: '#10B981' }} />
               </Box>
               <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Multi-Agent Cohesion</Typography>
-              <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Deploy swarms of specialized agents that share unified memory and state instantly.</Typography>
+              <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Deploy swarms of specialized agents that share universal memory and state instantly.</Typography>
             </GlassCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>

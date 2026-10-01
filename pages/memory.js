@@ -333,7 +333,7 @@ function MemoryStack() {
 
         <Drop height={26} />
 
-        {/* Your Unified Memory Container */}
+        {/* Your Universal Memory Container */}
         <Box
           sx={{
             width: '100%',
@@ -349,7 +349,7 @@ function MemoryStack() {
         >
           <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 2 }}>
             <Typography sx={{ fontSize: '0.92rem', fontWeight: 700, color: '#FF6600' }}>
-              Your Unified Memory Layer
+              Your Universal Memory Layer
             </Typography>
             <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>
               Encrypted & Local
@@ -446,7 +446,7 @@ export default function MemoryPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>Unified Memory — One Context Across Every AI Model | OpenLedger</title>
+        <title>Universal Memory — One Context Across Every AI Model | OpenLedger</title>
         <meta
           name="description"
           content="Say it once, every model knows. Your preferences, active projects, and decisions live in one private memory layer, independent of which model you chat with."
@@ -499,7 +499,7 @@ export default function MemoryPage() {
           >
             {/* Left Copy */}
             <Reveal>
-              <Eyebrow>UNIFIED MEMORY</Eyebrow>
+              <Eyebrow>UNIVERSAL MEMORY</Eyebrow>
               <Typography
                 component="h1"
                 sx={{
@@ -650,7 +650,7 @@ export default function MemoryPage() {
                         color: 'var(--text-muted)',
                       }}
                     >
-                      Unified memory
+                      Universal memory
                     </Typography>
                   </Box>
                   <Typography
@@ -974,7 +974,7 @@ export default function MemoryPage() {
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
               <Box sx={{ textAlign: 'center', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Eyebrow>WHY UNIFIED MEMORY</Eyebrow>
+                <Eyebrow>WHY UNIVERSAL MEMORY</Eyebrow>
                 <Typography
                   component="h2"
                   sx={{
@@ -1020,7 +1020,7 @@ export default function MemoryPage() {
               >
                 {[
                   {
-                    label: 'WITHOUT UNIFIED MEMORY',
+                    label: 'WITHOUT UNIVERSAL MEMORY',
                     ours: false,
                     points: [
                       'Every model starts from scratch.',
@@ -1030,7 +1030,7 @@ export default function MemoryPage() {
                     ],
                   },
                   {
-                    label: 'WITH UNIFIED MEMORY',
+                    label: 'WITH UNIVERSAL MEMORY',
                     ours: true,
                     points: [
                       'Pick up where you left off.',
@@ -1124,7 +1124,7 @@ export default function MemoryPage() {
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
               <Box sx={{ textAlign: 'center', maxWidth: '46rem', mx: 'auto', mb: { xs: 5, md: 7 } }}>
-                <Eyebrow>HOW UNIFIED MEMORY WORKS</Eyebrow>
+                <Eyebrow>HOW UNIVERSAL MEMORY WORKS</Eyebrow>
                 <Typography
                   component="h2"
                   sx={{
@@ -1271,7 +1271,7 @@ export default function MemoryPage() {
                 }}
               >
                 <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                UNIFIED MEMORY · PRIVATE BY DEFAULT · WORKS ACROSS MODELS
+                UNIVERSAL MEMORY · PRIVATE BY DEFAULT · WORKS ACROSS MODELS
               </Box>
 
               <Typography
