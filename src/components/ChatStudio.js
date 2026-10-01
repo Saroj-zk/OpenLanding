@@ -16,7 +16,7 @@ export function ChatStudio() {
     {
       role: 'assistant',
       model: 'Claude 3.5 Sonnet',
-      text: 'Hello! I have access to your unified memory stack across all models and sessions. How can I assist you with your project today?'
+      text: 'Hello! I have access to your universal memory stack across all models and sessions. How can I assist you with your project today?'
     }
   ]);
 
@@ -232,7 +232,7 @@ export function ChatStudio() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask anything across models, code, images, and unified memory..."
+            placeholder="Ask anything across models, code, images, and universal memory..."
             sx={{
               flex: 1,
               background: 'transparent',

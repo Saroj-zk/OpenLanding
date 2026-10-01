@@ -28,8 +28,8 @@ const TABS = [
   },
   {
     id: 'memory',
-    label: 'Unified Memory',
-    fullLabel: 'Unified Memory',
+    label: 'Universal Memory',
+    fullLabel: 'Universal Memory',
     shortLabel: 'Memory',
     icon: MemoryIcon,
     href: '/memory',
