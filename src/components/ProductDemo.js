@@ -17,13 +17,38 @@ const C = {
   muted: '#71717A',
   onInverse: '#F5F4F0',
   sendIdle: '#D8D7D3',
+  violetBg: '#F1EDFC',
+  violetFg: '#7C5CD6',
+  greenBg: '#D8F3E3',
+  greenFg: '#2F7D5B',
+  toggleOff: '#E2E1DE',
 };
+
+/* The rows the recording shows, with the badges the app puts on them. */
+const PICKER_ROWS = [
+  { code: 'DS', name: 'Deepseek V4 Flash', tags: ['Incognito', 'web'] },
+  { code: 'DS', name: 'Deepseek V4 Flash E2ee', tags: ['E2EE', 'TEE'] },
+  { code: 'GG', name: 'Gemini 2.5 Pro', tags: ['Incognito', 'web'] },
+  { code: 'GG', name: 'Gemini 3.7 Flash', tags: ['Incognito', 'web'], pick: true },
+  { code: 'GG', name: 'Gemma 4 26b Uncensored', tags: ['uncensored'] },
+];
+const PICKER_TABS = ['All', 'Text', 'Image', 'Text to Video', 'Image to Video'];
+
+/* Memory settings, in the app's own words. */
+const MEMORY_ROWS = [
+  { label: 'Use memory', note: 'Let the assistant use what it knows about you in new chats.', on: true },
+  { label: 'Generate memory from chats', note: 'Automatically save durable facts as you chat.', on: true },
+  { label: 'Share with external models', note: 'Off by default.', on: false },
+];
 
 /* Each flow mirrors one of the recordings: Auto picking the model and
    answering, and a second model carrying the first one's context. */
 const FLOWS = {
   multimodel: {
-    loop: 9000,
+    loop: 15000,
+    pickerOpen: 6200,
+    pickerClose: 11000,
+    pickedName: 'Gemini 3.7 Flash',
     model: { name: 'Auto', code: null },
     question: 'Convert 2.5 ETH to USD at $4,200 per ETH.',
     typeStart: 300,
@@ -40,7 +65,9 @@ const FLOWS = {
     ],
   },
   memory: {
-    loop: 11500,
+    loop: 16500,
+    settingsOpen: 9200,
+    settingsClose: 14200,
     model: { name: 'GPT 5.6 Sol', code: 'OA' },
     switchTo: { name: 'Claude Opus 5', code: 'AN' },
     switchAt: 1400,
@@ -114,6 +141,223 @@ function Streamed({ parts, n }) {
   );
 }
 
+function Tag({ label }) {
+  const violet = label === 'Incognito';
+  const green = label === 'TEE';
+  return (
+    <Box
+      component="span"
+      sx={{
+        px: 0.7,
+        py: '1px',
+        borderRadius: '9999px',
+        fontSize: '0.6rem',
+        fontWeight: 500,
+        whiteSpace: 'nowrap',
+        backgroundColor: violet ? C.violetBg : green ? C.greenBg : C.chip,
+        color: violet ? C.violetFg : green ? C.greenFg : C.textSecondary,
+      }}
+    >
+      {label}
+    </Box>
+  );
+}
+
+function Star({ size = 11 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth="1.8" strokeLinejoin="round" style={{ display: 'block', flexShrink: 0 }}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function Switch({ on }) {
+  return (
+    <Box
+      sx={{
+        width: 30, height: 17, flexShrink: 0, borderRadius: '9999px', p: '2.5px',
+        display: 'flex', alignItems: 'center',
+        justifyContent: on ? 'flex-end' : 'flex-start',
+        backgroundColor: on ? C.text : C.toggleOff,
+        transition: 'background-color 0.35s ease',
+      }}
+    >
+      <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#FFFFFF' }} />
+    </Box>
+  );
+}
+
+/* The model list, as the app opens it over the thread. */
+function PickerOverlay() {
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        inset: '6% 4% 12%',
+        zIndex: 5,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        backgroundColor: C.surface,
+        boxShadow: '0 20px 48px rgba(23, 23, 23, 0.20)',
+        animation: 'pdIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, px: 1.25, py: 1.1 }}>
+        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 0.8, px: 1.1, py: 0.6, borderRadius: '9999px', backgroundColor: C.chip }}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth="2.2">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <Typography sx={{ fontSize: '0.7rem', color: C.muted }}>Search models&hellip;</Typography>
+        </Box>
+        <Box sx={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: C.chip, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Star size={10} />
+        </Box>
+        <Box sx={{ px: 0.9, py: 0.5, borderRadius: '8px', backgroundColor: C.chip }}>
+          <Typography sx={{ fontSize: '0.68rem', color: C.text, whiteSpace: 'nowrap' }}>A&ndash;Z</Typography>
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, px: 1.25, pb: 0.9, borderBottom: `1px solid ${C.borderSoft}`, overflow: 'hidden' }}>
+        {PICKER_TABS.map((tab) => {
+          const on = tab === 'Text';
+          return (
+            <Typography
+              key={tab}
+              sx={{
+                px: 0.85, py: 0.3, borderRadius: '9999px',
+                fontSize: '0.66rem', whiteSpace: 'nowrap',
+                fontWeight: on ? 600 : 400,
+                color: on ? C.text : C.muted,
+                backgroundColor: on ? C.chip : 'transparent',
+              }}
+            >
+              {tab}
+            </Typography>
+          );
+        })}
+      </Box>
+
+      <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden', px: 1, py: 0.6 }}>
+        {PICKER_ROWS.map((m) => (
+          <Box
+            key={m.name}
+            sx={{
+              display: 'flex', alignItems: 'center', gap: 0.9,
+              px: 0.9, py: 0.75, borderRadius: '10px',
+              boxShadow: m.pick ? `inset 0 0 0 1.2px ${C.border}` : 'none',
+            }}
+          >
+            <Box sx={{ width: 20, height: 20, flexShrink: 0, borderRadius: '50%', border: `1px solid ${C.borderSoft}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BrandTile code={m.code} size={12} round />
+            </Box>
+            <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.72rem', fontWeight: 600, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {m.name}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 0.35, flexShrink: 0 }}>
+              {m.tags.map((x) => <Tag key={x} label={x} />)}
+            </Box>
+            <Star />
+          </Box>
+        ))}
+      </Box>
+
+      {/* The hover card the app floats beside the list */}
+      <Box
+        sx={{
+          position: 'absolute',
+          right: 8,
+          bottom: 8,
+          width: '55%',
+          p: 1.1,
+          borderRadius: '12px',
+          backgroundColor: C.surface,
+          boxShadow: '0 10px 28px rgba(23, 23, 23, 0.18)',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7, mb: 0.7 }}>
+          <Box sx={{ width: 18, height: 18, borderRadius: '50%', border: `1px solid ${C.borderSoft}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BrandTile code="GG" size={11} round />
+          </Box>
+          <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: C.text }}>Gemini 3.7 Flash</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 0.35, mb: 0.8 }}>
+          <Tag label="Incognito" />
+          <Tag label="web" />
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1, pt: 0.8, borderTop: `1px solid ${C.borderSoft}` }}>
+          <Box>
+            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: C.text, lineHeight: 1.2 }}>1M</Typography>
+            <Typography sx={{ fontSize: '0.6rem', color: C.muted }}>Context</Typography>
+          </Box>
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: C.text, lineHeight: 1.2 }}>$0.0004 &ndash; $0.0019</Typography>
+            <Typography sx={{ fontSize: '0.6rem', color: C.muted }}>Est. cost/1k tokens</Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+/* Memory settings, opened after the thread has made its point. */
+function MemoryOverlay() {
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        inset: '6% 4% 12%',
+        zIndex: 5,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        backgroundColor: C.surface,
+        boxShadow: '0 20px 48px rgba(23, 23, 23, 0.20)',
+        animation: 'pdIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both',
+        px: 1.6,
+        py: 1.05,
+      }}
+    >
+      <Typography sx={{ fontSize: '0.92rem', fontWeight: 600, color: C.text }}>Memory</Typography>
+      <Typography sx={{ mt: 0.6, fontSize: '0.68rem', lineHeight: 1.5, color: C.textSecondary }}>
+        Memory is stored only in this browser. It never syncs and is removed if you clear site data.
+      </Typography>
+
+      {MEMORY_ROWS.map((r, i) => (
+        <Box
+          key={r.label}
+          sx={{
+            display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+            gap: 1.5, mt: 0.9, pt: 0.9,
+            borderTop: `1px solid ${C.borderSoft}`,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontSize: '0.74rem', fontWeight: 600, color: C.text }}>{r.label}</Typography>
+            <Typography sx={{ mt: 0.2, fontSize: '0.64rem', lineHeight: 1.45, color: C.textSecondary }}>{r.note}</Typography>
+          </Box>
+          <Switch on={r.on} />
+        </Box>
+      ))}
+
+      <Typography sx={{ mt: 1.1, pt: 0.9, borderTop: `1px solid ${C.borderSoft}`, fontSize: '0.74rem', fontWeight: 600, color: C.text }}>
+        Saved memories{' '}
+        <Box component="span" sx={{ color: C.muted, fontWeight: 400 }}>(1)</Box>
+      </Typography>
+      <Box sx={{ mt: 0.6, display: 'flex', flexDirection: 'column', gap: 0.45 }}>
+        {['Launch target: October 28'].map((m) => (
+          <Box key={m} sx={{ px: 1.1, py: 0.6, borderRadius: '9px', backgroundColor: C.chip }}>
+            <Typography sx={{ fontSize: '0.68rem', color: C.text }}>{m}</Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
 export default function ProductDemo({ flow = 'multimodel', active = true }) {
   const F = FLOWS[flow];
   const ref = React.useRef(null);
@@ -144,7 +388,10 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
   const answerTotal = F.answer.reduce((a, p) => a + p.t.length, 0);
   const answerLen = Math.round(ramp(F.answerStart, F.answerSpan) * answerTotal);
   const switched = F.switchTo ? t >= F.switchAt : false;
-  const current = switched ? F.switchTo : F.model;
+  const pickerOpen = F.pickerOpen ? t >= F.pickerOpen && t < F.pickerClose : false;
+  const settingsOpen = F.settingsOpen ? t >= F.settingsOpen && t < F.settingsClose : false;
+  const pickedAfter = F.pickedName && t >= F.pickerClose ? { name: F.pickedName, code: 'GG' } : null;
+  const current = pickedAfter || (switched ? F.switchTo : F.model);
 
   return (
     <Box
@@ -155,11 +402,14 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        position: 'relative',
         backgroundColor: C.page,
         fontFamily: C.font,
         '& *': { fontFamily: 'inherit' },
       }}
     >
+      {pickerOpen && <PickerOverlay />}
+      {settingsOpen && <MemoryOverlay />}
       {/* Thread */}
       <Box sx={{ flex: 1, minHeight: 0, px: { xs: 1.75, sm: 2.25 }, pt: { xs: 2, sm: 2.5 }, overflow: 'hidden' }}>
         {!sent && !F.prior ? (
@@ -303,6 +553,10 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
       </Box>
 
       <style>{`
+        @keyframes pdIn {
+          from { opacity: 0; transform: translateY(10px) scale(0.985); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
         @keyframes pdCaret {
           0%, 50% { opacity: 1; }
           51%, 100% { opacity: 0; }
