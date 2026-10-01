@@ -15,7 +15,6 @@ const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Models', href: '/models' },
   { label: 'Memory', href: '/memory' },
-  { label: 'Capabilities', href: '/capabilities' },
   { label: 'Private AI', href: '/private' },
   { label: 'Token', href: '/token' },
 ];
@@ -28,7 +27,7 @@ export default function PageHeader({ spacer = true }) {
   const { isDark, toggleTheme } = useThemeMode();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isVisible, setIsVisible] = React.useState(true);
+  const [isVisible, setIsVisible] = React.useState(false);
   const lastScrollY = React.useRef(0);
 
   React.useEffect(() => {
@@ -38,8 +37,9 @@ export default function PageHeader({ spacer = true }) {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
 
-          if (currentScrollY < 50) {
-            setIsVisible(true);
+          const heroHeight = window.innerHeight * 0.7;
+          if (currentScrollY < heroHeight) {
+            setIsVisible(false);
           } else if (currentScrollY > lastScrollY.current) {
             setIsVisible(false);
           } else if (currentScrollY < lastScrollY.current) {

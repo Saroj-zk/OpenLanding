@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { alpha } from '@mui/material/styles';
 import { useThemeMode } from '@/context/ThemeContext';
+import ProductDemo from '@/components/ProductDemo';
 
 // Icons
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
@@ -30,7 +31,9 @@ const OPTIONS = [
     id: 'chat',
     title: 'Chat',
     icon: ChatBubbleOutlineRoundedIcon,
-    video: '/Videos/AI ecosystem/Chat.webm',
+    video: '/Videos/AI ecosystem/Chat.mp4',
+    fastUntil: 16,
+    fastRate: 3.2,
     overlayEyebrow: 'CONVERSATIONAL INTELLIGENCE',
     overlayTitle: 'Contextual dialogue\nwithout boundaries.',
   },
@@ -38,7 +41,7 @@ const OPTIONS = [
     id: 'imagine',
     title: 'Imagine',
     icon: ImageOutlinedIcon,
-    video: '/Videos/AI ecosystem/Imagine.webm',
+    video: '/Videos/AI ecosystem/Imagine.mp4',
     overlayEyebrow: 'VISUAL GENERATION',
     overlayTitle: 'State-of-the-art multi-modal\ncreative synthesis.',
   },
@@ -46,7 +49,7 @@ const OPTIONS = [
     id: 'video-gen',
     title: 'Video Gen',
     icon: PlayCircleOutlineRoundedIcon,
-    video: '/Videos/AI ecosystem/Video Gen.webm',
+    video: '/Videos/AI ecosystem/Video Gen.mp4',
     overlayEyebrow: 'VIDEO GENERATION',
     overlayTitle: 'High-fidelity video\nand motion synthesis.',
   },
@@ -63,6 +66,7 @@ const OPTIONS = [
     title: 'Agent',
     icon: SmartToyOutlinedIcon,
     video: '/Videos/AI ecosystem/Agent.webm',
+    demo: 'agent',
     overlayEyebrow: 'AUTONOMOUS EXECUTION',
     overlayTitle: 'Intelligent reconciliation\nand proactive action.',
   },
@@ -88,9 +92,20 @@ const GlassCard = ({ children, sx = {}, borderRadius = 24, ...props }) => {
   );
 };
 
-const TabVideo = ({ src, isActive, onEnded }) => {
+const TabVideo = ({ src, isActive, onEnded, fastUntil = 0, fastRate = 1 }) => {
   const videoRef = React.useRef(null);
-  
+
+  /* timeupdate fires often enough to switch at the boundary, and reading
+     currentTime means the rate resets correctly when the clip loops. */
+  const pace = React.useCallback(
+    (e) => {
+      if (!fastUntil) return;
+      const want = e.target.currentTime < fastUntil ? fastRate : 1;
+      if (e.target.playbackRate !== want) e.target.playbackRate = want;
+    },
+    [fastUntil, fastRate]
+  );
+
   React.useEffect(() => {
     if (isActive && videoRef.current) {
       videoRef.current.currentTime = 0;
@@ -101,14 +116,16 @@ const TabVideo = ({ src, isActive, onEnded }) => {
   }, [isActive]);
 
   return (
-    <Box 
-      component="video" 
-      ref={videoRef} 
-      src={src} 
-      muted 
+    <Box
+      component="video"
+      ref={videoRef}
+      src={src}
+      muted
       onEnded={onEnded}
-      playsInline 
-      sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+      onTimeUpdate={pace}
+      onLoadedMetadata={pace}
+      playsInline
+      sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
     />
   );
 };
@@ -154,61 +171,61 @@ export default function ProductMatrixSection() {
               </Typography>
             </Box>
             <Typography variant="h2" sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' }, fontWeight: 500, letterSpacing: '-0.03em', color: 'var(--text-heading)' }}>
-              Uncensored chat,<br />images, video and more.
+              Unfiltered. <br /> From Chat to Code.
             </Typography>
           </Box>
           <Typography sx={{ fontSize: '1rem', color: 'var(--text-secondary)', maxWidth: 360, mt: { xs: 2, md: 0 }, lineHeight: 1.5 }}>
-            Text, image, video, audio, code and search in one place, all private or anonymous.
+            One workspace for chat, gen, audio, and search. Unrestricted on purpose.
           </Typography>
         </Box>
 
         {/* 4 Feature Value Highlights (Hidden as requested) */}
         <Grid container spacing={3} sx={{ display: 'none', mb: 4 }}>
           <Grid item xs={12} sm={6} md={3}>
-             <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
-                <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
-                  <BoltRoundedIcon sx={{ fontSize: '1rem', color: '#EAB308' }} />
-                </Box>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Rapid Inference</Typography>
-                <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Low-latency streaming responses optimized for high-throughput enterprise execution.</Typography>
-             </GlassCard>
+            <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
+              <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
+                <BoltRoundedIcon sx={{ fontSize: '1rem', color: '#EAB308' }} />
+              </Box>
+              <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Rapid Inference</Typography>
+              <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Low-latency streaming responses optimized for high-throughput enterprise execution.</Typography>
+            </GlassCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-             <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
-                <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
-                  <AppsRoundedIcon sx={{ fontSize: '1rem', color: '#10B981' }} />
-                </Box>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Multi-Agent Cohesion</Typography>
-                <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Deploy swarms of specialized agents that share unified memory and state instantly.</Typography>
-             </GlassCard>
+            <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
+              <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
+                <AppsRoundedIcon sx={{ fontSize: '1rem', color: '#10B981' }} />
+              </Box>
+              <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Multi-Agent Cohesion</Typography>
+              <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Deploy swarms of specialized agents that share unified memory and state instantly.</Typography>
+            </GlassCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-             <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
-                <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
-                  <BarChartRoundedIcon sx={{ fontSize: '1rem', color: '#EC4899' }} />
-                </Box>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Token Optimization</Typography>
-                <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Cut inference overhead by up to 60% through proactive smart routing and context pruning.</Typography>
-             </GlassCard>
+            <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
+              <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
+                <BarChartRoundedIcon sx={{ fontSize: '1rem', color: '#EC4899' }} />
+              </Box>
+              <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Token Optimization</Typography>
+              <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Cut inference overhead by up to 60% through proactive smart routing and context pruning.</Typography>
+            </GlassCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-             <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
-                <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
-                  <SecurityOutlinedIcon sx={{ fontSize: '1rem', color: '#3B82F6' }} />
-                </Box>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Total Privacy</Typography>
-                <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Interact securely and anonymously without compromising your enterprise data or identity.</Typography>
-             </GlassCard>
+            <GlassCard sx={{ p: 2.5, borderRadius: '24px' }}>
+              <Box sx={{ width: 28, height: 28, borderRadius: '6px', backgroundColor: 'var(--bg-pill)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
+                <SecurityOutlinedIcon sx={{ fontSize: '1rem', color: '#3B82F6' }} />
+              </Box>
+              <Typography sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-heading)', mb: 0.5 }}>Total Privacy</Typography>
+              <Typography sx={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Interact securely and anonymously without compromising your enterprise data or identity.</Typography>
+            </GlassCard>
           </Grid>
         </Grid>
 
         {/* Main Content Grid */}
         <Grid container spacing={3} alignItems="stretch" sx={{ flexGrow: 1 }}>
-          
+
           {/* Left Sidebar */}
           <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
             <GlassCard sx={{ width: '100%', display: 'flex', flexDirection: 'column', p: { xs: 2, md: 3 }, borderRadius: '32px' }}>
-              
+
               <Typography sx={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6, px: 1, mb: 4 }}>
                 The fastest way to build, govern, and scale enterprise AI agents.
               </Typography>
@@ -235,19 +252,19 @@ export default function ProductMatrixSection() {
                           : 'transparent',
                         background: isActive
                           ? (isDark
-                              ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                              : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)')
+                            ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%)'
+                            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)')
                           : 'transparent',
                         border: isActive
                           ? (isDark ? '1px solid rgba(255, 102, 0, 0.32)' : '1px solid rgba(255, 102, 0, 0.22)')
                           : '1px solid transparent',
                         boxShadow: isActive
                           ? (isDark
-                              ? '0 3px 12px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 0 0.5px rgba(255, 102, 0, 0.28)'
-                              : '0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.18)')
+                            ? '0 3px 12px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 0 0.5px rgba(255, 102, 0, 0.28)'
+                            : '0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.18)')
                           : 'none',
                         transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                        '&:hover': { 
+                        '&:hover': {
                           backgroundColor: isActive ? undefined : (isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.6)'),
                           borderColor: isActive ? undefined : (isDark ? 'rgba(255, 102, 0, 0.2)' : 'rgba(255, 102, 0, 0.15)'),
                           '& .opt-title, & .opt-icon, & .opt-chevron': { color: '#ff6600' }
@@ -269,31 +286,31 @@ export default function ProductMatrixSection() {
                 })}
               </Box>
 
-              <Box 
-                component="a" 
+              <Box
+                component="a"
                 href="https://ais.openledger.xyz/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                sx={{ 
+                sx={{
                   textDecoration: 'none',
-                  mt: 4, 
-                  width: '100%', 
-                  py: 1.5, 
-                  px: 3, 
-                  borderRadius: '9999px', 
+                  mt: 4,
+                  width: '100%',
+                  py: 1.5,
+                  px: 3,
+                  borderRadius: '9999px',
                   backgroundColor: '#ff6600',
                   color: '#ffffff',
                   border: isDark ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(255, 102, 0, 0.2)',
                   boxShadow: isDark
                     ? '0 8px 32px rgba(255, 102, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                     : '0 8px 32px rgba(255, 102, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
-                  display: 'flex', 
-                  alignItems: 'center', 
+                  display: 'flex',
+                  alignItems: 'center',
                   justifyContent: 'space-between',
                   cursor: 'pointer',
                   outline: 'none',
                   transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                  '&:hover': { 
+                  '&:hover': {
                     backgroundColor: '#e65c00',
                     transform: 'translateY(-2px)',
                     boxShadow: isDark
@@ -313,7 +330,7 @@ export default function ProductMatrixSection() {
 
           {/* Right Content */}
           <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
-            
+
             {/* Image Display */}
             <Box sx={{ position: 'relative', flexGrow: 1, minHeight: { xs: '300px', md: '350px' }, borderRadius: '32px', overflow: 'hidden', backgroundColor: 'var(--bg-page)' }}>
               {OPTIONS.map((opt, idx) => (
@@ -326,7 +343,11 @@ export default function ProductMatrixSection() {
                     pointerEvents: activeIdx === idx ? 'auto' : 'none'
                   }}
                 >
-                  <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} />
+                  {opt.demo ? (
+                    <ProductDemo flow={opt.demo} active={activeIdx === idx} />
+                  ) : (
+                    <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} fastUntil={opt.fastUntil} fastRate={opt.fastRate} />
+                  )}
                 </Box>
               ))}
             </Box>

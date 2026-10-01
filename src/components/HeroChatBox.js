@@ -167,8 +167,8 @@ export default function HeroChatBox({ prompt, setPrompt }) {
             flexDirection: 'column',
             transition: 'border-color 0.25s ease, box-shadow 0.25s ease',
             '&:focus-within': {
-              borderColor: 'rgba(255, 102, 0, 0.45)',
-              boxShadow: '0 25px 70px -15px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 102, 0, 0.15), 0 0 0 1px rgba(255, 102, 0, 0.25) inset',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 25px 70px -15px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
             },
           }}
         >
@@ -204,6 +204,10 @@ export default function HeroChatBox({ prompt, setPrompt }) {
                 flex: 1,
                 '& .MuiInputBase-input': {
                   padding: 0,
+                  outline: 'none !important',
+                  '&:focus, &:focus-visible': {
+                    outline: 'none !important',
+                  },
                   '&::placeholder': {
                     color: 'rgba(255, 255, 255, 0.48)',
                     opacity: 1,
@@ -493,7 +497,7 @@ export default function HeroChatBox({ prompt, setPrompt }) {
               </Tooltip>
 
               {/* Send Button */}
-              <Tooltip title="Open in OpenLedger Studio" placement="top">
+              <Tooltip title="Open in HeyOpen" placement="top">
                 <IconButton
                   onClick={() => handleSend()}
                   aria-label="Send message"

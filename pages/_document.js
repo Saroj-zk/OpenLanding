@@ -14,7 +14,7 @@ export default class MyDocument extends Document {
           <link rel="apple-touch-icon" href="/favicon.ico" />
           {/* Open Graph base tags — overridden per-page */}
           <meta property="og:type" content="website" />
-          <meta property="og:site_name" content="OpenLedger Studio" />
+          <meta property="og:site_name" content="HeyOpen" />
           <meta property="og:image" content="https://openledger.xyz/og-image.png" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
@@ -26,7 +26,7 @@ export default class MyDocument extends Document {
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Roboto+Mono:wght@400;500;600&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,600&family=Geist:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Roboto+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
           />
           <script

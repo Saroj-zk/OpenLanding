@@ -12,8 +12,15 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+/* Two backgrounds, switchable from the corner of the hero. */
+const BACKDROPS = [
+  { src: '/images/hero-bg-1.webp', label: 'First background' },
+  { src: '/images/hero-bg-2.webp', label: 'Second background' },
+];
+
 export default function HeroSection() {
   const [prompt, setPrompt] = React.useState('');
+  const [backdrop, setBackdrop] = React.useState(0);
   const rootRef = React.useRef(null);
   const curvePathRef = React.useRef(null);
 
@@ -115,7 +122,8 @@ export default function HeroSection() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        backgroundImage: 'url(/images/hero_BG.png)',
+        backgroundImage: `url(${BACKDROPS[backdrop].src})`,
+        transition: 'background-image 0.4s ease',
         backgroundPosition: 'bottom center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
@@ -161,7 +169,7 @@ export default function HeroSection() {
               display: 'block',
             }}
           >
-            Ask Open...
+            Hey Open..
           </Typography>
         </Box>
 
@@ -171,6 +179,54 @@ export default function HeroSection() {
           setPrompt={setPrompt}
         />
       </Container>
+
+      {/* Backdrop switch. Small, in the corner, and it does something. */}
+      <Box
+        sx={{
+          position: 'absolute',
+          right: { xs: 14, md: 26 },
+          bottom: { xs: 96, sm: 126, md: 192 },
+          zIndex: 11,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.75,
+          p: 0.65,
+          borderRadius: '9999px',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(12px) saturate(180%)',
+          border: '1px solid rgba(15, 23, 42, 0.08)',
+          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.08)',
+        }}
+      >
+        {BACKDROPS.map((b, i) => {
+          const on = backdrop === i;
+          return (
+            <Box
+              key={b.src}
+              component="button"
+              type="button"
+              aria-label={b.label}
+              aria-pressed={on}
+              onClick={() => setBackdrop(i)}
+              sx={{
+                width: 20,
+                height: 20,
+                p: 0,
+                flexShrink: 0,
+                cursor: 'pointer',
+                borderRadius: '50%',
+                backgroundImage: `url(${b.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                border: on ? '2px solid #FF6600' : '2px solid rgba(255, 255, 255, 0.9)',
+                outline: 'none',
+                transition: 'border-color 0.25s ease, transform 0.25s ease',
+                '&:hover': { transform: 'scale(1.08)' },
+              }}
+            />
+          );
+        })}
+      </Box>
 
       {/* Trust Badges */}
       <TrustBadges />

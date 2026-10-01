@@ -1324,7 +1324,7 @@ export default function MemoryPage() {
                 >
                   Start Chatting with Memory →
                 </Box>
-                <Link href="/capabilities" passHref style={{ textDecoration: 'none' }}>
+                <Link href="/models" passHref style={{ textDecoration: 'none' }}>
                   <Box
                     component="span"
                     sx={{
@@ -1347,7 +1347,7 @@ export default function MemoryPage() {
                       },
                     }}
                   >
-                    Explore AI Capabilities
+                    See every model
                   </Box>
                 </Link>
               </Box>

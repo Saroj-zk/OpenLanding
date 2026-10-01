@@ -33,30 +33,38 @@ const TELEMETRY = [
   { label: 'Profiling', value: 'NONE' },
 ];
 
+/* The path of a single request, in the order each property applies. The middle
+   field is what lets TEE be spelled out without a parenthetical. */
 const PILLARS = [
   {
-    glyph: 'device',
-    term: 'Private History',
-    detail: 'Your conversations stay available to you in your browser.',
-    status: 'STAYS WITH YOU',
+    n: '01',
+    term: 'Anonymous',
+    sub: 'No account, no sign up',
+    detail: 'Nothing to tie a question back to you.',
   },
   {
-    glyph: 'nostore',
-    term: 'Zero Retention',
-    detail: 'We don’t keep your prompts or responses after they’re processed.',
-    status: 'NOT RETAINED',
+    n: '02',
+    term: 'Encrypted',
+    sub: 'Encrypted in transit',
+    detail: 'Nobody in between can read what you sent.',
   },
   {
-    glyph: 'notrain',
-    term: 'No Training',
-    detail: 'What you say isn’t used to train AI models.',
-    status: 'NEVER USED FOR TRAINING',
+    n: '03',
+    term: 'TEE',
+    sub: 'Trusted Execution Environment',
+    detail: 'Runs inside isolated hardware.',
   },
   {
-    glyph: 'noprofile',
-    term: 'No Profiling',
-    detail: 'What you ask isn’t used to build a profile about you.',
-    status: 'NO PROFILING',
+    n: '04',
+    term: 'Private',
+    sub: 'Zero retention',
+    detail: 'Nothing kept, trained on, or profiled.',
+  },
+  {
+    n: '05',
+    term: 'Unfiltered',
+    sub: 'NSFW allowed',
+    detail: 'No content filter between you and the model.',
   },
 ];
 
@@ -76,7 +84,7 @@ const STEPS = [
     term: 'Secure Routing',
     line: 'SENT SECURELY',
     detail:
-      'Your request is securely routed to the model you choose.',
+      'Your request is routed securely to the model you picked.',
   },
   {
     step: '03',
@@ -85,7 +93,7 @@ const STEPS = [
     term: 'Private Inference',
     line: 'PRIVATELY PROCESSED',
     detail:
-      'The model handles your request without OpenLedger keeping your conversation.',
+      'The model answers your question, and OpenLedger keeps no copy of it.',
   },
   {
     step: '04',
@@ -109,29 +117,11 @@ const FLOWS = [
   {
     label: 'OpenLedger',
     accent: true,
-    note: 'Your request goes straight to the model without an added platform moderation layer.',
+    note: 'Your request goes straight to the model, with no platform filter in between.',
   },
 ];
 
-const FREEDOMS = [
-  {
-    glyph: 'chat',
-    term: 'Ask Freely',
-    detail: 'Ask the questions you actually want to ask, without an extra platform layer getting in the way.',
-  },
-  {
-    glyph: 'pen',
-    term: 'Create Freely',
-    detail: 'Write, research, brainstorm, code, and create without unnecessary restrictions.',
-  },
-  {
-    glyph: 'layers',
-    term: 'Choose Your Model',
-    detail: 'Choose from leading AI models based on what you’re doing, not what one platform wants you to use.',
-  },
-];
 
-const FREEDOM_SPECS = ['Private', 'Uncensored', 'Multi-model'];
 
 const CLOSING_SPECS = ['Zero Retention', 'No Training', 'No Profiling'];
 
@@ -310,7 +300,9 @@ function SectionHead({ eyebrow, title, lede }) {
           <Typography
             component="h2"
             sx={{
-              maxWidth: '17ch',
+              /* No ch cap: it stranded the last word of a heading on its own
+                 line. The grid column sets the width, balance sets the break. */
+              textWrap: 'balance',
               fontSize: { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
               fontWeight: 700,
               lineHeight: 1.12,
@@ -1225,7 +1217,7 @@ export default function PrivatePage() {
       <PageHeader />
 
       <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
-        {/* ── Section 1: Hero ──────────────────────────────────── */}
+        {/* ── Section 1: Hero ────────────────────────────────────── */}
         <Box component="section" sx={{ pt: { xs: 14, sm: 16, md: 18 }, pb: SECTION_PY }}>
           <Box
             sx={{
@@ -1325,65 +1317,111 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 2: Privacy Pillars ───────────────────────── */}
+        {/* ── Section 2: What you get ────────────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
+          {/* One list now. The promises and the ledger said the same things
+              twice, so they are a single set of rows. */}
           <Box sx={{ py: SECTION_PY }}>
-            <SectionHead
-              eyebrow="PRIVACY, BUILT IN"
-              title="Your conversations aren't the product."
-              lede="Your chats stay yours. They remain available in your browser without becoming another copy sitting on our servers."
-            />
+            {/* Centred and stacked, unlike the split head the later sections
+                use, so the page's main claim sits on its own axis. */}
+            <Reveal>
+              <Box
+                sx={{
+                  maxWidth: '44rem',
+                  mx: 'auto',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  mb: BLOCK_GAP,
+                }}
+              >
+                <Eyebrow>THE ARCHITECTURE</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    textWrap: 'balance',
+                    fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.4rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.18,
+                    letterSpacing: '-0.025em',
+                    color: 'var(--text-heading)',
+                  }}
+                >
+                  Privacy that is built, not promised.
+                </Typography>
+                <Typography
+                  sx={{
+                    mt: 2,
+                    textWrap: 'balance',
+                    maxWidth: '54ch',
+                    fontSize: { xs: '0.95rem', md: '1rem' },
+                    lineHeight: 1.7,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  The same protections apply to every request you send, from the moment it
+                  leaves your device to the moment the answer comes back.
+                </Typography>
+              </Box>
+            </Reveal>
 
-            {/* A ledger, not a card grid — hairline rows carry the rhythm. */}
-            <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+            {/* Five columns across, not five rows down. Every other list on
+                this page runs vertically, and the detail lines here are short
+                enough that a row layout left most of the width empty. Each
+                column ends on its label, so the orange sits on one baseline
+                across the strip. */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' },
+                borderTop: '1px solid var(--border-normal)',
+                borderBottom: '1px solid var(--border-normal)',
+              }}
+            >
               {PILLARS.map((pillar, i) => (
-                <Reveal key={pillar.term} delay={i * 60}>
+                <Reveal key={pillar.term} delay={i * 70}>
                   <Box
                     sx={{
-                      display: 'grid',
-                      // Every track is a fixed size or a fraction — nothing is
-                      // content-sized, so all four rows resolve to identical
-                      // columns instead of each row measuring its own text.
-                      gridTemplateColumns: {
-                        xs: 'auto minmax(0, 1fr)',
-                        md: '28px minmax(0, 0.78fr) minmax(0, 1.45fr) 190px',
-                      },
-                      columnGap: { xs: 2, md: 4 },
-                      rowGap: { xs: 1.2, md: 0 },
-                      alignItems: { md: 'center' },
-                      position: 'relative',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      px: { xs: 0, sm: 2.5, md: 2.75 },
                       py: ROW_PY,
-                      borderBottom: '1px solid var(--border-normal)',
-                      // Hover tint bleeds past the text, but the hairline stays
-                      // flush with the container so every rule on the page lines up.
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        inset: '0 -16px',
-                        zIndex: 0,
-                        backgroundColor: 'transparent',
-                        transition: 'background-color 0.3s ease',
-                        pointerEvents: 'none',
+                      borderLeft: { sm: i % 2 === 0 ? 'none' : '1px solid var(--border-subtle)',
+                                    md: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
+                      borderBottom: {
+                        xs: i === PILLARS.length - 1 ? 'none' : '1px solid var(--border-subtle)',
+                        md: 'none',
                       },
-                      '& > *': { position: 'relative', zIndex: 1 },
-                      '&:hover::before': { backgroundColor: 'var(--bg-glass)' },
-                      '&:hover .pillar-glyph': { transform: 'translateY(-2px)' },
+                      transition: 'background-color 0.3s ease',
+                      '&:hover': { backgroundColor: 'var(--bg-glass)' },
+                      '&:hover .spec-n': { color: ORANGE },
                     }}
                   >
-                    <Box
-                      className="pillar-glyph"
-                      sx={{ display: 'flex', color: ORANGE, transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                    <Typography
+                      className="spec-n"
+                      sx={{
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
+                        color: 'var(--text-muted)',
+                        transition: 'color 0.3s ease',
+                        mb: 1.75,
+                      }}
                     >
-                      <Glyph name={pillar.glyph} size={24} />
-                    </Box>
+                      {pillar.n}
+                    </Typography>
 
                     <Typography
                       sx={{
-                        fontSize: { xs: '1.05rem', md: '1.18rem' },
+                        fontSize: { xs: '1.1rem', md: '1.15rem' },
                         fontWeight: 700,
-                        letterSpacing: '-0.01em',
+                        lineHeight: 1.25,
+                        letterSpacing: '-0.015em',
                         color: 'var(--text-heading)',
+                        mb: 1,
                       }}
                     >
                       {pillar.term}
@@ -1391,47 +1429,29 @@ export default function PrivatePage() {
 
                     <Typography
                       sx={{
-                        gridColumn: { xs: '1 / -1', md: 'auto' },
-                        fontSize: '0.95rem',
+                        fontSize: '0.88rem',
                         lineHeight: 1.6,
                         color: 'var(--text-secondary)',
+                        mb: 3,
                       }}
                     >
                       {pillar.detail}
                     </Typography>
 
-                    <Box
+                    {/* mt auto pins every label to the foot of the strip */}
+                    <Typography
                       sx={{
-                        gridColumn: { xs: '1 / -1', md: 'auto' },
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 1.1,
-                        justifySelf: 'start',
+                        mt: 'auto',
+                        fontSize: '0.66rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.07em',
+                        lineHeight: 1.5,
+                        textTransform: 'uppercase',
+                        color: ORANGE,
                       }}
                     >
-                      <Box
-                        sx={{
-                          width: 5,
-                          height: 5,
-                          borderRadius: '50%',
-                          flexShrink: 0,
-                          backgroundColor: ORANGE,
-                          boxShadow: '0 0 6px rgba(255, 102, 0, 0.6)',
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          letterSpacing: '0.07em',
-                          textTransform: 'uppercase',
-                          color: 'var(--text-muted)',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {pillar.status}
-                      </Typography>
-                    </Box>
+                      {pillar.sub}
+                    </Typography>
                   </Box>
                 </Reveal>
               ))}
@@ -1439,7 +1459,7 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 3: How it works ──────────────────────────── */}
+        {/* ── Section 3: How it works ────────────────────────────── */}
         <Box component="section" id="how-it-works" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
@@ -1454,111 +1474,36 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: Freedom to ask ────────────────────────── */}
+        {/* ── Section 4: Uncensored by design ──────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
             <SectionHead
               eyebrow="Uncensored by design"
-              title="Private enough to ask. Free enough to explore."
-              lede="Privacy protects what you ask. Uncensored access gives you room to explore, challenge ideas, research difficult topics, create, and code without unnecessary restrictions."
+              title="Private enough to ask. Unfiltered enough to answer."
+              lede="Research difficult subjects, challenge an idea you disagree with, write, and code without a moderation layer deciding what reaches the model."
             />
 
             {/* Filter-layer comparison */}
             <Reveal>
-              <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+              {/* The closing Rule of the next section already draws a line
+                  here, so the last row drops its own. */}
+              <Box
+                sx={{
+                  borderTop: '1px solid var(--border-normal)',
+                  '& > *:last-child': { borderBottom: 'none' },
+                }}
+              >
                 <FlowKeyframes />
                 {FLOWS.map((flow) => (
                   <FlowRow key={flow.label} flow={flow} />
                 ))}
               </Box>
             </Reveal>
-
-            {/* Three columns divided by hairlines — no card chrome. */}
-            <Box
-              sx={{
-                mt: BLOCK_GAP,
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                borderTop: '1px solid var(--border-normal)',
-                borderBottom: { md: '1px solid var(--border-normal)' },
-              }}
-            >
-              {FREEDOMS.map((card, i) => (
-                <Reveal key={card.term} delay={i * 80}>
-                  <Box
-                    sx={{
-                      height: '100%',
-                      py: ROW_PY,
-                      pr: { md: 4 },
-                      pl: { md: i === 0 ? 0 : 4 },
-                      borderBottom: { xs: '1px solid var(--border-normal)', md: 'none' },
-                      borderLeft: { md: i === 0 ? 'none' : '1px solid var(--border-normal)' },
-                      '&:hover .freedom-glyph': { transform: 'translateY(-2px)' },
-                    }}
-                  >
-                    <Box
-                      className="freedom-glyph"
-                      sx={{
-                        display: 'flex',
-                        color: ORANGE,
-                        mb: 2.25,
-                        transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                      }}
-                    >
-                      <Glyph name={card.glyph} size={26} />
-                    </Box>
-
-                    <Typography
-                      sx={{
-                        fontSize: '1.18rem',
-                        fontWeight: 700,
-                        letterSpacing: '-0.01em',
-                        color: 'var(--text-heading)',
-                        mb: 1.2,
-                      }}
-                    >
-                      {card.term}
-                    </Typography>
-
-                    <Typography sx={{ maxWidth: '34ch', fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-                      {card.detail}
-                    </Typography>
-                  </Box>
-                </Reveal>
-              ))}
-            </Box>
-
-            {/* Section footer: actions + spec line */}
-            <Reveal delay={160}>
-              <Box
-                sx={{
-                  mt: BLOCK_GAP,
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: { xs: 3, md: 4 },
-                }}
-              >
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
-                    Start Chatting
-                  </Box>
-                  <Link href="/models" passHref legacyBehavior>
-                    <Box component="a" sx={GHOST_CTA_SX}>
-                      See every model
-                    </Box>
-                  </Link>
-                </Box>
-
-                <SpecLine items={FREEDOM_SPECS} />
-              </Box>
-            </Reveal>
           </Box>
         </Box>
 
-        {/* ── Section 5: Start a private session ───────────────── */}
+        {/* ── Section 5: Start a private session ──────────────────── */}
         <Box component="section" sx={{ position: 'relative' }}>
           <Rule />
 
@@ -1662,7 +1607,7 @@ export default function PrivatePage() {
                       mb: 2,
                     }}
                   >
-                    Ask freely.<br />Leave nothing behind.
+                    Ask anything.<br />Leave nothing behind.
                   </Typography>
 
                   <Typography
@@ -1681,9 +1626,9 @@ export default function PrivatePage() {
                     <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
                       Start a Private Chat →
                     </Box>
-                    <Link href="/capabilities" passHref legacyBehavior>
+                    <Link href="/models" passHref legacyBehavior>
                       <Box component="a" sx={GHOST_CTA_SX}>
-                        Explore AI Capabilities
+                        See every model
                       </Box>
                     </Link>
                   </Box>
@@ -1710,7 +1655,7 @@ export default function PrivatePage() {
                       mb: 1,
                     }}
                   >
-                    Private on every surface
+                    Private on every platform
                   </Typography>
 
                   {SURFACES.map((s, i) => (

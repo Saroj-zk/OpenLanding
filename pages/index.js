@@ -17,10 +17,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>OpenLedger Studio | AI Assistant</title>
+        <title>HeyOpen | AI Assistant</title>
         <meta
           name="description"
-          content="OpenLedger Studio - A private, multi-model AI experience with no account required to start."
+          content="HeyOpen - A private, multi-model AI experience with no account required to start."
         />
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>

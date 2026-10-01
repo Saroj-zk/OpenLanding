@@ -33,3 +33,7 @@ yarn-error.log*
 next-env.d.ts
 
 .swc
+
+# Reference recordings used to build the product demo panels, not shipped
+/videos/
+*.mov

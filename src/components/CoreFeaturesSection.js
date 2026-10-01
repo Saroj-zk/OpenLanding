@@ -14,6 +14,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/dist/ScrollToPlugin';
 import { useThemeMode } from '@/context/ThemeContext';
+import ProductDemo from '@/components/ProductDemo';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -21,6 +22,36 @@ if (typeof window !== 'undefined') {
 }
 
 const TABS = [
+  {
+    id: 'multimodel',
+    label: 'Multi-Model',
+    fullLabel: 'Multi-Model & Tokens',
+    shortLabel: 'Multi-Model',
+    icon: AutoAwesomeIcon,
+    tagline: 'More models to choose from. Fewer tokens wasted.',
+    description: 'Use leading AI models from one place. Choose your own, or let Auto match each request with the right model.',
+    hasExplore: true,
+    exploreLink: '/models',
+    video: '/Videos/Why Openledger/Multimodel & Token.webm',
+    demo: 'multimodel',
+    tagLeft: 'MULTI-MODEL',
+    tagRight: 'TOKEN OPTIMIZED',
+  },
+  {
+    id: 'memory',
+    label: 'Universal Memory',
+    fullLabel: 'Universal Memory',
+    shortLabel: 'Memory',
+    icon: MemoryIcon,
+    tagline: 'One memory. You decide what stays.',
+    description: 'Switch models without losing context. Delete any memory you don’t want kept, or turn memory off so it isn’t used.',
+    hasExplore: true,
+    exploreLink: '/memory',
+    video: '/Videos/Why Openledger/Unified Memory.webm',
+    demo: 'memory',
+    tagLeft: 'ONE MEMORY',
+    tagRight: 'FULL CONTROL',
+  },
   {
     id: 'private',
     label: 'Private AI',
@@ -36,43 +67,15 @@ const TABS = [
     tagRight: 'UNCENSORED',
   },
   {
-    id: 'multimodel',
-    label: 'Multi-Model',
-    fullLabel: 'Multi-Model & Tokens',
-    shortLabel: 'Multi-Model',
-    icon: AutoAwesomeIcon,
-    tagline: 'More models to choose from. Fewer tokens wasted.',
-    description: 'Use leading AI models from one place. Choose your own, or let Auto match each request with the right model.',
-    hasExplore: true,
-    exploreLink: '/models',
-    video: '/Videos/Why Openledger/Multimodel & Token.webm',
-    tagLeft: 'MULTI-MODEL',
-    tagRight: 'TOKEN OPTIMIZED',
-  },
-  {
-    id: 'memory',
-    label: 'Unified Memory',
-    fullLabel: 'Unified Memory',
-    shortLabel: 'Memory',
-    icon: MemoryIcon,
-    tagline: 'Say it once. Every model remembers.',
-    description: 'Your Your memory moves with you, so you can change models without starting the conversation over.',
-    hasExplore: true,
-    exploreLink: '/memory',
-    video: '/Videos/Why Openledger/Unified Memory.webm',
-    tagLeft: 'ONE MEMORY',
-    tagRight: 'SHARED CONTEXT',
-  },
-  {
     id: 'agents',
-    label: 'Built for Agents',
+    label: 'Built for agents. x402 native.',
     fullLabel: 'Built for Agents',
     shortLabel: 'Agents',
     icon: SmartToyIcon,
     tagline: 'Give your agents more ways to get things done.',
     description: 'Connect agents to leading models through one API, with x402-ready access for agent-to-agent interactions and transactions.',
     hasExplore: true,
-    exploreLink: '/capabilities',
+    exploreLink: '/token',
     video: '/Videos/Why Openledger/Built For Agents.webm',
     tagLeft: 'X402 ENABLED',
     tagRight: 'AGENT READY',
@@ -332,7 +335,7 @@ export default function CoreFeaturesSection() {
               mb: { xs: 2.5, md: 3.2 },
             }}
           >
-            {/* Headline: Private by default. Uncensored by design. */}
+            {/* Headline: From multi-model access to private, uncensored AI. */}
             <Typography
               variant="h2"
               sx={{
@@ -344,10 +347,10 @@ export default function CoreFeaturesSection() {
               }}
             >
               <Box component="span" sx={{ color: 'var(--text-heading)', display: 'block' }}>
-                Private by default.
+                From multi-model access to
               </Box>
               <Box component="span" sx={{ color: 'var(--text-secondary)', display: 'block' }}>
-                Uncensored by design.
+                private, uncensored AI.
               </Box>
             </Typography>
 
@@ -362,7 +365,8 @@ export default function CoreFeaturesSection() {
                 pt: { md: 0.8 },
               }}
             >
-              Private conversations, the models you want, memory that follows you, and agents that can actually get things done.            </Typography>
+              Choose from 100+ models, keep your conversations private, explore without unnecessary restrictions, and carry your context wherever you go.
+            </Typography>
           </Box>
 
           {/* Apple Liquid Glass Floating Tab Bar with Lens Optics & Stretching Pill */}
@@ -582,15 +586,21 @@ export default function CoreFeaturesSection() {
 
                 {/* Left Column: Video */}
                 <Box sx={{ flex: 1, height: '100%', position: 'relative', borderRadius: '16px', overflow: 'hidden', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-                  <Box
-                    component="video"
-                    src={tab.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                  {/* Two of these are built rather than recorded, so they stay
+                      sharp at any size and match the app as it ships. */}
+                  {tab.demo ? (
+                    <ProductDemo flow={tab.demo} active={activeTab === idx} />
+                  ) : (
+                    <Box
+                      component="video"
+                      src={tab.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
                 </Box>
 
                 {/* Right Column: Content */}

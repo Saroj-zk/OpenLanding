@@ -200,12 +200,13 @@ export default function Footer({ showCta = false }) {
                   fontWeight: 700,
                   lineHeight: 1.12,
                   letterSpacing: '-0.03em',
+                  textWrap: 'balance',
                   color: '#FFFFFF',
                   mb: 1.5,
                   textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)',
                 }}
               >
-                Models change every few weeks.
+                You shouldn’t have to bet on one model.
               </Typography>
 
               {/* Sub-headline italic serif */}
@@ -214,12 +215,13 @@ export default function Footer({ showCta = false }) {
                   fontSize: { xs: '1.4rem', sm: '1.9rem', md: '2.4rem' },
                   fontFamily: 'serif',
                   fontStyle: 'italic',
+                  textWrap: 'balance',
                   color: 'rgba(255, 225, 200, 0.9)',
                   mb: { xs: 4, sm: 5 },
                   fontWeight: 400,
                 }}
               >
-                Your interface shouldn’t.
+                Use all of them.
               </Typography>
 
               {/* CTA Buttons */}

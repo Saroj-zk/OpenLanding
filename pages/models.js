@@ -21,7 +21,7 @@ const HERO_INK_2 = 'rgb(100, 116, 139)';
 const HERO_HAIRLINE = 'rgba(15, 23, 42, 0.14)';
 
 /* Section 3: what the router actually does with a prompt. Every lane is a real
-   entry in the catalogue below, so the claim and the list agree. */
+   entry in the catalog below, so the claim and the list agree. */
 const LANES = [
   { code: 'AN', model: 'Claude Opus 4', task: 'Refactor across forty files' },
   { code: 'DS', model: 'DeepSeek R1', task: 'Prove it, and show the steps' },
@@ -451,7 +451,7 @@ export default function ModelsPage() {
                 {PROVIDERS.length} labs. One account.
               </Typography>
               <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-                Every provider below is live today. Pick one to filter the catalogue, or scroll past
+                Every provider below is live today. Pick one to filter the catalog, or scroll past
                 and browse the whole list.
               </Typography>
             </Box>
@@ -594,7 +594,7 @@ export default function ModelsPage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: The catalogue ────────────────────────────── */}
+        {/* ── Section 4: The catalog ────────────────────────────── */}
         <Rule />
         <Box id="catalog-list" sx={{ py: SECTION_PY, scrollMarginTop: '96px' }}>
           <Reveal>
@@ -619,7 +619,7 @@ export default function ModelsPage() {
                     color: 'var(--text-heading)',
                   }}
                 >
-                  The whole catalogue
+                  The whole catalog
                 </Typography>
                 <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.8 }}>
                   {filteredModels.length === MODELS.length
@@ -733,7 +733,7 @@ export default function ModelsPage() {
             )}
           </Reveal>
 
-          {/* One table. Hairline rows keep a long catalogue scannable and let the
+          {/* One table. Hairline rows keep a long catalog scannable and let the
               columns line up all the way down the page. */}
           <Reveal delay={60}>
             <Box sx={{ mt: 4 }}>
