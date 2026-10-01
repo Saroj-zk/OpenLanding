@@ -71,7 +71,7 @@ const FLOWS = {
     pickerClose: 15000,
     pickedName: 'Gemini 3.7 Flash',
     model: { name: 'Auto', code: null },
-    question: 'Convert 2.5 ETH to USD at $4,200 per ETH.',
+    question: 'Convert 2,400 euros to dollars at 1.08.',
     typeStart: 300,
     typeSpan: 1700,
     send: 2300,
@@ -80,9 +80,36 @@ const FLOWS = {
     answerStart: 3500,
     answerSpan: 1500,
     answer: [
-      { t: '2.5 ETH at $4,200 per ETH equals ' },
-      { t: '$10,500', b: true },
+      { t: '2,400 euros at 1.08 comes to ' },
+      { t: '$2,592', b: true },
       { t: '.' },
+    ],
+  },
+  agent: {
+    loop: 15000,
+    compact: true,
+    header: { title: 'Financial Analyst', sub: 'Research \u00b7 Analyze \u00b7 Report' },
+    model: { name: 'Auto', code: null },
+    question: 'Summarize what moved the S&P 500 this week.',
+    typeStart: 400,
+    typeSpan: 1600,
+    send: 2300,
+    thinking: 600,
+    meta: { name: 'Financial Analyst', secs: '6.20' },
+    /* The analyst reports what happened. It does not tell anyone what to buy. */
+    steps: [
+      'Pulling five day index history',
+      'Comparing sector performance',
+      'Reading this week’ earnings reports',
+    ],
+    stepStart: 3100,
+    stepEvery: 1200,
+    answerStart: 7400,
+    answerSpan: 2300,
+    answer: [
+      { t: 'The index finished the week ' },
+      { t: 'up 1.8%', b: true },
+      { t: ', led by healthcare and utilities, while semiconductors gave back most of last week’ gain. Volume stayed under the monthly average throughout.' },
     ],
   },
   memory: {
@@ -445,8 +472,39 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
     >
       {pickerOpen && <PickerOverlay elapsed={t - F.pickerOpen} />}
       {settingsOpen && <MemoryOverlay />}
+      {/* Agent header, when the flow has one */}
+      {F.header && (
+        <Box
+          sx={{
+            display: 'flex', alignItems: 'center', gap: 1.1,
+            px: { xs: 1.75, sm: 2.25 }, py: 1.2,
+            borderBottom: `1px solid ${C.borderSoft}`,
+          }}
+        >
+          <Box sx={{ width: 24, height: 24, flexShrink: 0, borderRadius: '8px', backgroundColor: C.chip, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.textSecondary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+              <polyline points="16 7 22 7 22 13" />
+            </svg>
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: C.text, lineHeight: 1.2 }}>
+              {F.header.title}
+            </Typography>
+            <Typography sx={{ fontSize: '0.66rem', color: C.muted, lineHeight: 1.3 }}>
+              {F.header.sub}
+            </Typography>
+          </Box>
+          <Box sx={{ flex: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 0.9, py: 0.3, borderRadius: '9999px', backgroundColor: C.chip, flexShrink: 0 }}>
+            <Box sx={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: C.greenFg }} />
+            <Typography sx={{ fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.06em', color: C.textSecondary }}>LIVE</Typography>
+          </Box>
+        </Box>
+      )}
+
       {/* Thread */}
-      <Box sx={{ flex: 1, minHeight: 0, px: { xs: 1.75, sm: 2.25 }, pt: { xs: 2, sm: 2.5 }, overflow: 'hidden' }}>
+      <Box sx={{ flex: 1, minHeight: 0, px: { xs: 1.75, sm: 2.25 }, pt: F.header ? 1.5 : { xs: 2, sm: 2.5 }, overflow: 'hidden' }}>
         {!sent && !F.prior ? (
           <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
             <Typography sx={{ fontFamily: '"Fraunces", Georgia, serif', fontWeight: 600, fontSize: { xs: '1.15rem', sm: '1.4rem' }, lineHeight: 1.2, color: C.text }}>
@@ -477,12 +535,15 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
 
             {sent && (
               <>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1.75 }}>
-                  <Box sx={{ maxWidth: '82%', px: 1.6, py: 1, borderRadius: '16px', backgroundColor: C.chip }}>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: F.compact ? 1.2 : 1.75 }}>
+                  <Box sx={{ maxWidth: '82%', px: 1.6, py: F.compact ? 0.8 : 1, borderRadius: '16px', backgroundColor: C.chip }}>
                     <Typography sx={{ fontSize: '0.8rem', lineHeight: 1.55, color: C.text }}>{F.question}</Typography>
                   </Box>
                 </Box>
 
+                {/* While the steps run, the panel header already names the
+                    agent, so this line would only repeat it. */}
+                {!(F.steps && answerLen <= 0) && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.9 }}>
                   <ModelMark code={current.code} size={14} color={C.textSecondary} />
                   <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: C.text }}>
@@ -492,6 +553,51 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
                     &middot; {thinking ? 'Thinking' : `${F.meta.secs}s`}
                   </Typography>
                 </Box>
+                )}
+
+                {/* Once the summary is being written the steps have done their
+                    job, so they fold into one line and give the answer room. */}
+                {F.steps && answerLen > 0 && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7, mb: 1 }}>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <Typography sx={{ fontSize: '0.72rem', color: C.muted }}>
+                      {F.steps.length} steps
+                    </Typography>
+                  </Box>
+                )}
+
+                {F.steps && answerLen <= 0 && (
+                  <Box sx={{ mb: 1.2 }}>
+                    {F.steps.map((label, i) => {
+                      const started = t >= F.stepStart + i * F.stepEvery;
+                      const done = t >= F.stepStart + (i + 1) * F.stepEvery;
+                      if (!started) return null;
+                      return (
+                        <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 0.9, py: 0.3 }}>
+                          <Box
+                            sx={{
+                              width: 13, height: 13, flexShrink: 0, borderRadius: '50%',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              border: done ? 'none' : `1.4px solid ${C.toggleOff}`,
+                              backgroundColor: done ? C.greenBg : 'transparent',
+                            }}
+                          >
+                            {done && (
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={C.greenFg} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                          </Box>
+                          <Typography sx={{ fontSize: '0.74rem', color: done ? C.textSecondary : C.muted }}>
+                            {label}{done ? '' : '\u2026'}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                )}
 
                 {!thinking && F.meta.steps && (
                   <Typography sx={{ fontSize: '0.72rem', color: C.muted, mb: 0.9 }}>
@@ -511,9 +617,9 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
       </Box>
 
       {/* Composer */}
-      <Box sx={{ px: { xs: 1.75, sm: 2.25 }, pb: 1, pt: 1 }}>
+      <Box sx={{ px: { xs: 1.75, sm: 2.25 }, pb: F.compact ? 0.75 : 1, pt: F.compact ? 0.5 : 1 }}>
         <Box sx={{ borderRadius: '14px', backgroundColor: C.surface, border: `1px solid ${C.border}` }}>
-          <Box sx={{ px: 1.5, pt: 1.15, pb: 0.8 }}>
+          <Box sx={{ px: 1.5, pt: F.compact ? 0.9 : 1.15, pb: F.compact ? 0.6 : 0.8 }}>
             <Typography
               sx={{
                 fontSize: '0.78rem',
@@ -525,7 +631,7 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
             >
               {typedLen > 0 && !sent
                 ? (<>{F.question.slice(0, typedLen)}{typedLen < F.question.length && <Caret />}</>)
-                : 'Send a message…'}
+                : 'Send a message…  (@ to mention, / for commands)'}
             </Typography>
           </Box>
 
@@ -582,7 +688,17 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
           </Box>
         </Box>
 
-        <Typography sx={{ mt: 0.8, textAlign: 'center', fontSize: '0.64rem', color: C.muted }}>
+        {!sent && !F.compact && !F.prior && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 0.7, mt: 1 }}>
+            {['Weather', 'Code', 'Write', 'Analyze', 'Brainstorm'].map((x) => (
+              <Box key={x} sx={{ px: 1.1, py: 0.45, borderRadius: '9999px', backgroundColor: C.surface, border: `1px solid ${C.border}` }}>
+                <Typography sx={{ fontSize: '0.68rem', color: C.text, whiteSpace: 'nowrap' }}>{x}</Typography>
+              </Box>
+            ))}
+          </Box>
+        )}
+
+        <Typography sx={{ mt: F.compact ? 0.5 : 0.8, textAlign: 'center', fontSize: '0.62rem', color: C.muted }}>
           HeyOpen can make mistakes. Verify important information.
         </Typography>
       </Box>

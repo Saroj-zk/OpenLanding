@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { alpha } from '@mui/material/styles';
 import { useThemeMode } from '@/context/ThemeContext';
+import ProductDemo from '@/components/ProductDemo';
 
 // Icons
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
@@ -65,6 +66,7 @@ const OPTIONS = [
     title: 'Agent',
     icon: SmartToyOutlinedIcon,
     video: '/Videos/AI ecosystem/Agent.webm',
+    demo: 'agent',
     overlayEyebrow: 'AUTONOMOUS EXECUTION',
     overlayTitle: 'Intelligent reconciliation\nand proactive action.',
   },
@@ -341,7 +343,11 @@ export default function ProductMatrixSection() {
                     pointerEvents: activeIdx === idx ? 'auto' : 'none'
                   }}
                 >
-                  <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} fastUntil={opt.fastUntil} fastRate={opt.fastRate} />
+                  {opt.demo ? (
+                    <ProductDemo flow={opt.demo} active={activeIdx === idx} />
+                  ) : (
+                    <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} fastUntil={opt.fastUntil} fastRate={opt.fastRate} />
+                  )}
                 </Box>
               ))}
             </Box>
