@@ -166,6 +166,7 @@ export default function WhyAskMultipleModelsSection() {
   /* Each model starts only once the one before it has finished. */
   const answerLen = (i, text) =>
     Math.round(ramp(T.answerStart + i * T.answerStep, T.answerSpan) * text.length);
+  const council = t >= T.pickClose;
   const summaryLen = Math.round(ramp(T.summaryStart, T.summarySpan) * SUMMARY.length);
   const analysisLen = Math.round(ramp(T.analysisStart, T.analysisSpan) * ANALYSIS.length);
 
@@ -452,10 +453,10 @@ export default function WhyAskMultipleModelsSection() {
                     overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                   }}
                 >
-                  {sent
-                    ? 'Ask the council\u2026'
-                    : typedLen > 0
-                      ? (<>{QUESTION.slice(0, typedLen)}{typedLen < QUESTION.length && <Caret />}</>)
+                  {typedLen > 0 && !sent
+                    ? (<>{QUESTION.slice(0, typedLen)}{typedLen < QUESTION.length && <Caret />}</>)
+                    : council
+                      ? 'Ask the council…'
                       : 'Send a message\u2026  (@ to mention, / for commands)'}
                 </Typography>
                 <Box sx={{ display: 'flex', color: C.muted, flexShrink: 0 }}>
@@ -469,7 +470,7 @@ export default function WhyAskMultipleModelsSection() {
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.4, pb: 1.4 }}>
-                {sent ? (
+                {council ? (
                   <>
                     <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6, px: 1, py: 0.45, borderRadius: '9999px', backgroundColor: C.chip }}>
                       <Scales size={12} color={C.textSecondary} />
@@ -510,8 +511,8 @@ export default function WhyAskMultipleModelsSection() {
                   sx={{
                     width: 34, height: 34, flexShrink: 0, borderRadius: '50%',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: sent ? C.text : C.sendIdle,
-                    color: sent ? C.onInverse : C.textSecondary,
+                    backgroundColor: typedLen > 0 || sent ? C.text : C.sendIdle,
+                    color: typedLen > 0 || sent ? C.onInverse : C.textSecondary,
                     transition: 'background-color 0.3s ease',
                   }}
                 >
