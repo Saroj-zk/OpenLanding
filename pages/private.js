@@ -33,7 +33,7 @@ const TELEMETRY = [
   { label: 'Profiling', value: 'NONE' },
 ];
 
-/* Five properties of a single request, in the order they apply. The middle
+/* The path of a single request, in the order each property applies. The middle
    field is what lets TEE be spelled out without a parenthetical. */
 const PILLARS = [
   {
@@ -1359,8 +1359,8 @@ export default function PrivatePage() {
                     color: 'var(--text-secondary)',
                   }}
                 >
-                  Five properties that hold for every request you send, from the moment it leaves
-                  your device to the moment the answer comes back.
+                  This is what happens to a request you send, from the moment it leaves your
+                  device to the moment the answer comes back.
                 </Typography>
               </Box>
             </Reveal>
