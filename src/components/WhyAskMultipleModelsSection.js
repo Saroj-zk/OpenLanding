@@ -24,6 +24,30 @@ const C = {
   sendIdle: '#D8D7D3',
 };
 
+const QUESTION = 'Pick the best sushi restaurant in Tokyo for dinner under $100.';
+const SUMMARY =
+  'Manten Sushi. Two of the four picked it, and it is the only one that clears an omakase under $100 without dropping to a casual counter.';
+const ANALYSIS =
+  'The outliers traded price against experience. Neither held once the budget was read as a ceiling rather than a target.';
+
+/* Milliseconds from the top of the loop. */
+const T = {
+  pickOpen: 900,
+  pickStep: 420,
+  pickClose: 3000,
+  typeStart: 3100,
+  typeSpan: 1700,
+  send: 5000,
+  answerStart: 5700,
+  answerStep: 1150,
+  answerSpan: 1050,
+  summaryStart: 10700,
+  summarySpan: 1500,
+  analysisStart: 12000,
+  analysisSpan: 1300,
+};
+const LOOP = 17500;
+
 /* The first entry is the judge, which is how Council marks it. */
 const COUNCIL = [
   { code: 'AN', name: 'Claude Opus 5', web: true, secs: '3.3', pick: 'Manten Sushi', note: 'Quality and value without premium pricing.' },
@@ -50,6 +74,31 @@ function Search({ size = 14, color }) {
       <circle cx="11" cy="11" r="7" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
+  );
+}
+
+function Caret() {
+  return (
+    <Box component="span" sx={{ ml: '1px', animation: 'olCaret 0.9s steps(1) infinite' }}>
+      &#9611;
+    </Box>
+  );
+}
+
+/* Types the pick, then the reason, so a card fills the way an answer
+   actually arrives rather than appearing whole. */
+function Typed({ head, body, n, C: T }) {
+  const full = `${head}. ${body}`;
+  if (n <= 0) return <Typography sx={{ fontSize: '0.85rem', color: T.muted }}>Generating&hellip;</Typography>;
+  const shown = full.slice(0, n);
+  return (
+    <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.6, color: T.textSecondary }}>
+      <Box component="span" sx={{ fontWeight: 600, color: T.text }}>
+        {shown.slice(0, Math.min(n, head.length))}
+      </Box>
+      {n > head.length ? shown.slice(head.length) : ''}
+      {n < full.length && <Caret />}
+    </Typography>
   );
 }
 
@@ -83,12 +132,12 @@ function Toggle({ on, C: T }) {
 export default function WhyAskMultipleModelsSection() {
   const { isDark } = useThemeMode();
 
-  /* 0 picks the council, 1 runs it, 2 shows what came back. picked counts
-     the models toggled on while phase 0 is on screen. */
-  const [phase, setPhase] = React.useState(0);
-  const [picked, setPicked] = React.useState(0);
+  /* One clock drives the whole sequence, and every state below is derived
+     from it. Chained timers drifted and made the typing impossible to line
+     up against the phase changes. */
   const panelRef = React.useRef(null);
   const [live, setLive] = React.useState(false);
+  const [t, setT] = React.useState(0);
 
   React.useEffect(() => {
     if (!panelRef.current) return undefined;
@@ -99,25 +148,26 @@ export default function WhyAskMultipleModelsSection() {
 
   React.useEffect(() => {
     if (!live) return undefined;
-    const steps = [
-      [2000, () => setPhase(1)],
-      [700, () => setPicked(1)],
-      [460, () => setPicked(2)],
-      [420, () => setPicked(3)],
-      [420, () => setPicked(4)],
-      [1100, () => setPhase(2)],
-      [2300, () => setPhase(3)],
-      [4200, () => { setPhase(0); setPicked(0); }],
-    ];
-    let i = 0;
-    let t;
-    const run = () => {
-      const [wait, act] = steps[i % steps.length];
-      t = setTimeout(() => { act(); i += 1; run(); }, wait);
-    };
-    run();
-    return () => clearTimeout(t);
+    const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const id = setInterval(() => {
+      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+      setT((now - started) % LOOP);
+    }, 40);
+    return () => clearInterval(id);
   }, [live]);
+
+  const ramp = (from, span) => Math.max(0, Math.min(1, (t - from) / span));
+
+  const picking = t >= T.pickOpen && t < T.pickClose;
+  const picked = t < T.pickOpen ? 0 : Math.min(4, Math.floor((t - T.pickOpen) / T.pickStep) + 1);
+  const typedLen = Math.round(ramp(T.typeStart, T.typeSpan) * QUESTION.length);
+  const sent = t >= T.send;
+
+  /* Each model starts only once the one before it has finished. */
+  const answerLen = (i, text) =>
+    Math.round(ramp(T.answerStart + i * T.answerStep, T.answerSpan) * text.length);
+  const summaryLen = Math.round(ramp(T.summaryStart, T.summarySpan) * SUMMARY.length);
+  const analysisLen = Math.round(ramp(T.analysisStart, T.analysisSpan) * ANALYSIS.length);
 
   const sectionRef = React.useRef(null);
 
@@ -170,7 +220,7 @@ export default function WhyAskMultipleModelsSection() {
             width: '100%',
             maxWidth: { xs: '100%', lg: 1060 },
             mx: 'auto',
-            height: { xs: 'auto', md: 548 },
+            height: { xs: 'auto', md: 640 },
             display: 'flex',
             flexDirection: 'column',
             borderRadius: '20px',
@@ -184,7 +234,7 @@ export default function WhyAskMultipleModelsSection() {
         >
           {/* ── Canvas ───────────────────────────────────────────── */}
           <Box sx={{ flex: 1, minHeight: 0, position: 'relative', px: { xs: 2, sm: 3 }, pt: { xs: 3, sm: 4 } }}>
-            {phase <= 1 ? (
+            {!sent ? (
               <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', pb: { xs: 2, md: 4 } }}>
                 <Typography
                   sx={{
@@ -207,6 +257,11 @@ export default function WhyAskMultipleModelsSection() {
               </Box>
             ) : (
               <Box sx={{ height: '100%', overflow: 'hidden', pb: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1.75 }}>
+                  <Box sx={{ maxWidth: '72%', px: 2, py: 1.15, borderRadius: '18px', backgroundColor: C.chip }}>
+                    <Typography sx={{ fontSize: '0.86rem', lineHeight: 1.55, color: C.text }}>{QUESTION}</Typography>
+                  </Box>
+                </Box>
                 <Box
                   sx={{
                     display: 'grid',
@@ -216,23 +271,23 @@ export default function WhyAskMultipleModelsSection() {
                   }}
                 >
                   <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: { xs: 1.25, md: 1.5 } }}>
-                    {COUNCIL.map((m) => (
-                      <Box key={m.name} sx={{ borderRadius: '14px', backgroundColor: C.surface, border: `1px solid ${C.border}`, p: 1.6 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.2 }}>
-                          <BrandTile code={m.code} size={15} round />
-                          <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.82rem', fontWeight: 600, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {COUNCIL.map((m, i) => (
+                      <Box
+                        key={m.name}
+                        sx={{
+                          borderRadius: '14px', backgroundColor: C.surface,
+                          border: `1px solid ${C.border}`, p: 2.1,
+                          minHeight: { xs: 'auto', sm: 132 },
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.35 }}>
+                          <BrandTile code={m.code} size={17} round />
+                          <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.88rem', fontWeight: 600, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {m.name}
                           </Typography>
-                          <Typography sx={{ fontSize: '0.74rem', color: C.muted, flexShrink: 0 }}>{m.secs}s</Typography>
+                          <Typography sx={{ fontSize: '0.76rem', color: C.muted, flexShrink: 0 }}>{m.secs}s</Typography>
                         </Box>
-                        {phase === 2 ? (
-                          <Typography sx={{ fontSize: '0.8rem', color: C.muted }}>Generating&hellip;</Typography>
-                        ) : (
-                          <>
-                            <Typography sx={{ fontSize: '0.84rem', fontWeight: 600, color: C.text, mb: 0.3 }}>{m.pick}</Typography>
-                            <Typography sx={{ fontSize: '0.78rem', lineHeight: 1.5, color: C.textSecondary }}>{m.note}</Typography>
-                          </>
-                        )}
+                        <Typed head={m.pick} body={m.note} n={answerLen(i, `${m.pick}. ${m.note}`)} C={C} />
                       </Box>
                     ))}
                   </Box>
@@ -245,34 +300,31 @@ export default function WhyAskMultipleModelsSection() {
                         <BrandTile code={COUNCIL[0].code} size={13} round />
                         <Typography sx={{ fontSize: '0.72rem', color: C.muted, whiteSpace: 'nowrap' }}>{COUNCIL[0].name}</Typography>
                       </Box>
-                      {phase === 2 ? (
+                      {summaryLen <= 0 ? (
                         <>
-                          <Typography sx={{ fontSize: '0.8rem', color: C.muted, mb: 1 }}>Reading the answers&hellip;</Typography>
+                          <Typography sx={{ fontSize: '0.82rem', color: C.muted, mb: 1 }}>Reading the answers&hellip;</Typography>
                           {[88, 100, 72].map((w, i) => (
                             <Box key={i} sx={{ height: 8, width: `${w}%`, mb: 0.7, borderRadius: '9999px', backgroundColor: C.chip }} />
                           ))}
                         </>
                       ) : (
-                        <>
-                          <Typography sx={{ fontSize: '0.88rem', fontWeight: 600, color: C.text, mb: 0.4 }}>Manten Sushi</Typography>
-                          <Typography sx={{ fontSize: '0.78rem', lineHeight: 1.55, color: C.textSecondary }}>
-                            Two of the four picked it, and it is the only one that clears an omakase
-                            under $100 without dropping to a casual counter.
-                          </Typography>
-                        </>
+                        <Typography sx={{ fontSize: '0.84rem', lineHeight: 1.6, color: C.textSecondary }}>
+                          {SUMMARY.slice(0, summaryLen)}
+                          {summaryLen < SUMMARY.length && <Caret />}
+                        </Typography>
                       )}
                     </Box>
 
                     <Box sx={{ borderRadius: '14px', backgroundColor: C.surface, border: `1px solid ${C.border}`, p: 1.6 }}>
                       <Typography sx={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, mb: 1 }}>Analysis</Typography>
-                      {phase === 2
+                      {analysisLen <= 0
                         ? [100, 84].map((w, i) => (
                             <Box key={i} sx={{ height: 8, width: `${w}%`, mb: 0.7, borderRadius: '9999px', backgroundColor: C.chip }} />
                           ))
                         : (
-                          <Typography sx={{ fontSize: '0.78rem', lineHeight: 1.55, color: C.textSecondary }}>
-                            The outliers traded price against experience, and neither held once the
-                            budget was read as a ceiling.
+                          <Typography sx={{ fontSize: '0.84rem', lineHeight: 1.6, color: C.textSecondary }}>
+                            {ANALYSIS.slice(0, analysisLen)}
+                            {analysisLen < ANALYSIS.length && <Caret />}
                           </Typography>
                         )}
                     </Box>
@@ -284,7 +336,7 @@ export default function WhyAskMultipleModelsSection() {
 
           {/* ── Foot: the picker opens out of the composer ────────── */}
           <Box sx={{ position: 'relative', px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 2.5 }, pt: 1 }}>
-            {phase === 1 && (
+            {picking && (
               <Box
                 sx={{
                   position: 'absolute',
@@ -393,8 +445,18 @@ export default function WhyAskMultipleModelsSection() {
             {/* Composer, pinned */}
             <Box sx={{ borderRadius: '18px', backgroundColor: C.surface, border: `1px solid ${C.border}` }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1.9, pt: 1.5, pb: 1.1 }}>
-                <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.88rem', color: C.muted, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                  {phase >= 2 ? 'Ask the council\u2026' : 'Send a message\u2026  (@ to mention, / for commands)'}
+                <Typography
+                  sx={{
+                    flex: 1, minWidth: 0, fontSize: '0.88rem',
+                    color: !sent && typedLen > 0 ? C.text : C.muted,
+                    overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                  }}
+                >
+                  {sent
+                    ? 'Ask the council\u2026'
+                    : typedLen > 0
+                      ? (<>{QUESTION.slice(0, typedLen)}{typedLen < QUESTION.length && <Caret />}</>)
+                      : 'Send a message\u2026  (@ to mention, / for commands)'}
                 </Typography>
                 <Box sx={{ display: 'flex', color: C.muted, flexShrink: 0 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -407,7 +469,7 @@ export default function WhyAskMultipleModelsSection() {
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.4, pb: 1.4 }}>
-                {phase >= 2 ? (
+                {sent ? (
                   <>
                     <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6, px: 1, py: 0.45, borderRadius: '9999px', backgroundColor: C.chip }}>
                       <Scales size={12} color={C.textSecondary} />
@@ -421,12 +483,12 @@ export default function WhyAskMultipleModelsSection() {
                     <Typography sx={{ fontSize: '0.78rem', color: C.textSecondary, whiteSpace: 'nowrap' }}>4 models</Typography>
                   </>
                 ) : (
-                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, px: 0.7, py: 0.4, borderRadius: '16px', backgroundColor: phase === 1 ? C.chip : 'transparent', transition: 'background-color 0.25s ease' }}>
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, px: 0.7, py: 0.4, borderRadius: '16px', backgroundColor: picking ? C.chip : 'transparent', transition: 'background-color 0.25s ease' }}>
                     <BrandTile code={COUNCIL[1].code} size={16} round />
                     <Typography sx={{ fontSize: '0.84rem', color: C.text, whiteSpace: 'nowrap' }}>
                       {COUNCIL[1].name}
                     </Typography>
-                    <Box sx={{ display: 'flex', color: C.muted, transform: phase === 1 ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease' }}>
+                    <Box sx={{ display: 'flex', color: C.muted, transform: picking ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease' }}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
@@ -448,12 +510,12 @@ export default function WhyAskMultipleModelsSection() {
                   sx={{
                     width: 34, height: 34, flexShrink: 0, borderRadius: '50%',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: phase === 2 ? C.text : C.sendIdle,
-                    color: phase === 2 ? C.onInverse : C.textSecondary,
+                    backgroundColor: sent ? C.text : C.sendIdle,
+                    color: sent ? C.onInverse : C.textSecondary,
                     transition: 'background-color 0.3s ease',
                   }}
                 >
-                  {phase === 2 ? (
+                  {sent ? (
                     <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: C.onInverse }} />
                   ) : (
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -466,7 +528,7 @@ export default function WhyAskMultipleModelsSection() {
             </Box>
 
             {/* Suggestion chips, as the app shows them before a first message */}
-            {phase === 0 && (
+            {!sent && (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1, mt: 1.5 }}>
                 {['Weather', 'Code', 'Write', 'Analyze', 'Brainstorm'].map((t) => (
                   <Box
@@ -483,6 +545,10 @@ export default function WhyAskMultipleModelsSection() {
             )}
 
             <style>{`
+              @keyframes olCaret {
+                0%, 50% { opacity: 1; }
+                51%, 100% { opacity: 0; }
+              }
               @keyframes olPickerIn {
                 from { opacity: 0; transform: translateY(8px); }
                 to   { opacity: 1; transform: translateY(0); }
