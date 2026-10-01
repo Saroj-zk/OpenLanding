@@ -22,6 +22,7 @@ const UI = {
   textSecondary: '#6D6C6A',
   muted: '#71717A',
   inverse: '#171717',
+  sendIdle: '#D8D7D3',
   onInverse: '#F5F4F0',
 };
 
@@ -54,6 +55,7 @@ const SCRIPT = [
   {
     kind: 'reply',
     model: 'GG',
+    secs: '2.41',
     saves: ['veg', 'budget', 'quiet', 'trip'],
     uses: [],
     parts: [
@@ -66,6 +68,7 @@ const SCRIPT = [
   {
     kind: 'reply',
     model: 'AN',
+    secs: '3.08',
     uses: ['quiet', 'budget', 'veg'],
     parts: [
       { t: 'Higashiyama and northern Kyoto both stay ' },
@@ -83,6 +86,7 @@ const SCRIPT = [
   {
     kind: 'reply',
     model: 'OA',
+    secs: '1.96',
     uses: ['quiet', 'trip'],
     parts: [
       { t: 'Start at Nanzen-ji when it opens, then walk the Philosopher\u2019s Path north to Shisen-d\u014d. It is a ' },
@@ -143,13 +147,12 @@ function UserBubble({ text }) {
     <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2.5 }}>
       <Box
         sx={{
-          maxWidth: '82%',
-          px: 2.25,
-          py: 1.5,
-          borderRadius: '16px 16px 4px 16px',
+          maxWidth: '78%',
+          px: 2,
+          py: 1.35,
+          borderRadius: '18px',
           backgroundColor: UI.sunken,
-          border: `1px solid ${UI.borderSoft}`,
-          fontSize: '0.92rem',
+          fontSize: '0.94rem',
           lineHeight: 1.6,
           color: UI.text,
         }}
@@ -167,8 +170,8 @@ function PickerMenu({ target }) {
     <Box
       sx={{
         position: 'absolute',
-        top: 'calc(100% - 6px)',
-        left: { xs: 14, sm: 20 },
+        bottom: 'calc(100% + 8px)',
+        left: 0,
         zIndex: 6,
         minWidth: 232,
         p: 0.75,
@@ -191,7 +194,7 @@ function PickerMenu({ target }) {
               px: 1.25,
               py: 1.05,
               borderRadius: '10px',
-              backgroundColor: picked ? 'rgba(255, 102, 0, 0.12)' : 'transparent',
+              backgroundColor: picked ? UI.sunken : 'transparent',
               transition: 'background-color 0.25s ease',
             }}
           >
@@ -202,13 +205,13 @@ function PickerMenu({ target }) {
                 fontSize: '0.86rem',
                 fontWeight: 600,
                 whiteSpace: 'nowrap',
-                color: picked ? ORANGE : UI.text,
+                color: UI.text,
               }}
             >
               {MODELS[code].full}
             </Typography>
             {picked && (
-              <Box sx={{ display: 'flex', flexShrink: 0, color: ORANGE }}>
+              <Box sx={{ display: 'flex', flexShrink: 0, color: UI.text }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
@@ -224,22 +227,14 @@ function PickerMenu({ target }) {
 /* Shown while the incoming model pulls the context across. */
 function ReadingRow({ model }) {
   return (
-    <Box sx={{ display: 'flex', gap: 1.6, mb: 2.5, alignItems: 'center' }}>
-      <Box sx={{ flexShrink: 0 }}>
-        <BrandTile code={model} size={26} />
+    <Box sx={{ mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.15 }}>
+        <BrandTile code={model} size={18} round />
+        <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, color: UI.text, whiteSpace: 'nowrap' }}>
+          {MODELS[model].full}
+        </Typography>
       </Box>
-      <Box
-        sx={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 1.2,
-          px: 1.75,
-          py: 1.05,
-          borderRadius: '12px',
-          backgroundColor: UI.sunken,
-          border: `1px solid ${UI.borderSoft}`,
-        }}
-      >
+      <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2 }}>
         <Box sx={{ display: 'flex', gap: 0.55 }}>
           {[0, 1, 2].map((d) => (
             <Box
@@ -248,7 +243,7 @@ function ReadingRow({ model }) {
                 width: 5,
                 height: 5,
                 borderRadius: '50%',
-                backgroundColor: ORANGE,
+                  backgroundColor: UI.muted,
                 animation: `olDot 1.05s ease-in-out ${d * 0.16}s infinite`,
               }}
             />
@@ -262,13 +257,21 @@ function ReadingRow({ model }) {
   );
 }
 
-function Reply({ model, parts }) {
+function Reply({ model, parts, secs }) {
   return (
-    <Box sx={{ display: 'flex', gap: 1.6, mb: 2.5, alignItems: 'flex-start' }}>
-      <Box sx={{ mt: 0.3, flexShrink: 0 }}>
-        <BrandTile code={model} size={26} />
+    <Box sx={{ mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.15 }}>
+        <BrandTile code={model} size={18} round />
+        <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, color: UI.text, whiteSpace: 'nowrap' }}>
+          {MODELS[model].full}
+        </Typography>
+        {secs && (
+          <Typography sx={{ fontSize: '0.85rem', color: UI.muted, whiteSpace: 'nowrap' }}>
+            &middot; {secs}s
+          </Typography>
+        )}
       </Box>
-      <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.7, color: UI.text, pt: 0.1 }}>
+      <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.75, color: UI.text }}>
         <Parts parts={parts} />
       </Typography>
     </Box>
@@ -277,7 +280,7 @@ function Reply({ model, parts }) {
 
 function ThreadItem({ item }) {
   if (item.kind === 'user') return <UserBubble text={item.text} />;
-  if (item.kind === 'reply') return <Reply model={item.model} parts={item.parts} />;
+  if (item.kind === 'reply') return <Reply model={item.model} parts={item.parts} secs={item.secs} />;
   return <SwitchDivider model={item.model} />;
 }
 
@@ -357,78 +360,6 @@ export function MemoryChatDemo() {
           boxShadow: 'none',
         }}
       >
-        {/* Header: the model updates itself as the thread hands over */}
-        <Box
-          sx={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 2,
-            px: { xs: 2.25, sm: 3 },
-            py: 2,
-            borderBottom: `1px solid ${UI.borderSoft}`,
-          }}
-        >
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 1.2,
-              minWidth: 0,
-              px: 1,
-              py: 0.6,
-              ml: -1,
-              borderRadius: '10px',
-              backgroundColor: picking ? UI.sunken : 'transparent',
-              transition: 'background-color 0.25s ease',
-            }}
-          >
-            <BrandTile code={activeModel} size={26} />
-            <Typography
-              sx={{
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                color: UI.text,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {MODELS[activeModel].name}
-            </Typography>
-            <Box
-              aria-hidden="true"
-              sx={{
-                display: 'flex',
-                color: UI.muted,
-                transform: picking ? 'rotate(180deg)' : 'none',
-                transition: 'transform 0.25s ease',
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </Box>
-          </Box>
-
-          {picking && <PickerMenu target={picking} />}
-
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-            <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE, boxShadow: `0 0 8px ${ORANGE}` }} />
-            <Typography
-              sx={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                letterSpacing: '0.07em',
-                textTransform: 'uppercase',
-                color: UI.muted,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {MEMORY.length} in memory
-            </Typography>
-          </Box>
-        </Box>
-
         {/* Thread. A hidden copy of the finished conversation holds the height
             open, so the window is exactly as tall as the full thread at any
             width, so it never grows as messages land and never scrolls. */}
@@ -443,7 +374,7 @@ export function MemoryChatDemo() {
               50%      { opacity: 1; transform: translateY(-2px); }
             }
             @keyframes olMenuIn {
-              from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+              from { opacity: 0; transform: translateY(6px) scale(0.98); }
               to   { opacity: 1; transform: translateY(0) scale(1); }
             }
             @keyframes olReading {
@@ -472,51 +403,119 @@ export function MemoryChatDemo() {
           </Box>
         </Box>
 
-        {/* Composer: part of the window, not a control. Nothing here is typable. */}
+        {/* Composer, matching the app: a white two row shell, the message
+            line above, the model selector and the send control below. It is
+            display only, so the send button keeps the app's disabled grey
+            rather than its active dark fill. */}
         <Box
           aria-hidden="true"
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.25,
+            position: 'relative',
             m: { xs: 1.75, sm: 2.25 },
-            pl: 2,
-            pr: 0.75,
-            py: 1.1,
-            borderRadius: '9999px',
+            borderRadius: '20px',
             border: `1px solid ${UI.border}`,
-            backgroundColor: UI.composer,
+            backgroundColor: UI.surface,
             pointerEvents: 'none',
             userSelect: 'none',
           }}
         >
-          <Box sx={{ display: 'flex', color: UI.muted, flexShrink: 0 }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-            </svg>
+          {/* Message line */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, pt: 1.6, pb: 1.2 }}>
+            <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.94rem', color: UI.muted, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              Send a message&hellip;{'  '}(@ to mention, / for commands)
+            </Typography>
+            <Box sx={{ display: 'flex', color: UI.muted, flexShrink: 0 }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="15 3 21 3 21 9" />
+                <polyline points="9 21 3 21 3 15" />
+                <line x1="21" y1="3" x2="14" y2="10" />
+                <line x1="3" y1="21" x2="10" y2="14" />
+              </svg>
+            </Box>
           </Box>
-          <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.92rem', color: UI.muted }}>
-            Ask anything...
-          </Typography>
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              flexShrink: 0,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: UI.onInverse,
-              backgroundColor: UI.inverse,
-            }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="12" y1="19" x2="12" y2="5" />
-              <polyline points="5 12 12 5 19 12" />
-            </svg>
+
+          {/* Control line */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.5, pb: 1.5 }}>
+            <Box sx={{ position: 'relative', minWidth: 0 }}>
+              {picking && <PickerMenu target={picking} />}
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.9,
+                  height: 28,
+                  px: 0.75,
+                  borderRadius: '16px',
+                  minWidth: 0,
+                  backgroundColor: picking ? UI.sunken : 'transparent',
+                  transition: 'background-color 0.25s ease',
+                }}
+              >
+                <BrandTile code={activeModel} size={18} round />
+                <Typography sx={{ fontSize: '0.875rem', color: UI.text, whiteSpace: 'nowrap' }}>
+                  {MODELS[activeModel].full}
+                </Typography>
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    display: 'flex',
+                    color: UI.muted,
+                    flexShrink: 0,
+                    transform: picking ? 'rotate(180deg)' : 'none',
+                    transition: 'transform 0.25s ease',
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </Box>
+              </Box>
+            </Box>
+
+            <Box sx={{ flex: 1 }} />
+
+            <Box sx={{ width: 32, height: 32, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: UI.muted }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+              </svg>
+            </Box>
+
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                flexShrink: 0,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: UI.textSecondary,
+                backgroundColor: UI.sendIdle,
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+              </svg>
+            </Box>
           </Box>
         </Box>
+
+        {/* The app prints this under the composer. */}
+        <Typography
+          sx={{
+            px: 2,
+            pb: 2,
+            mt: -0.5,
+            textAlign: 'center',
+            fontSize: '0.74rem',
+            color: UI.muted,
+          }}
+        >
+          OpenLedger Studio can make mistakes. Verify important information.
+        </Typography>
       </Box>
 
       {/* ── Unified memory ──────────────────────────────────────── */}
