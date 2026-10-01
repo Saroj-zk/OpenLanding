@@ -52,7 +52,7 @@ const PILLARS = [
     n: '03',
     term: 'TEE',
     sub: 'Trusted Execution Environment',
-    detail: 'Isolated in hardware while it runs.',
+    detail: 'Runs inside isolated hardware.',
   },
   {
     n: '04',
@@ -84,7 +84,7 @@ const STEPS = [
     term: 'Secure Routing',
     line: 'SENT SECURELY',
     detail:
-      'Your request is securely routed to the model you choose.',
+      'Your request is routed securely to the model you picked.',
   },
   {
     step: '03',
@@ -93,7 +93,7 @@ const STEPS = [
     term: 'Private Inference',
     line: 'PRIVATELY PROCESSED',
     detail:
-      'The model handles your request without OpenLedger keeping your conversation.',
+      'The model answers your question, and OpenLedger keeps no copy of it.',
   },
   {
     step: '04',
@@ -117,7 +117,7 @@ const FLOWS = [
   {
     label: 'OpenLedger',
     accent: true,
-    note: 'Your request goes straight to the model without an added platform moderation layer.',
+    note: 'Your request goes straight to the model, with no platform filter in between.',
   },
 ];
 
@@ -1388,7 +1388,7 @@ export default function PrivatePage() {
                       display: 'flex',
                       flexDirection: 'column',
                       px: { xs: 0, sm: 2.5, md: 2.75 },
-                      py: { xs: 3, md: 4 },
+                      py: ROW_PY,
                       borderLeft: { sm: i % 2 === 0 ? 'none' : '1px solid var(--border-subtle)',
                                     md: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
                       borderBottom: {
@@ -1481,7 +1481,7 @@ export default function PrivatePage() {
             <SectionHead
               eyebrow="Uncensored by design"
               title="Private enough to ask. Unfiltered enough to answer."
-              lede="Research difficult subjects, challenge an idea you disagree with, write, and code without a moderation layer deciding in advance what is allowed to reach the model."
+              lede="Research difficult subjects, challenge an idea you disagree with, write, and code without a moderation layer deciding what reaches the model."
             />
 
             {/* Filter-layer comparison */}
@@ -1655,7 +1655,7 @@ export default function PrivatePage() {
                       mb: 1,
                     }}
                   >
-                    Private on every surface
+                    Private on every platform
                   </Typography>
 
                   {SURFACES.map((s, i) => (
