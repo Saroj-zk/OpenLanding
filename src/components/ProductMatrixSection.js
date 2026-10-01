@@ -30,7 +30,9 @@ const OPTIONS = [
     id: 'chat',
     title: 'Chat',
     icon: ChatBubbleOutlineRoundedIcon,
-    video: '/Videos/AI ecosystem/Chat.webm',
+    video: '/Videos/AI ecosystem/Chat.mp4',
+    fastUntil: 16,
+    fastRate: 3.2,
     overlayEyebrow: 'CONVERSATIONAL INTELLIGENCE',
     overlayTitle: 'Contextual dialogue\nwithout boundaries.',
   },
@@ -88,8 +90,19 @@ const GlassCard = ({ children, sx = {}, borderRadius = 24, ...props }) => {
   );
 };
 
-const TabVideo = ({ src, isActive, onEnded }) => {
+const TabVideo = ({ src, isActive, onEnded, fastUntil = 0, fastRate = 1 }) => {
   const videoRef = React.useRef(null);
+
+  /* timeupdate fires often enough to switch at the boundary, and reading
+     currentTime means the rate resets correctly when the clip loops. */
+  const pace = React.useCallback(
+    (e) => {
+      if (!fastUntil) return;
+      const want = e.target.currentTime < fastUntil ? fastRate : 1;
+      if (e.target.playbackRate !== want) e.target.playbackRate = want;
+    },
+    [fastUntil, fastRate]
+  );
 
   React.useEffect(() => {
     if (isActive && videoRef.current) {
@@ -107,6 +120,8 @@ const TabVideo = ({ src, isActive, onEnded }) => {
       src={src}
       muted
       onEnded={onEnded}
+      onTimeUpdate={pace}
+      onLoadedMetadata={pace}
       playsInline
       sx={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
     />
@@ -326,7 +341,7 @@ export default function ProductMatrixSection() {
                     pointerEvents: activeIdx === idx ? 'auto' : 'none'
                   }}
                 >
-                  <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} />
+                  <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} fastUntil={opt.fastUntil} fastRate={opt.fastRate} />
                 </Box>
               ))}
             </Box>
