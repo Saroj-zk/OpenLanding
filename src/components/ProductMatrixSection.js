@@ -41,7 +41,7 @@ const OPTIONS = [
     id: 'imagine',
     title: 'Imagine',
     icon: ImageOutlinedIcon,
-    video: '/Videos/AI ecosystem/Imagine.webm',
+    video: '/Videos/AI ecosystem/Imagine.mp4',
     overlayEyebrow: 'VISUAL GENERATION',
     overlayTitle: 'State-of-the-art multi-modal\ncreative synthesis.',
   },
