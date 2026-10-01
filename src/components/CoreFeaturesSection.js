@@ -72,7 +72,7 @@ const TABS = [
     tagline: 'Give your agents more ways to get things done.',
     description: 'Connect agents to leading models through one API, with x402-ready access for agent-to-agent interactions and transactions.',
     hasExplore: true,
-    exploreLink: '/capabilities',
+    exploreLink: '/token',
     video: '/Videos/Why Openledger/Built For Agents.webm',
     tagLeft: 'X402 ENABLED',
     tagRight: 'AGENT READY',

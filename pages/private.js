@@ -1626,9 +1626,9 @@ export default function PrivatePage() {
                     <Box component="a" href={CHAT_URL} target="_blank" rel="noopener noreferrer" sx={getPrimaryCtaSx(isDark)}>
                       Start a Private Chat →
                     </Box>
-                    <Link href="/capabilities" passHref legacyBehavior>
+                    <Link href="/models" passHref legacyBehavior>
                       <Box component="a" sx={GHOST_CTA_SX}>
-                        Explore AI Capabilities
+                        See every model
                       </Box>
                     </Link>
                   </Box>

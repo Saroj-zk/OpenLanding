@@ -34,14 +34,6 @@ const TABS = [
     icon: MemoryIcon,
     href: '/memory',
   },
-  {
-    id: 'agents',
-    label: 'Built for Agents',
-    fullLabel: 'Built for Agents',
-    shortLabel: 'Agents',
-    icon: SmartToyIcon,
-    href: '/capabilities',
-  },
 ];
 
 export default function FeatureTabBar() {

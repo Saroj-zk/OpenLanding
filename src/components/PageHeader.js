@@ -15,7 +15,6 @@ const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Models', href: '/models' },
   { label: 'Memory', href: '/memory' },
-  { label: 'Capabilities', href: '/capabilities' },
   { label: 'Private AI', href: '/private' },
   { label: 'Token', href: '/token' },
 ];
