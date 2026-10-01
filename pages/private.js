@@ -1339,7 +1339,7 @@ export default function PrivatePage() {
                 <Typography
                   component="h2"
                   sx={{
-                    maxWidth: '19ch',
+                    textWrap: 'balance',
                     fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.4rem' },
                     fontWeight: 700,
                     lineHeight: 1.18,
@@ -1352,6 +1352,7 @@ export default function PrivatePage() {
                 <Typography
                   sx={{
                     mt: 2,
+                    textWrap: 'balance',
                     maxWidth: '54ch',
                     fontSize: { xs: '0.95rem', md: '1rem' },
                     lineHeight: 1.7,
