@@ -24,15 +24,36 @@ const C = {
   toggleOff: '#E2E1DE',
 };
 
-/* The rows the recording shows, with the badges the app puts on them. */
+/* Enough of the catalogue that scrolling it reads as a catalogue. Names and
+   badges follow the list in the recording. */
 const PICKER_ROWS = [
+  { code: 'AN', name: 'Claude Opus 5', tags: ['Incognito', 'web'] },
+  { code: 'AN', name: 'Claude Sonnet 5', tags: ['Incognito'] },
+  { code: 'AN', name: 'Claude Haiku 4.5', tags: ['Incognito', 'web'] },
+  { code: 'MS', name: 'Codestral 2508', tags: ['Incognito', 'web'] },
+  { code: 'DS', name: 'Deepseek R1 0528', tags: ['Incognito', 'web'] },
   { code: 'DS', name: 'Deepseek V4 Flash', tags: ['Incognito', 'web'] },
   { code: 'DS', name: 'Deepseek V4 Flash E2ee', tags: ['E2EE', 'TEE'] },
+  { code: 'DS', name: 'Deepseek V4 Pro', tags: ['Incognito', 'web'] },
+  { code: 'OA', name: 'Fugu Ultra', tags: ['Incognito', 'web'] },
   { code: 'GG', name: 'Gemini 2.5 Pro', tags: ['Incognito', 'web'] },
+  { code: 'GG', name: 'Gemini 3.5 Flash Lite', tags: ['Incognito', 'web'] },
   { code: 'GG', name: 'Gemini 3.7 Flash', tags: ['Incognito', 'web'], pick: true },
   { code: 'GG', name: 'Gemma 4 26b Uncensored', tags: ['uncensored'] },
+  { code: 'GG', name: 'Gemma 4 31b', tags: ['Incognito', 'web'] },
+  { code: 'ZP', name: 'GLM 4.7 Flash', tags: ['Incognito', 'web'] },
+  { code: 'ZP', name: 'GLM 5.3 Flash E2ee', tags: ['E2EE', 'TEE'] },
+  { code: 'OA', name: 'GPT 5.1', tags: ['Incognito', 'web'] },
+  { code: 'OA', name: 'GPT 5.6 Luna', tags: ['Incognito'] },
+  { code: 'OA', name: 'GPT 5.6 Terra', tags: ['Incognito'] },
+  { code: 'XA', name: 'Grok 4 Fast', tags: ['Incognito', 'web'] },
+  { code: 'XA', name: 'Grok 4.5', tags: ['Incognito', 'web'] },
+  { code: 'MO', name: 'Kimi K2', tags: ['Incognito', 'web'] },
+  { code: 'MT', name: 'Llama 4 Maverick', tags: ['Incognito', 'web'] },
+  { code: 'QW', name: 'Qwen3 235B', tags: ['Incognito', 'web'] },
 ];
 const PICKER_TABS = ['All', 'Text', 'Image', 'Text to Video', 'Image to Video'];
+const CATALOG_COUNT = '200+';
 
 /* Memory settings, in the app's own words. */
 const MEMORY_ROWS = [
@@ -45,9 +66,9 @@ const MEMORY_ROWS = [
    answering, and a second model carrying the first one's context. */
 const FLOWS = {
   multimodel: {
-    loop: 15000,
+    loop: 19000,
     pickerOpen: 6200,
-    pickerClose: 11000,
+    pickerClose: 15000,
     pickedName: 'Gemini 3.7 Flash',
     model: { name: 'Auto', code: null },
     question: 'Convert 2.5 ETH to USD at $4,200 per ETH.',
@@ -238,12 +259,19 @@ function PickerOverlay() {
             </Typography>
           );
         })}
+        <Box sx={{ flex: 1 }} />
+        <Typography sx={{ fontSize: '0.66rem', fontWeight: 600, color: C.muted, pr: 0.25, whiteSpace: 'nowrap' }}>
+          {CATALOG_COUNT}
+        </Typography>
       </Box>
 
+      {/* The list runs on its own. The rows are rendered twice and the track
+          travels exactly half its height, so the loop has no seam. */}
       <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden', px: 1, py: 0.6 }}>
-        {PICKER_ROWS.map((m) => (
+        <Box sx={{ animation: 'pdScroll 17s linear infinite' }}>
+        {[...PICKER_ROWS, ...PICKER_ROWS].map((m, i) => (
           <Box
-            key={m.name}
+            key={`${m.name}-${i}`}
             sx={{
               display: 'flex', alignItems: 'center', gap: 0.9,
               px: 0.9, py: 0.75, borderRadius: '10px',
@@ -262,6 +290,7 @@ function PickerOverlay() {
             <Star />
           </Box>
         ))}
+        </Box>
       </Box>
 
       {/* The hover card the app floats beside the list */}
@@ -553,6 +582,10 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
       </Box>
 
       <style>{`
+        @keyframes pdScroll {
+          from { transform: translateY(0); }
+          to   { transform: translateY(-50%); }
+        }
         @keyframes pdIn {
           from { opacity: 0; transform: translateY(10px) scale(0.985); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
