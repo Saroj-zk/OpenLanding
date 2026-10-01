@@ -3,8 +3,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { BrandTile } from '@/components/ui/LedgerUI';
 
-const ORANGE = '#FF6600';
-
 /* Pulled from the live app at ais.openledger.xyz in its light theme, so the
    demo reads as the product rather than as the marketing page. The lab()
    tokens there resolve to these sRGB values. Orange is kept only for the
@@ -23,17 +21,67 @@ const UI = {
   muted: '#71717A',
   inverse: '#171717',
   sendIdle: '#D8D7D3',
+  chipBg: '#F1F1EF',
+  violetBg: '#F1EDFC',
+  violetFg: '#7C5CD6',
+  greenBg: '#E6F4EC',
+  greenFg: '#2F7D5B',
+  amberBg: '#FBF2E3',
+  amberFg: '#B5872C',
+  searchBg: '#EFEEEC',
+  toggleOff: '#E2E1DE',
   onInverse: '#F5F4F0',
 };
 
 const MODEL_ORDER = ['GG', 'AN', 'OA', 'DS'];
 
 export const MODELS = {
-  GG: { code: 'GG', name: 'Gemini', full: 'Gemini 1.5 Pro' },
-  AN: { code: 'AN', name: 'Claude', full: 'Claude 3.5 Sonnet' },
-  OA: { code: 'OA', name: 'GPT-4o', full: 'GPT-4o' },
-  DS: { code: 'DS', name: 'DeepSeek', full: 'DeepSeek R1' },
+  GG: { code: 'GG', name: 'Gemini', full: 'Gemini 2.5 Pro', tier: 'Pro+', tags: ['Incognito', 'web'] },
+  AN: { code: 'AN', name: 'Claude', full: 'Claude Sonnet 5', tier: 'Enterprise', tags: ['Incognito'] },
+  OA: { code: 'OA', name: 'GPT-4o', full: 'GPT-4o', tier: 'Pro', tags: ['Incognito', 'web'] },
+  DS: { code: 'DS', name: 'DeepSeek', full: 'Deepseek V4 Pro', tier: 'Pro+', tags: ['E2EE', 'TEE'] },
 };
+
+/* The app tints these three differently and leaves the rest grey. */
+const TAG_STYLE = {
+  Incognito: { bg: 'violetBg', fg: 'violetFg' },
+  TEE: { bg: 'greenBg', fg: 'greenFg' },
+};
+const TIER_STYLE = {
+  'Pro+': { bg: 'amberBg', fg: 'amberFg' },
+  Enterprise: { bg: 'violetBg', fg: 'violetFg' },
+  Pro: { bg: 'chipBg', fg: 'textSecondary' },
+};
+
+function Badge({ label, bg, fg, lock }) {
+  return (
+    <Box
+      component="span"
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.4,
+        px: 0.85,
+        py: '2px',
+        borderRadius: '9999px',
+        backgroundColor: bg,
+        color: fg,
+        fontSize: '0.66rem',
+        fontWeight: 500,
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+      }}
+    >
+      {lock && (
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
+          <rect x="4" y="11" width="16" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </svg>
+      )}
+      {label}
+    </Box>
+  );
+}
 
 /* Four facts, written once from the first message. */
 const MEMORY = [
@@ -105,8 +153,9 @@ function MemoryChip({ children }) {
     <Box
       component="span"
       sx={{
-        backgroundColor: 'rgba(255, 102, 0, 0.14)',
-        color: UI.text,
+        backgroundColor: UI.violetBg,
+        color: UI.violetFg,
+        fontWeight: 500,
         borderRadius: '5px',
         px: 0.7,
         py: '1px',
@@ -163,8 +212,10 @@ function UserBubble({ text }) {
   );
 }
 
-/* The model picker, shown mid-selection: it opens, the incoming model is
-   highlighted, then it closes and the thread hands over. */
+/* The app's model list: a search field, modality tabs, then rows carrying a
+   round provider avatar, the tier badge under the name, the capability
+   badges, and a favourite star. Shown mid-selection, with the incoming
+   model under the cursor. */
 function PickerMenu({ target }) {
   return (
     <Box
@@ -173,50 +224,117 @@ function PickerMenu({ target }) {
         bottom: 'calc(100% + 8px)',
         left: 0,
         zIndex: 6,
-        minWidth: 232,
-        p: 0.75,
-        borderRadius: '14px',
+        width: { xs: 268, sm: 310 },
+        p: 1.25,
+        borderRadius: '20px',
         backgroundColor: UI.surface,
         border: `1px solid ${UI.border}`,
-        boxShadow: '0 8px 24px rgba(23, 23, 23, 0.10)',
+        boxShadow: '0 16px 40px rgba(23, 23, 23, 0.14)',
         animation: 'olMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both',
       }}
     >
+      {/* Search */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          px: 1.4,
+          py: 0.9,
+          mb: 1.1,
+          borderRadius: '9999px',
+          backgroundColor: UI.searchBg,
+        }}
+      >
+        <Box sx={{ display: 'flex', color: UI.muted, flexShrink: 0 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </Box>
+        <Typography sx={{ fontSize: '0.8rem', color: UI.muted }}>Search models&hellip;</Typography>
+      </Box>
+
+      {/* Modality tabs */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1, px: 0.25 }}>
+        {['All', 'Text', 'Image'].map((tab) => {
+          const on = tab === 'Text';
+          return (
+            <Typography
+              key={tab}
+              sx={{
+                px: 1.1,
+                py: 0.4,
+                borderRadius: '9999px',
+                fontSize: '0.78rem',
+                fontWeight: on ? 600 : 400,
+                color: on ? UI.text : UI.muted,
+                backgroundColor: on ? UI.chipBg : 'transparent',
+              }}
+            >
+              {tab}
+            </Typography>
+          );
+        })}
+      </Box>
+
       {MODEL_ORDER.map((code) => {
+        const m = MODELS[code];
         const picked = code === target;
+        const tier = TIER_STYLE[m.tier] || TIER_STYLE.Pro;
         return (
           <Box
             key={code}
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 1.3,
-              px: 1.25,
-              py: 1.05,
-              borderRadius: '10px',
+              gap: 1.1,
+              px: 1,
+              py: 0.9,
+              borderRadius: '12px',
               backgroundColor: picked ? UI.sunken : 'transparent',
               transition: 'background-color 0.25s ease',
             }}
           >
-            <BrandTile code={code} size={22} />
-            <Typography
+            <Box
               sx={{
-                flex: 1,
-                fontSize: '0.86rem',
-                fontWeight: 600,
-                whiteSpace: 'nowrap',
-                color: UI.text,
+                width: 26,
+                height: 26,
+                flexShrink: 0,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: UI.chipBg,
+                overflow: 'hidden',
               }}
             >
-              {MODELS[code].full}
-            </Typography>
-            {picked && (
-              <Box sx={{ display: 'flex', flexShrink: 0, color: UI.text }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
+              <BrandTile code={code} size={16} round />
+            </Box>
+
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography sx={{ fontSize: '0.82rem', color: UI.text, whiteSpace: 'nowrap' }}>
+                {m.full}
+              </Typography>
+              <Box sx={{ mt: 0.3 }}>
+                <Badge label={m.tier} bg={UI[tier.bg]} fg={UI[tier.fg]} lock />
               </Box>
-            )}
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+              {m.tags.map((t) => {
+                const st = TAG_STYLE[t];
+                return (
+                  <Badge key={t} label={t} bg={st ? UI[st.bg] : UI.chipBg} fg={st ? UI[st.fg] : UI.textSecondary} />
+                );
+              })}
+            </Box>
+
+            <Box sx={{ display: 'flex', color: UI.muted, flexShrink: 0 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </Box>
           </Box>
         );
       })}
@@ -518,131 +636,152 @@ export function MemoryChatDemo() {
         </Typography>
       </Box>
 
-      {/* ── Unified memory ──────────────────────────────────────── */}
+      {/* ── Memory, drawn as the app's own settings pane: the storage note,
+             the Use memory switch, then the saved list with its count. The
+             only addition is the per turn marker, which the product has no
+             need for and the demo cannot do without. ──────────────── */}
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           borderRadius: '20px',
-          p: { xs: 2.25, sm: 3 },
+          p: { xs: 2.25, sm: 2.75 },
           backgroundColor: UI.surface,
           border: `1px solid ${UI.border}`,
-          boxShadow: 'none',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
-          <Typography
+        <Typography sx={{ fontSize: '1.2rem', fontWeight: 600, color: UI.text, letterSpacing: '-0.01em' }}>
+          Memory
+        </Typography>
+        <Typography sx={{ mt: 1, fontSize: '0.82rem', lineHeight: 1.6, color: UI.textSecondary }}>
+          Memory is stored only in this browser. It never syncs and is removed if you clear site data.
+        </Typography>
+
+        {/* Switch row */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 2,
+            mt: 2.25,
+            pt: 2.25,
+            borderTop: `1px solid ${UI.borderSoft}`,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontSize: '0.92rem', fontWeight: 600, color: UI.text }}>
+              Use memory
+            </Typography>
+            <Typography sx={{ mt: 0.4, fontSize: '0.8rem', lineHeight: 1.55, color: UI.textSecondary }}>
+              Let the assistant use what it knows about you in new chats.
+            </Typography>
+          </Box>
+          <Box
+            aria-hidden="true"
             sx={{
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              letterSpacing: '0.09em',
-              textTransform: 'uppercase',
-              color: UI.muted,
+              width: 42,
+              height: 24,
+              flexShrink: 0,
+              mt: 0.2,
+              borderRadius: '9999px',
+              backgroundColor: UI.inverse,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              px: '3px',
             }}
           >
-            Unified memory
-          </Typography>
-          <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: UI.muted }}>
-            {MEMORY.length} / {MEMORY.length}
-          </Typography>
+            <Box sx={{ width: 18, height: 18, borderRadius: '50%', backgroundColor: '#FFFFFF' }} />
+          </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+        {/* Saved list */}
+        <Typography
+          sx={{
+            mt: 2.5,
+            pt: 2.25,
+            borderTop: `1px solid ${UI.borderSoft}`,
+            fontSize: '0.92rem',
+            fontWeight: 600,
+            color: UI.text,
+          }}
+        >
+          Saved memories{' '}
+          <Box component="span" sx={{ color: UI.muted, fontWeight: 400 }}>
+            ({MEMORY.length})
+          </Box>
+        </Typography>
+
+        <Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
           {MEMORY.map((item) => {
             const reading = readingNow.includes(item.id);
             const used = usedNow.includes(item.id);
             const saved = savedNow.includes(item.id);
             const lit = reading || used || saved;
-            const tag = reading ? 'READING' : used ? 'USED' : saved ? 'SAVED' : null;
+            const tag = reading ? 'Reading' : used ? 'Used' : saved ? 'Saved' : null;
             return (
               <Box
                 key={item.id}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 1.3,
-                  px: 1.75,
-                  py: 1.4,
+                  gap: 1.1,
+                  px: 1.5,
+                  py: 1.15,
                   borderRadius: '12px',
-                  backgroundColor: lit ? 'rgba(255, 102, 0, 0.09)' : UI.sunken,
-                  border: `1px solid ${lit ? 'rgba(255, 102, 0, 0.35)' : UI.borderSoft}`,
+                  backgroundColor: lit ? UI.sunken : 'transparent',
+                  border: `1px solid ${lit ? UI.border : 'transparent'}`,
                   animation: reading ? 'olReading 1.05s ease-in-out infinite' : 'none',
                   transition: 'background-color 0.45s ease, border-color 0.45s ease',
                 }}
               >
-                <Box sx={{ display: 'flex', flexShrink: 0, color: lit ? ORANGE : UI.muted }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </Box>
-                <Typography sx={{ flex: 1, fontSize: '0.88rem', fontWeight: 600, color: UI.text }}>
+                <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.86rem', color: UI.text }}>
                   {item.label}
                 </Typography>
-                {tag && (
-                  <Typography
-                    sx={{ fontSize: '0.64rem', fontWeight: 800, letterSpacing: '0.08em', color: ORANGE, flexShrink: 0 }}
-                  >
-                    {tag}
-                  </Typography>
-                )}
+                {tag && <Badge label={tag} bg={UI.violetBg} fg={UI.violetFg} />}
               </Box>
             );
           })}
         </Box>
 
-        <Typography sx={{ mt: 2.5, fontSize: '0.86rem', lineHeight: 1.6, color: UI.textSecondary }}>
-          Written once, from the first message. Every model after it reads the same four facts, so nobody had to
-          repeat them.
-        </Typography>
-
-        <Box
-          sx={{
-            mt: 'auto',
-            pt: 2.5,
-          }}
-        >
+        {/* Add row, as the app has it */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
           <Box
             sx={{
-              p: 2,
-              borderRadius: '14px',
-              border: `1px solid ${UI.borderSoft}`,
-              backgroundColor: UI.sunken,
+              flex: 1,
+              minWidth: 0,
+              px: 1.6,
+              py: 1,
+              borderRadius: '10px',
+              border: `1px solid ${UI.border}`,
+              backgroundColor: UI.surface,
             }}
           >
-            <Typography
-              sx={{
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                letterSpacing: '0.09em',
-                textTransform: 'uppercase',
-                color: UI.muted,
-                mb: 1,
-              }}
-            >
-              Yours to change
+            <Typography sx={{ fontSize: '0.8rem', color: UI.muted, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              e.g. I prefer concise answers
             </Typography>
-            <Typography sx={{ fontSize: '0.84rem', lineHeight: 1.6, color: UI.textSecondary, mb: 1.75 }}>
-              Every entry can be reviewed, edited, or removed. Nothing is remembered that you have not chosen to keep.
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {['Review', 'Edit', 'Delete'].map((label) => (
-                <Typography
-                  key={label}
-                  sx={{
-                    px: 1.5,
-                    py: 0.6,
-                    borderRadius: '9999px',
-                    fontSize: '0.78rem',
-                    fontWeight: 600,
-                    color: UI.textSecondary,
-                    border: `1px solid ${UI.border}`,
-                    backgroundColor: UI.surface,
-                  }}
-                >
-                  {label}
-                </Typography>
-              ))}
-            </Box>
+          </Box>
+          <Box
+            sx={{
+              flexShrink: 0,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 0.5,
+              px: 1.6,
+              py: 1,
+              borderRadius: '10px',
+              backgroundColor: UI.inverse,
+              color: UI.onInverse,
+              fontSize: '0.8rem',
+              fontWeight: 600,
+            }}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add
           </Box>
         </Box>
       </Box>
