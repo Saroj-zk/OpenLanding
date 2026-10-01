@@ -46,7 +46,7 @@ const OPTIONS = [
     id: 'video-gen',
     title: 'Video Gen',
     icon: PlayCircleOutlineRoundedIcon,
-    video: '/Videos/AI ecosystem/Video Gen.webm',
+    video: '/Videos/AI ecosystem/Video Gen.mp4',
     overlayEyebrow: 'VIDEO GENERATION',
     overlayTitle: 'High-fidelity video\nand motion synthesis.',
   },
