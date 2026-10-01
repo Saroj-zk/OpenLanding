@@ -619,9 +619,11 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
       {/* Composer */}
       <Box sx={{ px: { xs: 1.75, sm: 2.25 }, pb: F.compact ? 0.75 : 1, pt: F.compact ? 0.5 : 1 }}>
         <Box sx={{ borderRadius: '14px', backgroundColor: C.surface, border: `1px solid ${C.border}` }}>
-          <Box sx={{ px: 1.5, pt: F.compact ? 0.9 : 1.15, pb: F.compact ? 0.6 : 0.8 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, px: 1.5, pt: F.compact ? 0.9 : 1.15, pb: F.compact ? 0.7 : 0.9, borderBottom: `1px solid ${C.borderSoft}` }}>
             <Typography
               sx={{
+                flex: 1,
+                minWidth: 0,
                 fontSize: '0.78rem',
                 color: typedLen > 0 && !sent ? C.text : C.muted,
                 overflow: 'hidden',
@@ -633,9 +635,17 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
                 ? (<>{F.question.slice(0, typedLen)}{typedLen < F.question.length && <Caret />}</>)
                 : 'Send a message…  (@ to mention, / for commands)'}
             </Typography>
+            <Box sx={{ display: 'flex', color: C.muted, flexShrink: 0 }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 3 21 3 21 9" />
+                <polyline points="9 21 3 21 3 15" />
+                <line x1="21" y1="3" x2="14" y2="10" />
+                <line x1="3" y1="21" x2="10" y2="14" />
+              </svg>
+            </Box>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, px: 1, pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7, px: 1, py: F.compact ? 0.7 : 0.85 }}>
             <Box
               sx={{
                 display: 'inline-flex',
@@ -661,6 +671,14 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
             </Box>
 
             <Box sx={{ flex: 1 }} />
+
+            <Box sx={{ width: 22, height: 22, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+              </svg>
+            </Box>
 
             <Box
               sx={{
