@@ -5,6 +5,26 @@ import { BrandTile } from '@/components/ui/LedgerUI';
 
 const ORANGE = '#FF6600';
 
+/* Pulled from the live app at ais.openledger.xyz in its light theme, so the
+   demo reads as the product rather than as the marketing page. The lab()
+   tokens there resolve to these sRGB values. Orange is kept only for the
+   memory highlights, which are a demo affordance the product has no
+   equivalent for. */
+const UI = {
+  font: '"Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif',
+  page: '#F5F4F0',
+  surface: '#FFFFFF',
+  sunken: '#F1F1F1',
+  composer: '#FBFAF7',
+  border: '#DDDEE0',
+  borderSoft: '#EAE9E6',
+  text: '#262626',
+  textSecondary: '#6D6C6A',
+  muted: '#71717A',
+  inverse: '#171717',
+  onInverse: '#F5F4F0',
+};
+
 const MODEL_ORDER = ['GG', 'AN', 'OA', 'DS'];
 
 export const MODELS = {
@@ -82,7 +102,7 @@ function MemoryChip({ children }) {
       component="span"
       sx={{
         backgroundColor: 'rgba(255, 102, 0, 0.14)',
-        color: 'var(--text-primary)',
+        color: UI.text,
         borderRadius: '5px',
         px: 0.7,
         py: '1px',
@@ -106,14 +126,14 @@ function Parts({ parts }) {
 function SwitchDivider({ model }) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, my: 2.5 }}>
-      <Box sx={{ flex: 1, height: '1px', backgroundColor: 'var(--border-normal)' }} />
+      <Box sx={{ flex: 1, height: '1px', backgroundColor: UI.border }} />
       <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
         <BrandTile code={model} size={18} round />
-        <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+        <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: UI.muted, whiteSpace: 'nowrap' }}>
           Switched to {MODELS[model].name}
         </Typography>
       </Box>
-      <Box sx={{ flex: 1, height: '1px', backgroundColor: 'var(--border-normal)' }} />
+      <Box sx={{ flex: 1, height: '1px', backgroundColor: UI.border }} />
     </Box>
   );
 }
@@ -127,11 +147,11 @@ function UserBubble({ text }) {
           px: 2.25,
           py: 1.5,
           borderRadius: '16px 16px 4px 16px',
-          backgroundColor: 'var(--bg-glass)',
-          border: '1px solid var(--border-subtle)',
+          backgroundColor: UI.sunken,
+          border: `1px solid ${UI.borderSoft}`,
           fontSize: '0.92rem',
           lineHeight: 1.6,
-          color: 'var(--text-primary)',
+          color: UI.text,
         }}
       >
         {text}
@@ -153,9 +173,9 @@ function PickerMenu({ target }) {
         minWidth: 232,
         p: 0.75,
         borderRadius: '14px',
-        backgroundColor: 'var(--bg-card)',
-        border: '1px solid var(--border-normal)',
-        boxShadow: 'var(--shadow-popup)',
+        backgroundColor: UI.surface,
+        border: `1px solid ${UI.border}`,
+        boxShadow: '0 8px 24px rgba(23, 23, 23, 0.10)',
         animation: 'olMenuIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both',
       }}
     >
@@ -182,7 +202,7 @@ function PickerMenu({ target }) {
                 fontSize: '0.86rem',
                 fontWeight: 600,
                 whiteSpace: 'nowrap',
-                color: picked ? ORANGE : 'var(--text-primary)',
+                color: picked ? ORANGE : UI.text,
               }}
             >
               {MODELS[code].full}
@@ -216,8 +236,8 @@ function ReadingRow({ model }) {
           px: 1.75,
           py: 1.05,
           borderRadius: '12px',
-          backgroundColor: 'var(--bg-glass)',
-          border: '1px solid var(--border-subtle)',
+          backgroundColor: UI.sunken,
+          border: `1px solid ${UI.borderSoft}`,
         }}
       >
         <Box sx={{ display: 'flex', gap: 0.55 }}>
@@ -234,7 +254,7 @@ function ReadingRow({ model }) {
             />
           ))}
         </Box>
-        <Typography sx={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+        <Typography sx={{ fontSize: '0.82rem', fontWeight: 500, color: UI.textSecondary, whiteSpace: 'nowrap' }}>
           {MODELS[model].name} is reading your memory
         </Typography>
       </Box>
@@ -248,7 +268,7 @@ function Reply({ model, parts }) {
       <Box sx={{ mt: 0.3, flexShrink: 0 }}>
         <BrandTile code={model} size={26} />
       </Box>
-      <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.7, color: 'var(--text-primary)', pt: 0.1 }}>
+      <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.7, color: UI.text, pt: 0.1 }}>
         <Parts parts={parts} />
       </Typography>
     </Box>
@@ -321,6 +341,8 @@ export function MemoryChatDemo() {
         gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.05fr) minmax(0, 0.62fr)' },
         gap: { xs: 2.5, md: 3 },
         alignItems: 'stretch',
+        fontFamily: UI.font,
+        '& *': { fontFamily: 'inherit' },
       }}
     >
       {/* ── Chat window ─────────────────────────────────────────── */}
@@ -330,9 +352,9 @@ export function MemoryChatDemo() {
           flexDirection: 'column',
           borderRadius: '20px',
           overflow: 'hidden',
-          backgroundColor: 'var(--bg-card)',
-          border: '1px solid var(--border-normal)',
-          boxShadow: 'var(--shadow-card)',
+          backgroundColor: UI.surface,
+          border: `1px solid ${UI.border}`,
+          boxShadow: 'none',
         }}
       >
         {/* Header: the model updates itself as the thread hands over */}
@@ -345,7 +367,7 @@ export function MemoryChatDemo() {
             gap: 2,
             px: { xs: 2.25, sm: 3 },
             py: 2,
-            borderBottom: '1px solid var(--border-subtle)',
+            borderBottom: `1px solid ${UI.borderSoft}`,
           }}
         >
           <Box
@@ -358,7 +380,7 @@ export function MemoryChatDemo() {
               py: 0.6,
               ml: -1,
               borderRadius: '10px',
-              backgroundColor: picking ? 'var(--bg-glass)' : 'transparent',
+              backgroundColor: picking ? UI.sunken : 'transparent',
               transition: 'background-color 0.25s ease',
             }}
           >
@@ -367,7 +389,7 @@ export function MemoryChatDemo() {
               sx={{
                 fontSize: '0.95rem',
                 fontWeight: 700,
-                color: 'var(--text-heading)',
+                color: UI.text,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -377,7 +399,7 @@ export function MemoryChatDemo() {
               aria-hidden="true"
               sx={{
                 display: 'flex',
-                color: 'var(--text-muted)',
+                color: UI.muted,
                 transform: picking ? 'rotate(180deg)' : 'none',
                 transition: 'transform 0.25s ease',
               }}
@@ -398,7 +420,7 @@ export function MemoryChatDemo() {
                 fontWeight: 700,
                 letterSpacing: '0.07em',
                 textTransform: 'uppercase',
-                color: 'var(--text-muted)',
+                color: UI.muted,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -462,18 +484,18 @@ export function MemoryChatDemo() {
             pr: 0.75,
             py: 1.1,
             borderRadius: '9999px',
-            border: '1px solid var(--border-normal)',
-            backgroundColor: 'var(--bg-glass)',
+            border: `1px solid ${UI.border}`,
+            backgroundColor: UI.composer,
             pointerEvents: 'none',
             userSelect: 'none',
           }}
         >
-          <Box sx={{ display: 'flex', color: 'var(--text-muted)', flexShrink: 0 }}>
+          <Box sx={{ display: 'flex', color: UI.muted, flexShrink: 0 }}>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
             </svg>
           </Box>
-          <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.92rem', color: 'var(--text-muted)' }}>
+          <Typography sx={{ flex: 1, minWidth: 0, fontSize: '0.92rem', color: UI.muted }}>
             Ask anything...
           </Typography>
           <Box
@@ -485,9 +507,8 @@ export function MemoryChatDemo() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#FFFFFF',
-              backgroundColor: ORANGE,
-              boxShadow: `0 4px 12px ${ORANGE}55`,
+              color: UI.onInverse,
+              backgroundColor: UI.inverse,
             }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -505,9 +526,9 @@ export function MemoryChatDemo() {
           flexDirection: 'column',
           borderRadius: '20px',
           p: { xs: 2.25, sm: 3 },
-          backgroundColor: 'var(--bg-card)',
-          border: '1px solid var(--border-normal)',
-          boxShadow: 'var(--shadow-card)',
+          backgroundColor: UI.surface,
+          border: `1px solid ${UI.border}`,
+          boxShadow: 'none',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
@@ -517,12 +538,12 @@ export function MemoryChatDemo() {
               fontWeight: 700,
               letterSpacing: '0.09em',
               textTransform: 'uppercase',
-              color: 'var(--text-muted)',
+              color: UI.muted,
             }}
           >
             Unified memory
           </Typography>
-          <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+          <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: UI.muted }}>
             {MEMORY.length} / {MEMORY.length}
           </Typography>
         </Box>
@@ -544,18 +565,18 @@ export function MemoryChatDemo() {
                   px: 1.75,
                   py: 1.4,
                   borderRadius: '12px',
-                  backgroundColor: lit ? 'rgba(255, 102, 0, 0.09)' : 'var(--bg-glass)',
-                  border: `1px solid ${lit ? 'rgba(255, 102, 0, 0.35)' : 'var(--border-subtle)'}`,
+                  backgroundColor: lit ? 'rgba(255, 102, 0, 0.09)' : UI.sunken,
+                  border: `1px solid ${lit ? 'rgba(255, 102, 0, 0.35)' : UI.borderSoft}`,
                   animation: reading ? 'olReading 1.05s ease-in-out infinite' : 'none',
                   transition: 'background-color 0.45s ease, border-color 0.45s ease',
                 }}
               >
-                <Box sx={{ display: 'flex', flexShrink: 0, color: lit ? ORANGE : 'var(--text-muted)' }}>
+                <Box sx={{ display: 'flex', flexShrink: 0, color: lit ? ORANGE : UI.muted }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </Box>
-                <Typography sx={{ flex: 1, fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <Typography sx={{ flex: 1, fontSize: '0.88rem', fontWeight: 600, color: UI.text }}>
                   {item.label}
                 </Typography>
                 {tag && (
@@ -570,7 +591,7 @@ export function MemoryChatDemo() {
           })}
         </Box>
 
-        <Typography sx={{ mt: 2.5, fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+        <Typography sx={{ mt: 2.5, fontSize: '0.86rem', lineHeight: 1.6, color: UI.textSecondary }}>
           Written once, from the first message. Every model after it reads the same four facts, so nobody had to
           repeat them.
         </Typography>
@@ -585,8 +606,8 @@ export function MemoryChatDemo() {
             sx={{
               p: 2,
               borderRadius: '14px',
-              border: '1px solid var(--border-subtle)',
-              backgroundColor: 'var(--bg-glass)',
+              border: `1px solid ${UI.borderSoft}`,
+              backgroundColor: UI.sunken,
             }}
           >
             <Typography
@@ -595,13 +616,13 @@ export function MemoryChatDemo() {
                 fontWeight: 700,
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
-                color: 'var(--text-muted)',
+                color: UI.muted,
                 mb: 1,
               }}
             >
               Yours to change
             </Typography>
-            <Typography sx={{ fontSize: '0.84rem', lineHeight: 1.6, color: 'var(--text-secondary)', mb: 1.75 }}>
+            <Typography sx={{ fontSize: '0.84rem', lineHeight: 1.6, color: UI.textSecondary, mb: 1.75 }}>
               Every entry can be reviewed, edited, or removed. Nothing is remembered that you have not chosen to keep.
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -614,9 +635,9 @@ export function MemoryChatDemo() {
                     borderRadius: '9999px',
                     fontSize: '0.78rem',
                     fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                    border: '1px solid var(--border-normal)',
-                    backgroundColor: 'var(--bg-card)',
+                    color: UI.textSecondary,
+                    border: `1px solid ${UI.border}`,
+                    backgroundColor: UI.surface,
                   }}
                 >
                   {label}
