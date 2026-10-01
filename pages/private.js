@@ -52,7 +52,7 @@ const PILLARS = [
     n: '03',
     term: 'TEE',
     sub: 'Trusted Execution Environment',
-    detail: 'Processed inside a hardware isolated enclave.',
+    detail: 'Isolated in hardware while it runs.',
   },
   {
     n: '04',
@@ -1364,93 +1364,90 @@ export default function PrivatePage() {
               </Box>
             </Reveal>
 
-            {/* Definition rows. The term carries the weight, the expansion
-                sits under it, and the meaning runs in the second column across
-                a vertical rule. No icons and no status column, so this reads
-                as a glossary rather than another hairline table. */}
-            <Box sx={{ borderTop: '1px solid var(--border-strong)' }}>
+            {/* Five columns across, not five rows down. Every other list on
+                this page runs vertically, and the detail lines here are short
+                enough that a row layout left most of the width empty. Each
+                column ends on its label, so the orange sits on one baseline
+                across the strip. */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' },
+                borderTop: '1px solid var(--border-normal)',
+                borderBottom: '1px solid var(--border-normal)',
+              }}
+            >
               {PILLARS.map((pillar, i) => (
-                <Reveal key={pillar.term} delay={i * 60}>
+                <Reveal key={pillar.term} delay={i * 70}>
                   <Box
                     sx={{
-                      position: 'relative',
-                      display: 'grid',
-                      gridTemplateColumns: {
-                        xs: '1fr',
-                        md: '46px minmax(0, 0.82fr) minmax(0, 1.3fr)',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      px: { xs: 0, sm: 2.5, md: 2.75 },
+                      py: { xs: 3, md: 4 },
+                      borderLeft: { sm: i % 2 === 0 ? 'none' : '1px solid var(--border-subtle)',
+                                    md: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
+                      borderBottom: {
+                        xs: i === PILLARS.length - 1 ? 'none' : '1px solid var(--border-subtle)',
+                        md: 'none',
                       },
-                      columnGap: { md: 5 },
-                      rowGap: { xs: 1.5, md: 0 },
-                      alignItems: 'start',
-                      py: { xs: 2.5, md: 2.75 },
-                      borderBottom: '1px solid var(--border-subtle)',
                       transition: 'background-color 0.3s ease',
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        inset: '0 -20px',
-                        zIndex: 0,
-                        backgroundColor: 'transparent',
-                        transition: 'background-color 0.3s ease',
-                        pointerEvents: 'none',
-                      },
-                      '& > *': { position: 'relative', zIndex: 1 },
-                      '&:hover::before': { backgroundColor: 'var(--bg-glass)' },
-                      '&:hover .def-n': { color: ORANGE },
+                      '&:hover': { backgroundColor: 'var(--bg-glass)' },
+                      '&:hover .spec-n': { color: ORANGE },
                     }}
                   >
                     <Typography
-                      className="def-n"
+                      className="spec-n"
                       sx={{
-                        display: { xs: 'none', md: 'block' },
-                        fontSize: '0.72rem',
+                        fontSize: '0.7rem',
                         fontWeight: 600,
                         letterSpacing: '0.08em',
-                        lineHeight: 1.9,
                         color: 'var(--text-muted)',
                         transition: 'color 0.3s ease',
+                        mb: 1.75,
                       }}
                     >
                       {pillar.n}
                     </Typography>
 
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: { xs: '1.2rem', md: '1.3rem' },
-                          fontWeight: 700,
-                          lineHeight: 1.25,
-                          letterSpacing: '-0.015em',
-                          color: 'var(--text-heading)',
-                        }}
-                      >
-                        {pillar.term}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          mt: 0.5,
-                          fontSize: '0.68rem',
-                          fontWeight: 600,
-                          letterSpacing: '0.07em',
-                          textTransform: 'uppercase',
-                          color: ORANGE,
-                        }}
-                      >
-                        {pillar.sub}
-                      </Typography>
-                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: '1.1rem', md: '1.15rem' },
+                        fontWeight: 700,
+                        lineHeight: 1.25,
+                        letterSpacing: '-0.015em',
+                        color: 'var(--text-heading)',
+                        mb: 1,
+                      }}
+                    >
+                      {pillar.term}
+                    </Typography>
 
                     <Typography
                       sx={{
-                        maxWidth: '48ch',
-                        pl: { md: 5 },
-                        borderLeft: { md: '1px solid var(--border-subtle)' },
-                        fontSize: { xs: '0.92rem', md: '0.95rem' },
-                        lineHeight: 1.7,
+                        fontSize: '0.88rem',
+                        lineHeight: 1.6,
                         color: 'var(--text-secondary)',
+                        mb: 3,
                       }}
                     >
                       {pillar.detail}
+                    </Typography>
+
+                    {/* mt auto pins every label to the foot of the strip */}
+                    <Typography
+                      sx={{
+                        mt: 'auto',
+                        fontSize: '0.66rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.07em',
+                        lineHeight: 1.5,
+                        textTransform: 'uppercase',
+                        color: ORANGE,
+                      }}
+                    >
+                      {pillar.sub}
                     </Typography>
                   </Box>
                 </Reveal>
