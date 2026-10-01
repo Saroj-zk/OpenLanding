@@ -27,30 +27,30 @@ const C = {
 /* Enough of the catalogue that scrolling it reads as a catalogue. Names and
    badges follow the list in the recording. */
 const PICKER_ROWS = [
-  { code: 'AN', name: 'Claude Opus 5', tags: ['Incognito', 'web'] },
-  { code: 'AN', name: 'Claude Sonnet 5', tags: ['Incognito'] },
-  { code: 'AN', name: 'Claude Haiku 4.5', tags: ['Incognito', 'web'] },
-  { code: 'MS', name: 'Codestral 2508', tags: ['Incognito', 'web'] },
-  { code: 'DS', name: 'Deepseek R1 0528', tags: ['Incognito', 'web'] },
-  { code: 'DS', name: 'Deepseek V4 Flash', tags: ['Incognito', 'web'] },
-  { code: 'DS', name: 'Deepseek V4 Flash E2ee', tags: ['E2EE', 'TEE'] },
-  { code: 'DS', name: 'Deepseek V4 Pro', tags: ['Incognito', 'web'] },
-  { code: 'OA', name: 'Fugu Ultra', tags: ['Incognito', 'web'] },
-  { code: 'GG', name: 'Gemini 2.5 Pro', tags: ['Incognito', 'web'] },
-  { code: 'GG', name: 'Gemini 3.5 Flash Lite', tags: ['Incognito', 'web'] },
-  { code: 'GG', name: 'Gemini 3.7 Flash', tags: ['Incognito', 'web'], pick: true },
-  { code: 'GG', name: 'Gemma 4 26b Uncensored', tags: ['uncensored'] },
-  { code: 'GG', name: 'Gemma 4 31b', tags: ['Incognito', 'web'] },
-  { code: 'ZP', name: 'GLM 4.7 Flash', tags: ['Incognito', 'web'] },
-  { code: 'ZP', name: 'GLM 5.3 Flash E2ee', tags: ['E2EE', 'TEE'] },
-  { code: 'OA', name: 'GPT 5.1', tags: ['Incognito', 'web'] },
-  { code: 'OA', name: 'GPT 5.6 Luna', tags: ['Incognito'] },
-  { code: 'OA', name: 'GPT 5.6 Terra', tags: ['Incognito'] },
-  { code: 'XA', name: 'Grok 4 Fast', tags: ['Incognito', 'web'] },
-  { code: 'XA', name: 'Grok 4.5', tags: ['Incognito', 'web'] },
-  { code: 'MO', name: 'Kimi K2', tags: ['Incognito', 'web'] },
-  { code: 'MT', name: 'Llama 4 Maverick', tags: ['Incognito', 'web'] },
-  { code: 'QW', name: 'Qwen3 235B', tags: ['Incognito', 'web'] },
+  { code: 'AN', name: 'Claude Opus 5', tags: ['Incognito', 'web'], ctx: '1M', cost: '$0.005 \u2013 $0.025' },
+  { code: 'AN', name: 'Claude Sonnet 5', tags: ['Incognito'], ctx: '1M', cost: '$0.003 \u2013 $0.015' },
+  { code: 'AN', name: 'Claude Haiku 4.5', tags: ['Incognito', 'web'], ctx: '200K', cost: '$0.001 \u2013 $0.005' },
+  { code: 'MS', name: 'Codestral 2508', tags: ['Incognito', 'web'], ctx: '256K', cost: '$0.0003 \u2013 $0.0009' },
+  { code: 'DS', name: 'Deepseek R1 0528', tags: ['Incognito', 'web'], ctx: '164K', cost: '$0.0005 \u2013 $0.0021' },
+  { code: 'DS', name: 'Deepseek V4 Flash', tags: ['Incognito', 'web'], ctx: '128K', cost: '$0.0002 \u2013 $0.0008' },
+  { code: 'DS', name: 'Deepseek V4 Flash E2ee', tags: ['E2EE', 'TEE'], ctx: '128K', cost: '$0.0004 \u2013 $0.0012' },
+  { code: 'DS', name: 'Deepseek V4 Pro', tags: ['Incognito', 'web'], ctx: '256K', cost: '$0.0009 \u2013 $0.0036' },
+  { code: 'OA', name: 'Fugu Ultra', tags: ['Incognito', 'web'], ctx: '400K', cost: '$0.004 \u2013 $0.016' },
+  { code: 'GG', name: 'Gemini 2.5 Pro', tags: ['Incognito', 'web'], ctx: '1M', cost: '$0.0012 \u2013 $0.0050' },
+  { code: 'GG', name: 'Gemini 3.5 Flash Lite', tags: ['Incognito', 'web'], ctx: '1M', cost: '$0.0001 \u2013 $0.0004' },
+  { code: 'GG', name: 'Gemini 3.7 Flash', tags: ['Incognito', 'web'], ctx: '1M', cost: '$0.0004 \u2013 $0.0019', pick: true },
+  { code: 'GG', name: 'Gemma 4 26b Uncensored', tags: ['uncensored'], ctx: '128K', cost: '$0.0002 \u2013 $0.0006' },
+  { code: 'GG', name: 'Gemma 4 31b', tags: ['Incognito', 'web'], ctx: '128K', cost: '$0.0002 \u2013 $0.0007' },
+  { code: 'ZP', name: 'GLM 4.7 Flash', tags: ['Incognito', 'web'], ctx: '128K', cost: '$0.0001 \u2013 $0.0005' },
+  { code: 'ZP', name: 'GLM 5.3 Flash E2ee', tags: ['E2EE', 'TEE'], ctx: '128K', cost: '$0.0003 \u2013 $0.0011' },
+  { code: 'OA', name: 'GPT 5.1', tags: ['Incognito', 'web'], ctx: '400K', cost: '$0.0025 \u2013 $0.0100' },
+  { code: 'OA', name: 'GPT 5.6 Luna', tags: ['Incognito'], ctx: '1M', cost: '$0.0015 \u2013 $0.0060' },
+  { code: 'OA', name: 'GPT 5.6 Terra', tags: ['Incognito'], ctx: '1M', cost: '$0.002 \u2013 $0.012' },
+  { code: 'XA', name: 'Grok 4 Fast', tags: ['Incognito', 'web'], ctx: '2M', cost: '$0.0002 \u2013 $0.0010' },
+  { code: 'XA', name: 'Grok 4.5', tags: ['Incognito', 'web'], ctx: '256K', cost: '$0.003 \u2013 $0.015' },
+  { code: 'MO', name: 'Kimi K2', tags: ['Incognito', 'web'], ctx: '256K', cost: '$0.0006 \u2013 $0.0025' },
+  { code: 'MT', name: 'Llama 4 Maverick', tags: ['Incognito', 'web'], ctx: '1M', cost: '$0.0002 \u2013 $0.0009' },
+  { code: 'QW', name: 'Qwen3 235B', tags: ['Incognito', 'web'], ctx: '128K', cost: '$0.0003 \u2013 $0.0012' },
 ];
 const PICKER_TABS = ['All', 'Text', 'Image', 'Text to Video', 'Image to Video'];
 const CATALOG_COUNT = '200+';
@@ -209,7 +209,12 @@ function Switch({ on }) {
 }
 
 /* The model list, as the app opens it over the thread. */
-function PickerOverlay() {
+/* One row every 708ms, which is the rate the track scrolls at, so the card
+   stays with the part of the list on screen. */
+const SCROLL_MS_PER_ROW = (17 * 1000) / PICKER_ROWS.length;
+
+function PickerOverlay({ elapsed }) {
+  const hovered = PICKER_ROWS[(Math.floor(elapsed / SCROLL_MS_PER_ROW) + 3) % PICKER_ROWS.length];
   return (
     <Box
       sx={{
@@ -275,7 +280,7 @@ function PickerOverlay() {
             sx={{
               display: 'flex', alignItems: 'center', gap: 0.9,
               px: 0.9, py: 0.75, borderRadius: '10px',
-              boxShadow: m.pick ? `inset 0 0 0 1.2px ${C.border}` : 'none',
+              boxShadow: m.name === hovered.name ? `inset 0 0 0 1.2px ${C.border}` : 'none',
             }}
           >
             <Box sx={{ width: 20, height: 20, flexShrink: 0, borderRadius: '50%', border: `1px solid ${C.borderSoft}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -308,21 +313,22 @@ function PickerOverlay() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7, mb: 0.7 }}>
           <Box sx={{ width: 18, height: 18, borderRadius: '50%', border: `1px solid ${C.borderSoft}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <BrandTile code="GG" size={11} round />
+            <BrandTile code={hovered.code} size={11} round />
           </Box>
-          <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: C.text }}>Gemini 3.7 Flash</Typography>
+          <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {hovered.name}
+          </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 0.35, mb: 0.8 }}>
-          <Tag label="Incognito" />
-          <Tag label="web" />
+          {hovered.tags.map((x) => <Tag key={x} label={x} />)}
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1, pt: 0.8, borderTop: `1px solid ${C.borderSoft}` }}>
           <Box>
-            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: C.text, lineHeight: 1.2 }}>1M</Typography>
+            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: C.text, lineHeight: 1.2 }}>{hovered.ctx}</Typography>
             <Typography sx={{ fontSize: '0.6rem', color: C.muted }}>Context</Typography>
           </Box>
           <Box sx={{ textAlign: 'right' }}>
-            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: C.text, lineHeight: 1.2 }}>$0.0004 &ndash; $0.0019</Typography>
+            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: C.text, lineHeight: 1.2, whiteSpace: 'nowrap' }}>{hovered.cost}</Typography>
             <Typography sx={{ fontSize: '0.6rem', color: C.muted }}>Est. cost/1k tokens</Typography>
           </Box>
         </Box>
@@ -437,7 +443,7 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
         '& *': { fontFamily: 'inherit' },
       }}
     >
-      {pickerOpen && <PickerOverlay />}
+      {pickerOpen && <PickerOverlay elapsed={t - F.pickerOpen} />}
       {settingsOpen && <MemoryOverlay />}
       {/* Thread */}
       <Box sx={{ flex: 1, minHeight: 0, px: { xs: 1.75, sm: 2.25 }, pt: { xs: 2, sm: 2.5 }, overflow: 'hidden' }}>
@@ -577,7 +583,7 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
         </Box>
 
         <Typography sx={{ mt: 0.8, textAlign: 'center', fontSize: '0.64rem', color: C.muted }}>
-          OpenLedger Studio can make mistakes. Verify important information.
+          HeyOpen can make mistakes. Verify important information.
         </Typography>
       </Box>
 

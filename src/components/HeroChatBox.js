@@ -497,7 +497,7 @@ export default function HeroChatBox({ prompt, setPrompt }) {
               </Tooltip>
 
               {/* Send Button */}
-              <Tooltip title="Open in OpenLedger Studio" placement="top">
+              <Tooltip title="Open in HeyOpen" placement="top">
                 <IconButton
                   onClick={() => handleSend()}
                   aria-label="Send message"
