@@ -300,7 +300,9 @@ function SectionHead({ eyebrow, title, lede }) {
           <Typography
             component="h2"
             sx={{
-              maxWidth: '17ch',
+              /* No ch cap: it stranded the last word of a heading on its own
+                 line. The grid column sets the width, balance sets the break. */
+              textWrap: 'balance',
               fontSize: { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
               fontWeight: 700,
               lineHeight: 1.12,
@@ -1359,8 +1361,8 @@ export default function PrivatePage() {
                     color: 'var(--text-secondary)',
                   }}
                 >
-                  This is what happens to a request you send, from the moment it leaves your
-                  device to the moment the answer comes back.
+                  The same protections apply to every request you send, from the moment it
+                  leaves your device to the moment the answer comes back.
                 </Typography>
               </Box>
             </Reveal>
@@ -1472,14 +1474,14 @@ export default function PrivatePage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: Freedom to ask ───────────────────────────── */}
+        {/* ── Section 4: Uncensored by design ──────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px' }}>
           <Rule />
           <Box sx={{ py: SECTION_PY }}>
             <SectionHead
               eyebrow="Uncensored by design"
-              title="Private enough to ask. Free enough to explore."
-              lede="Privacy protects what you ask. Uncensored access gives you room to explore, challenge ideas, research difficult topics, create, and code without unnecessary restrictions."
+              title="Private enough to ask. Unfiltered enough to answer."
+              lede="Research difficult subjects, challenge an idea you disagree with, write, and code without a moderation layer deciding in advance what is allowed to reach the model."
             />
 
             {/* Filter-layer comparison */}
@@ -1605,7 +1607,7 @@ export default function PrivatePage() {
                       mb: 2,
                     }}
                   >
-                    Ask freely.<br />Leave nothing behind.
+                    Ask anything.<br />Leave nothing behind.
                   </Typography>
 
                   <Typography
