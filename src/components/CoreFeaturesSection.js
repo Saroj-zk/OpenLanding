@@ -14,6 +14,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/dist/ScrollToPlugin';
 import { useThemeMode } from '@/context/ThemeContext';
+import ProductDemo from '@/components/ProductDemo';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -32,6 +33,7 @@ const TABS = [
     hasExplore: true,
     exploreLink: '/models',
     video: '/Videos/Why Openledger/Multimodel & Token.webm',
+    demo: 'multimodel',
     tagLeft: 'MULTI-MODEL',
     tagRight: 'TOKEN OPTIMIZED',
   },
@@ -46,6 +48,7 @@ const TABS = [
     hasExplore: true,
     exploreLink: '/memory',
     video: '/Videos/Why Openledger/Unified Memory.webm',
+    demo: 'memory',
     tagLeft: 'ONE MEMORY',
     tagRight: 'FULL CONTROL',
   },
@@ -583,15 +586,21 @@ export default function CoreFeaturesSection() {
 
                 {/* Left Column: Video */}
                 <Box sx={{ flex: 1, height: '100%', position: 'relative', borderRadius: '16px', overflow: 'hidden', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-                  <Box
-                    component="video"
-                    src={tab.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                  {/* Two of these are built rather than recorded, so they stay
+                      sharp at any size and match the app as it ships. */}
+                  {tab.demo ? (
+                    <ProductDemo flow={tab.demo} active={activeTab === idx} />
+                  ) : (
+                    <Box
+                      component="video"
+                      src={tab.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
                 </Box>
 
                 {/* Right Column: Content */}
