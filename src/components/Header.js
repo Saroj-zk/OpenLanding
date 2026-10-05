@@ -113,7 +113,7 @@ export default function Header() {
             >
               <img
                 src="/Open%20Ledegr%20Full%20Black.svg"
-                alt="OpenLedger"
+                alt="Hey Open"
                 style={{
                   height: 20,
                   width: 'auto',

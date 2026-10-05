@@ -294,7 +294,7 @@ export default function CoreFeaturesSection() {
         }}
       >
         <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 3, md: 4 } }}>
-          {/* Top Pill Badge: • WHY OPENLEDGER */}
+          {/* Top Pill Badge: • WHY HEY OPEN */}
           <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 1.6 }}>
             <Box
               sx={{
@@ -319,7 +319,7 @@ export default function CoreFeaturesSection() {
                   textTransform: 'uppercase',
                 }}
               >
-                Why OpenLedger
+                Why Hey Open
               </Typography>
             </Box>
           </Box>

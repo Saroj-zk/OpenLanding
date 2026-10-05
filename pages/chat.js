@@ -8,7 +8,7 @@ export default function ChatPage() {
   return (
     <>
       <Head>
-        <title>Chat - OpenLedger</title>
+        <title>Chat - Hey Open</title>
       </Head>
       <ChatStudio />
     </>

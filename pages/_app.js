@@ -63,7 +63,7 @@ export default function MyApp(props) {
     <CacheProvider value={emotionCache}>
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <title>OpenLedger | AI-Powered Infrastructure</title>
+        <title>Hey Open | AI-Powered Infrastructure</title>
         <link rel="icon" href="/openchat_icon_mark.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/favicon.ico" />
       </Head>

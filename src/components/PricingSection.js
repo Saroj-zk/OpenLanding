@@ -232,7 +232,7 @@ export default function PricingSection() {
             />
           </Box>
 
-          {/* RIGHT COLUMN: OpenLedger Pro Premium Card */}
+          {/* RIGHT COLUMN: Hey Open Pro Premium Card */}
           <Box sx={{ width: { xs: '100%', sm: 380 }, flexShrink: 0, position: 'relative', mt: { xs: 0, lg: '28px' } }}>
             <style>{`
               @keyframes floatCard {
@@ -300,7 +300,7 @@ export default function PricingSection() {
                   {/* Top Header Row */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography sx={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
-                      <span style={{ color: primaryText }}>OPENLEDGER</span> <span style={{ color: '#ff6600' }}>PRO</span>
+                      <span style={{ color: primaryText }}>HEY OPEN</span> <span style={{ color: '#ff6600' }}>PRO</span>
                     </Typography>
                     <Box sx={{
                       backgroundColor: 'rgba(255,102,0,0.1)',

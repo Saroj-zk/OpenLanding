@@ -153,7 +153,7 @@ export default function HeroSection() {
             <Box
               component="img"
               src="/Icons/Frosted logo OPL.png"
-              alt="OpenLedger"
+              alt="Hey Open"
               sx={{ width: { xs: 60, md: 80 }, height: { xs: 60, md: 80 }, objectFit: 'contain' }}
             />
           </Box>

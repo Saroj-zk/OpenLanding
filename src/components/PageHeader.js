@@ -105,7 +105,7 @@ export default function PageHeader({ spacer = true }) {
             <Link href="/" passHref style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginLeft: 8 }}>
               <img
                 src="/Open%20Ledegr%20Full%20Black.svg"
-                alt="OpenLedger"
+                alt="Hey Open"
                 style={{
                   height: 20,
                   width: 'auto',

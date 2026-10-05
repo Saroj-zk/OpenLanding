@@ -207,7 +207,7 @@ export default function ModelsPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>{`AI Models Catalog, ${MODEL_TOTAL} Frontier Models in One Subscription | OpenLedger`}</title>
+        <title>{`AI Models Catalog, ${MODEL_TOTAL} Frontier Models in One Subscription | Hey Open`}</title>
         <meta
           name="description"
           content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${MODEL_TOTAL} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
