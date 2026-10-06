@@ -5,8 +5,12 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { useThemeMode } from '@/context/ThemeContext';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 export default function ApiSection() {
+  const [leftRef, leftShown] = useReveal();
+  const [rightRef, rightShown] = useReveal();
+
   const { isDark } = useThemeMode();
   const [activeTab, setActiveTab] = React.useState('curl');
   const [copied, setCopied] = React.useState(false);
@@ -99,7 +103,7 @@ const response = await client.chat.completions.create({
         <Grid container spacing={{ xs: 8, md: 6 }} alignItems="center">
           
           {/* Left Column: Content */}
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} ref={leftRef} sx={revealSx(leftShown)}>
             <Typography component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase', mb: 3 }}>
               <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#ff6600' }} /> API
             </Typography>
@@ -202,7 +206,7 @@ const response = await client.chat.completions.create({
           </Grid>
 
           {/* Right Column: Code Block & Tabs */}
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={7} ref={rightRef} sx={revealSx(rightShown, 140)}>
             <Box sx={{ position: 'relative' }}>
               
               {/* Glow Behind Terminal */}

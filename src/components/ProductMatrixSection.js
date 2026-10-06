@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import { alpha } from '@mui/material/styles';
 import { useThemeMode } from '@/context/ThemeContext';
 import useInView from '@/utils/useInView';
+import { useReveal, revealSx } from '@/utils/reveal';
 import ProductDemo from '@/components/ProductDemo';
 
 // Icons
@@ -152,6 +153,9 @@ export default function ProductMatrixSection() {
      show has already buffered by the time the section arrives. */
   const [sectionRef, sectionInView] = useInView('1400px');
 
+  const [headRef, headShown] = useReveal();
+  const [gridRef, gridShown] = useReveal();
+
   /* Fetch the clip on show plus the one the cycle moves to next, and keep
      anything already fetched. */
   const [primed, setPrimed] = React.useState({});
@@ -192,7 +196,7 @@ export default function ProductMatrixSection() {
 
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2.5, sm: 3, md: 4 } }}>
         {/* Top Header */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'flex-end' }, mb: { xs: 4, md: 6 } }}>
+        <Box ref={headRef} sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'flex-end' }, mb: { xs: 4, md: 6 }, ...revealSx(headShown) }}>
           <Box>
             <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#CD7A4C' }} />
@@ -250,7 +254,7 @@ export default function ProductMatrixSection() {
         </Grid>
 
         {/* Main Content Grid */}
-        <Grid container spacing={3} alignItems="stretch" sx={{ flexGrow: 1 }}>
+        <Grid ref={gridRef} container spacing={3} alignItems="stretch" sx={{ flexGrow: 1, ...revealSx(gridShown, 120) }}>
 
           {/* Left Sidebar */}
           <Grid item xs={12} md={4} sx={{ display: 'flex' }}>

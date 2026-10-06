@@ -4,6 +4,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useThemeMode } from '@/context/ThemeContext';
 import { BrandTile } from '@/components/ui/LedgerUI';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 
 /* Light theme values from ais.openledger.xyz, so the panel reads as Council
@@ -130,6 +131,11 @@ function Toggle({ on, C: T }) {
 
 
 export default function WhyAskMultipleModelsSection() {
+  /* The window below runs its own demo once it is on screen, so only the
+     copy around it needs an entrance. */
+  const [headRef, headShown] = useReveal();
+  const [footRef, footShown] = useReveal();
+
   const { isDark } = useThemeMode();
 
   /* One clock drives the whole sequence, and every state below is derived
@@ -196,7 +202,7 @@ export default function WhyAskMultipleModelsSection() {
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 3, md: 4 }, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: { xs: 'flex-start', md: 'space-between' }, my: 'auto' }}>
 
         {/* HEADER */}
-        <Box sx={{ textAlign: 'center', mb: { xs: 3, md: 5 } }}>
+        <Box ref={headRef} sx={{ textAlign: 'center', mb: { xs: 3, md: 5 }, ...revealSx(headShown) }}>
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, mb: 1 }}>
             <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
               Multi-Model Consensus
@@ -559,7 +565,7 @@ export default function WhyAskMultipleModelsSection() {
         </Box>
 
         {/* BOTTOM CAPTION & CTA */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: { xs: 3, md: 4 }, gap: 2 }}>
+        <Box ref={footRef} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: { xs: 3, md: 4 }, gap: 2, ...revealSx(footShown) }}>
           <Typography sx={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: { xs: '0.95rem', md: '1.05rem' }, fontWeight: 500 }}>
             A verifiable way to query frontier AI and get consensus truth.
           </Typography>

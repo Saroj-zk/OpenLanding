@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useThemeMode } from '@/context/ThemeContext';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 // Complete catalog of premier models based on reference
 const ALL_MODELS = [
@@ -424,6 +425,12 @@ function getProviderStyle(providerKey, isDark) {
 }
 
 export default function SupportedModelsSection() {
+  /* Header, then the controls, then the table, each a beat behind the one
+     before it. */
+  const [headRef, headShown] = useReveal();
+  const [barRef, barShown] = useReveal();
+  const [tableRef, tableShown] = useReveal();
+
   const { isDark } = useThemeMode();
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState('All');
@@ -478,7 +485,7 @@ export default function SupportedModelsSection() {
     >
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2.5, sm: 3, md: 4 } }}>
         {/* Header: Badge + Big Title + Subtitle */}
-        <Box sx={{ mb: { xs: 4, md: 5 }, maxWidth: { xs: '100%', md: 680 } }}>
+        <Box ref={headRef} sx={{ mb: { xs: 4, md: 5 }, maxWidth: { xs: '100%', md: 680 }, ...revealSx(headShown) }}>
           {/* Pill Badge: • MODELS */}
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.85, mb: 1.8 }}>
             {/* Removed dot */}
@@ -525,6 +532,7 @@ export default function SupportedModelsSection() {
 
         {/* Search & Filter Bar Controls */}
         <Box
+          ref={barRef}
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', lg: 'row' },
@@ -532,6 +540,7 @@ export default function SupportedModelsSection() {
             justifyContent: 'space-between',
             gap: 1.8,
             mb: 3,
+            ...revealSx(barShown, 110),
           }}
         >
           {/* Search Pill Input */}
@@ -760,7 +769,9 @@ export default function SupportedModelsSection() {
 
         {/* Main Models Table Container (The Big Apple Liquid Glass Surface Card) */}
         <Box
+          ref={tableRef}
           sx={{
+            ...revealSx(tableShown, 200),
             width: '100%',
             borderRadius: { xs: '20px', md: '26px' },
             backgroundColor: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(255, 255, 255, 0.72)',

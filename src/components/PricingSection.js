@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { useThemeMode } from '@/context/ThemeContext';
 import useInView from '@/utils/useInView';
+import { useReveal, revealSx } from '@/utils/reveal';
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
@@ -18,6 +19,9 @@ export default function PricingSection() {
      and decodes, so the clip waits on the observer either way. An element that
      is display:none never reports as intersecting, which is what keeps it off
      small screens entirely. */
+  const [headRef, headShown] = useReveal();
+  const [bodyRef, bodyShown] = useReveal();
+
   const [clipRef, clipInView] = useInView('1000px');
   const clipVideoRef = React.useRef(null);
 
@@ -118,7 +122,7 @@ export default function PricingSection() {
       <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 }, position: 'relative' }}>
 
         {/* HERO HEADER */}
-        <Box sx={{ textAlign: 'center', mb: { xs: 8, md: 10 } }}>
+        <Box ref={headRef} sx={{ textAlign: 'center', mb: { xs: 8, md: 10 }, ...revealSx(headShown) }}>
           <Typography variant="h2" sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '3rem', lg: '3.5rem' }, lineHeight: 1.1, letterSpacing: '-0.02em', color: primaryText, mb: 2 }}>
             One Subscription.<br />All your go-to AI models.
           </Typography>
@@ -128,7 +132,8 @@ export default function PricingSection() {
         </Box>
 
         {/* COMPARISON LAYOUT (Flex Node Graph) */}
-        <Box sx={{
+        <Box ref={bodyRef} sx={{
+          ...revealSx(bodyShown, 120),
           display: 'flex',
           flexDirection: { xs: 'column', lg: 'row' },
           alignItems: { xs: 'center', lg: 'flex-start' },

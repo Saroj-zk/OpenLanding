@@ -25,6 +25,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 const leftFeatures = [
   {
@@ -81,6 +82,9 @@ const rightFeatures = [
 ];
 
 export default function EnterpriseSection() {
+  const [headRef, headShown] = useReveal();
+  const [cardRef, cardShown] = useReveal();
+
   const { isDark } = useThemeMode();
 
   // Contact Sales Modal State
@@ -215,7 +219,7 @@ export default function EnterpriseSection() {
         <Box sx={{ maxWidth: 1280, mx: 'auto' }}>
           
           {/* TOP HEADER */}
-          <Box sx={{ mb: { xs: 6, md: 8 } }}>
+          <Box ref={headRef} sx={{ mb: { xs: 6, md: 8 }, ...revealSx(headShown) }}>
             {/* Eyebrow Pill */}
             <Box
               sx={{
@@ -299,7 +303,9 @@ export default function EnterpriseSection() {
 
           {/* MASTER GLASS FEATURE CARD */}
           <Box
+            ref={cardRef}
             sx={{
+              ...revealSx(cardShown, 140),
               backgroundColor: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.75)',
               backdropFilter: 'blur(24px) saturate(180%)',
               WebkitBackdropFilter: 'blur(24px) saturate(180%)',
