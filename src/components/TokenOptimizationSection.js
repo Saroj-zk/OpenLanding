@@ -34,7 +34,7 @@ export default function TokenOptimizationSection() {
   const { isDark } = useThemeMode();
 
   return (
-    <Container maxWidth="xl" sx={{ pb: { xs: 8, md: 10 }, overflow: 'hidden' }}>
+    <Container id="token" maxWidth="xl" sx={{ pb: { xs: 8, md: 10 }, overflow: 'hidden', scrollMarginTop: '96px' }}>
       {/* NEW TOKEN OPTIMIZATION LAYOUT */}
       <Box sx={{ maxWidth: 1400, mx: 'auto', mt: 4 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 4, alignItems: 'stretch' }}>

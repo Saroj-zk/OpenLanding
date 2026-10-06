@@ -42,7 +42,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: 'Chat', href: 'https://ais.openledger.xyz/chat', external: true },
       { label: 'Models', href: '#models' },
-      { label: 'Council Mode', href: '#council' },
+      { label: 'Council Mode', href: '#consensus-mode' },
       { label: 'iOS app', href: '#' },
       { label: 'Android app', href: '#' },
       { label: 'Pricing', href: '#pricing' },
