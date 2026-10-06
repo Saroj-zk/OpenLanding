@@ -41,7 +41,7 @@ const FOOTER_COLUMNS = [
     title: 'Product',
     links: [
       { label: 'Chat', href: 'https://ais.openledger.xyz/chat', external: true },
-      { label: 'Models', href: '#models' },
+      { label: 'Models', href: '/models' },
       { label: 'Council Mode', href: '#consensus-mode' },
       { label: 'iOS app', href: '#' },
       { label: 'Android app', href: '#' },
@@ -53,7 +53,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: 'API reference', href: '#api' },
       { label: 'Quickstart', href: '#api' },
-      { label: 'Model IDs', href: '#models' },
+      { label: 'Model IDs', href: '/models' },
       { label: 'Status', href: '#' },
       { label: 'Documentation', href: '#' },
     ],

@@ -9,7 +9,7 @@ import { useThemeMode } from '@/context/ThemeContext';
 /* Each of these resolves to a section on this page. #consensus and #privacy
    were in here before and matched nothing. */
 const NAV_ITEMS = [
-  { label: 'Models', href: '#models' },
+  { label: 'Models', href: '/models' },
   { label: 'Consensus', href: '#consensus-mode' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'Token', href: '#token' },
