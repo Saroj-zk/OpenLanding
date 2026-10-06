@@ -228,7 +228,11 @@ svg {
 }
 
 /* ── Smooth anchor scroll with offset for sticky header ────────── */
-html {
+/* Lenis writes scrollTop every frame. With native smooth on top, the
+   browser animates toward each of those writes as well, so every wheel
+   tick gets eased twice and the page feels rubbery. Keep native smooth
+   only for the case where Lenis is not mounted (it adds .lenis to html). */
+html:not(.lenis) {
   scroll-behavior: smooth;
 }
 

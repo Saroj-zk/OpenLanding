@@ -82,6 +82,38 @@ const TABS = [
   },
 ];
 
+/* All four clips sit in this section at once and crossfade. On plain autoPlay
+   every one of them loops for the whole visit, off screen included, which is
+   four decodes competing with the scroll. Only the visible one runs. */
+const TabClip = ({ src, play }) => {
+  const ref = React.useRef(null);
+  const [primed, setPrimed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (play) setPrimed(true);
+  }, [play]);
+
+  React.useEffect(() => {
+    const v = ref.current;
+    if (!v || !primed) return;
+    if (play) v.play().catch(() => {});
+    else v.pause();
+  }, [play, primed]);
+
+  return (
+    <Box
+      component="video"
+      ref={ref}
+      src={primed ? src : undefined}
+      loop
+      muted
+      playsInline
+      preload="none"
+      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    />
+  );
+};
+
 export default function CoreFeaturesSection() {
   const { isDark } = useThemeMode();
   const [activeTab, setActiveTab] = React.useState(0);
@@ -143,6 +175,21 @@ export default function CoreFeaturesSection() {
     window.addEventListener('pointerup', release);
     window.addEventListener('pointercancel', release);
   };
+
+  /* Nothing in here needs to be playing until the section is close. */
+  const [clipsLive, setClipsLive] = React.useState(false);
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setClipsLive(true);
+      return undefined;
+    }
+    const io = new IntersectionObserver(([e]) => setClipsLive(e.isIntersecting), {
+      rootMargin: '1400px',
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Initialize GSAP ScrollTrigger for pinning and scroll-based tab navigation
   React.useEffect(() => {
@@ -591,15 +638,7 @@ export default function CoreFeaturesSection() {
                   {tab.demo ? (
                     <ProductDemo flow={tab.demo} active={activeTab === idx} />
                   ) : (
-                    <Box
-                      component="video"
-                      src={tab.video}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                    <TabClip src={tab.video} play={activeTab === idx && clipsLive} />
                   )}
                 </Box>
 

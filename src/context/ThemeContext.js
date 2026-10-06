@@ -9,13 +9,11 @@ export function ThemeProvider({ children }) {
   const [isDark, setIsDark] = React.useState(false);
 
   React.useEffect(() => {
-    // Persist preference across reloads
-    const saved = localStorage.getItem('ol-theme');
-    if (saved === 'dark') {
+    /* The bootstrap script in _document has already put the saved preference on
+       <html>, so the paint is correct before React runs. Only catch state up to
+       it; writing the attribute again here is what produced the visible swap. */
+    if (document.documentElement.getAttribute('data-theme') === 'dark') {
       setIsDark(true);
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
     }
   }, []);
 

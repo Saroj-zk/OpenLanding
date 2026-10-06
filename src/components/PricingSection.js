@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { useThemeMode } from '@/context/ThemeContext';
+import useInView from '@/utils/useInView';
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
@@ -12,6 +13,27 @@ import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
 
 export default function PricingSection() {
   const { isDark } = useThemeMode();
+
+  /* Below lg the wrapper is display:none, but a hidden <video> still downloads
+     and decodes, so the clip waits on the observer either way. An element that
+     is display:none never reports as intersecting, which is what keeps it off
+     small screens entirely. */
+  const [clipRef, clipInView] = useInView('1000px');
+  const clipVideoRef = React.useRef(null);
+
+  /* Latched: once fetched, leaving the section pauses the clip instead of
+     dropping the src, which would rewind it and log an empty-src warning. */
+  const [clipLoaded, setClipLoaded] = React.useState(false);
+  React.useEffect(() => {
+    if (clipInView) setClipLoaded(true);
+  }, [clipInView]);
+
+  React.useEffect(() => {
+    const v = clipVideoRef.current;
+    if (!v || !clipLoaded) return;
+    if (clipInView) v.play().catch(() => {});
+    else v.pause();
+  }, [clipInView, clipLoaded]);
 
   // Theme-adaptive colors
   const primaryText = isDark ? '#FFFFFF' : '#111111';
@@ -202,7 +224,7 @@ export default function PricingSection() {
           </Box>
 
           {/* MIDDLE BRIDGE: Video ONLY */}
-          <Box sx={{
+          <Box ref={clipRef} sx={{
             flexGrow: 1,
             height: 380,
             mt: '38px',
@@ -217,11 +239,12 @@ export default function PricingSection() {
             borderRadius: '24px', // Soft rounded edges for the crop
           }}>
             <video
-              src="/pricing_video.mp4"
-              autoPlay
+              ref={clipVideoRef}
+              src={clipLoaded ? '/pricing_video.mp4' : undefined}
               loop
               muted
               playsInline
+              preload="none"
               style={{
                 width: '100%',
                 height: '100%',

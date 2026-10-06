@@ -9,6 +9,17 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+          {/* Runs before the first paint. Bare :root in globals.css carries the
+              dark palette, so an <html> that reaches the painter without
+              data-theme shows dark and then swaps once React mounts. */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html:
+                "(function(){try{var t=localStorage.getItem('ol-theme');" +
+                "document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}" +
+                "catch(e){document.documentElement.setAttribute('data-theme','light');}})();",
+            }}
+          />
           <meta name="theme-color" content={theme.palette.background.default} />
           <link rel="shortcut icon" href="/favicon.ico" />
           <link rel="apple-touch-icon" href="/favicon.ico" />
