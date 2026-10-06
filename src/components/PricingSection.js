@@ -20,7 +20,11 @@ export default function PricingSection() {
      is display:none never reports as intersecting, which is what keeps it off
      small screens entirely. */
   const [headRef, headShown] = useReveal();
-  const [bodyRef, bodyShown] = useReveal();
+  /* The two columns reveal on their own. The row that holds them must not,
+     because the clip between them blends with the page and a transform on an
+     ancestor would cut it off from what it blends against. */
+  const [leftRef, leftShown] = useReveal();
+  const [rightRef, rightShown] = useReveal();
 
   const [clipRef, clipInView] = useInView('1000px');
   const clipVideoRef = React.useRef(null);
@@ -132,8 +136,7 @@ export default function PricingSection() {
         </Box>
 
         {/* COMPARISON LAYOUT (Flex Node Graph) */}
-        <Box ref={bodyRef} sx={{
-          ...revealSx(bodyShown, 120),
+        <Box sx={{
           display: 'flex',
           flexDirection: { xs: 'column', lg: 'row' },
           alignItems: { xs: 'center', lg: 'flex-start' },
@@ -144,7 +147,7 @@ export default function PricingSection() {
         }}>
 
           {/* LEFT COLUMN: Separate Subscriptions */}
-          <Box sx={{ width: { xs: '100%', sm: 340 }, flexShrink: 0, position: 'relative' }}>
+          <Box ref={leftRef} sx={{ width: { xs: '100%', sm: 340 }, flexShrink: 0, position: 'relative', ...revealSx(leftShown, 120) }}>
             <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: secondaryText, mb: 3, textAlign: 'center' }}>
               The Cost of Fragmentation
             </Typography>
@@ -261,7 +264,7 @@ export default function PricingSection() {
           </Box>
 
           {/* RIGHT COLUMN: Hey Open Pro Premium Card */}
-          <Box sx={{ width: { xs: '100%', sm: 380 }, flexShrink: 0, position: 'relative', mt: { xs: 0, lg: '28px' } }}>
+          <Box ref={rightRef} sx={{ width: { xs: '100%', sm: 380 }, flexShrink: 0, position: 'relative', mt: { xs: 0, lg: '28px' }, ...revealSx(rightShown, 220) }}>
             <style>{`
               @keyframes floatCard {
                 0%, 100% { transform: translateY(0px); }

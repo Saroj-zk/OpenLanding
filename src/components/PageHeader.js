@@ -2,11 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useThemeMode } from '@/context/ThemeContext';
@@ -24,7 +21,7 @@ const NAV_LINKS = [
    offset into their own padding, so the background runs up behind the
    header instead of leaving a bar of page colour above it. */
 export default function PageHeader({ spacer = true }) {
-  const { isDark, toggleTheme } = useThemeMode();
+  const { isDark } = useThemeMode();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -251,30 +248,6 @@ export default function PageHeader({ spacer = true }) {
             >
               Start a chat
             </Button>
-
-            {/* Theme toggle */}
-            <Tooltip title={isDark ? 'Switch to light theme' : 'Switch to dark theme'} arrow>
-              <IconButton
-                aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-                onClick={toggleTheme}
-                sx={{
-                  display: { xs: 'none', sm: 'flex' },
-                  width: 36,
-                  height: 36,
-                  color: isDark ? '#FFFFFF' : '#0F172A',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: isDark
-                      ? 'rgba(255,255,255,0.1)'
-                      : 'rgba(0,0,0,0.05)',
-                  },
-                }}
-              >
-                {isDark
-                  ? <LightModeOutlinedIcon sx={{ fontSize: 18 }} />
-                  : <DarkModeOutlinedIcon sx={{ fontSize: 18 }} />}
-              </IconButton>
-            </Tooltip>
 
             {/* Mobile hamburger */}
             <IconButton

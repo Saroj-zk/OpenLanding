@@ -2,7 +2,7 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 let theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
       main: '#FF6600',
       light: '#FF8533',
@@ -16,14 +16,14 @@ let theme = createTheme({
       contrastText: '#FFFFFF',
     },
     background: {
-      default: '#0A0C10',
-      paper: '#12161F',
+      default: '#F8F9FA',
+      paper: '#FFFFFF',
     },
     text: {
-      primary: '#F0F4F8',
-      secondary: '#94A3B8',
+      primary: '#0F172A',
+      secondary: '#475569',
     },
-    divider: 'rgba(255, 255, 255, 0.08)',
+    divider: 'rgba(0, 0, 0, 0.12)',
   },
   typography: {
     fontFamily: [
@@ -58,8 +58,8 @@ let theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: '#0A0C10',
-          color: '#F0F4F8',
+          backgroundColor: '#F8F9FA',
+          color: '#0F172A',
           overflowX: 'hidden',
           scrollBehavior: 'auto',
         },
@@ -67,10 +67,10 @@ let theme = createTheme({
           width: '6px',
         },
         '*::-webkit-scrollbar-track': {
-          background: '#0A0C10',
+          background: '#F8F9FA',
         },
         '*::-webkit-scrollbar-thumb': {
-          backgroundColor: 'rgba(255, 255, 255, 0.16)',
+          backgroundColor: 'rgba(0, 0, 0, 0.18)',
           borderRadius: '3px',
         },
       },

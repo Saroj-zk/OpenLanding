@@ -87,7 +87,10 @@ export function useReveal(options) {
 export function revealSx(shown, delay = 0, distance = 22) {
   return {
     opacity: shown ? 1 : 0,
-    transform: shown ? 'translate3d(0, 0, 0)' : `translate3d(0, ${distance}px, 0)`,
+    /* `none` at rest, not a zero translate: a transform of any kind makes the
+       element a stacking context, which would trap the blend modes and fixed
+       positioning of anything inside it. */
+    transform: shown ? 'none' : `translate3d(0, ${distance}px, 0)`,
     transition:
       'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
     transitionDelay: `${delay}ms`,

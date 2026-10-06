@@ -4,9 +4,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import Tooltip from '@mui/material/Tooltip';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { useThemeMode } from '@/context/ThemeContext';
 
 /* Each of these resolves to a section on this page. #consensus and #privacy
@@ -19,7 +16,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Header() {
-  const { isDark, toggleTheme } = useThemeMode();
+  const { isDark } = useThemeMode();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isVisible, setIsVisible] = React.useState(false);
   const lastScrollY = React.useRef(0);
@@ -232,25 +229,6 @@ export default function Header() {
             >
               Log in
             </Box>
-
-            {/* Theme Toggle Button */}
-            <Tooltip title={isDark ? 'Switch to light theme' : 'Switch to dark theme'} arrow>
-              <IconButton
-                onClick={toggleTheme}
-                sx={{
-                  width: 38,
-                  height: 38,
-                  ml: { sm: 1 },
-                  color: isDark ? '#FFFFFF' : '#0F172A',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                  },
-                }}
-              >
-                {isDark ? <LightModeOutlinedIcon sx={{ fontSize: 20 }} /> : <DarkModeOutlinedIcon sx={{ fontSize: 20 }} />}
-              </IconButton>
-            </Tooltip>
 
             {/* Mobile Hamburger Toggle */}
             <IconButton
