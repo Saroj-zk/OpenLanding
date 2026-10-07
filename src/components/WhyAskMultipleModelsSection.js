@@ -7,7 +7,7 @@ import { BrandTile } from '@/components/ui/LedgerUI';
 import { useReveal, revealSx } from '@/utils/reveal';
 
 
-/* Light theme values from ais.openledger.xyz, so the panel reads as Council
+/* Light theme values from ais.openledger.xyz, so the panel reads as the app
    rather than as a marketing illustration. */
 const C = {
   font: '"Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif',
@@ -49,8 +49,8 @@ const T = {
 };
 const LOOP = 17500;
 
-/* The first entry is the judge, which is how Council marks it. */
-const COUNCIL = [
+/* The first entry is the judge, which is how Consensus mode marks it. */
+const PANEL = [
   { code: 'AN', name: 'Claude Opus 5', web: true, secs: '3.3', pick: 'Manten Sushi', note: 'Quality and value without premium pricing.' },
   { code: 'OA', name: 'GPT 5.6 Sol', web: false, secs: '4.1', pick: 'Sushi Tokyo Ten', note: 'Good value omakase, central location.' },
   { code: 'GG', name: 'Gemini 2.5 Pro', web: true, secs: '5.2', pick: 'Sushi no Midori', note: 'More casual and affordable, wide selection.' },
@@ -172,7 +172,7 @@ export default function WhyAskMultipleModelsSection() {
   /* Each model starts only once the one before it has finished. */
   const answerLen = (i, text) =>
     Math.round(ramp(T.answerStart + i * T.answerStep, T.answerSpan) * text.length);
-  const council = t >= T.pickClose;
+  const consensus = t >= T.pickClose;
   const summaryLen = Math.round(ramp(T.summaryStart, T.summarySpan) * SUMMARY.length);
   const analysisLen = Math.round(ramp(T.analysisStart, T.analysisSpan) * ANALYSIS.length);
 
@@ -212,11 +212,11 @@ export default function WhyAskMultipleModelsSection() {
             Ask four models. Get one answer.
           </Typography>
           <Typography sx={{ color: 'var(--text-secondary)', fontSize: { xs: '1rem', md: '1.125rem' }, lineHeight: 1.6, maxWidth: 600, mx: 'auto' }}>
-            Ask once and get four perspectives. Council compares the responses and brings the best thinking together in one clear answer.
+            Ask once and get four perspectives. Consensus mode compares the responses and brings the best thinking together in one clear answer.
           </Typography>
         </Box>
 
-        {/* COUNCIL WINDOW — the app, start to finish: the empty state, the
+        {/* PANEL WINDOW — the app, start to finish: the empty state, the
             model list opening out of the composer, the four running, then the
             verdict. One fixed height so the window never resizes under the
             section, with the composer pinned to the foot of it throughout. */}
@@ -278,7 +278,7 @@ export default function WhyAskMultipleModelsSection() {
                   }}
                 >
                   <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: { xs: 1.25, md: 1.5 } }}>
-                    {COUNCIL.map((m, i) => (
+                    {PANEL.map((m, i) => (
                       <Box
                         key={m.name}
                         sx={{
@@ -304,8 +304,8 @@ export default function WhyAskMultipleModelsSection() {
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.9, mb: 1.2 }}>
                         <Scales size={14} color={C.text} />
                         <Typography sx={{ flex: 1, fontSize: '0.82rem', fontWeight: 600, color: C.text }}>Summary</Typography>
-                        <BrandTile code={COUNCIL[0].code} size={13} round />
-                        <Typography sx={{ fontSize: '0.72rem', color: C.muted, whiteSpace: 'nowrap' }}>{COUNCIL[0].name}</Typography>
+                        <BrandTile code={PANEL[0].code} size={13} round />
+                        <Typography sx={{ fontSize: '0.72rem', color: C.muted, whiteSpace: 'nowrap' }}>{PANEL[0].name}</Typography>
                       </Box>
                       {summaryLen <= 0 ? (
                         <>
@@ -383,7 +383,7 @@ export default function WhyAskMultipleModelsSection() {
                     <Typography sx={{ fontSize: '0.8rem', color: C.textSecondary }}>
                       Judge:{' '}
                       <Box component="span" sx={{ color: C.text, fontWeight: 500 }}>
-                        {picked >= 1 ? COUNCIL[0].name : 'None'}
+                        {picked >= 1 ? PANEL[0].name : 'None'}
                       </Box>
                     </Typography>
                     {picked >= 1 && (
@@ -405,7 +405,7 @@ export default function WhyAskMultipleModelsSection() {
                 </Box>
 
                 <Box>
-                  {COUNCIL.map((m, i) => {
+                  {PANEL.map((m, i) => {
                     const on = i < picked;
                     const judge = i === 0 && picked >= 1;
                     return (
@@ -461,8 +461,8 @@ export default function WhyAskMultipleModelsSection() {
                 >
                   {typedLen > 0 && !sent
                     ? (<>{QUESTION.slice(0, typedLen)}{typedLen < QUESTION.length && <Caret />}</>)
-                    : council
-                      ? 'Ask the council…'
+                    : consensus
+                      ? 'Ask Consensus mode…'
                       : 'Send a message\u2026  (@ to mention, / for commands)'}
                 </Typography>
                 <Box sx={{ display: 'flex', color: C.muted, flexShrink: 0 }}>
@@ -476,14 +476,14 @@ export default function WhyAskMultipleModelsSection() {
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.4, pb: 1.4 }}>
-                {council ? (
+                {consensus ? (
                   <>
                     <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6, px: 1, py: 0.45, borderRadius: '9999px', backgroundColor: C.chip }}>
                       <Scales size={12} color={C.textSecondary} />
-                      <Typography sx={{ fontSize: '0.76rem', color: C.text }}>Council</Typography>
+                      <Typography sx={{ fontSize: '0.76rem', color: C.text }}>Consensus</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.35, ml: 0.3 }}>
-                      {COUNCIL.map((m) => (
+                      {PANEL.map((m) => (
                         <BrandTile key={m.name} code={m.code} size={14} round />
                       ))}
                     </Box>
@@ -491,9 +491,9 @@ export default function WhyAskMultipleModelsSection() {
                   </>
                 ) : (
                   <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, px: 0.7, py: 0.4, borderRadius: '16px', backgroundColor: picking ? C.chip : 'transparent', transition: 'background-color 0.25s ease' }}>
-                    <BrandTile code={COUNCIL[1].code} size={16} round />
+                    <BrandTile code={PANEL[1].code} size={16} round />
                     <Typography sx={{ fontSize: '0.84rem', color: C.text, whiteSpace: 'nowrap' }}>
-                      {COUNCIL[1].name}
+                      {PANEL[1].name}
                     </Typography>
                     <Box sx={{ display: 'flex', color: C.muted, transform: picking ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease' }}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
