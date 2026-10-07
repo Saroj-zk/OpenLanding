@@ -25,8 +25,6 @@ const TABS = [
   {
     id: 'multimodel',
     label: 'Multi-Model',
-    fullLabel: 'Multi-Model & Tokens',
-    shortLabel: 'Multi-Model',
     icon: AutoAwesomeIcon,
     tagline: '200+ models, optimized for every request.',
     description: 'Choose any model yourself, or let Auto match each request to the right model and optimize token usage, so every task uses only what it needs.',
