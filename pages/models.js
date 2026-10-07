@@ -9,7 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, ProviderTile } from '@/components/ui/LedgerUI';
-import ModelPickerWindow from '@/components/ModelPickerWindow';
+import ProductWindow from '@/components/ProductWindow';
 import { MODELS, KINDS, PROVIDERS } from '@/data/catalog';
 
 /* How many models the product serves. The list further down carries the
@@ -585,36 +585,82 @@ export default function ModelsPage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: The picker, as it ships ─────────────────── */}
+        {/* ── Section 4: The app itself ──────────────────────────── */}
         <Rule />
         <Box sx={{ py: SECTION_PY }}>
           <Reveal>
-            <Box sx={{ maxWidth: '44ch', mb: { xs: 5, md: 7 } }}>
+            <Box sx={{ textAlign: 'center', maxWidth: '58ch', mx: 'auto', mb: { xs: 5, md: 7 } }}>
+              <Typography
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: ORANGE,
+                  mb: 2.5,
+                }}
+              >
+                <Box component="span" sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE }} />
+                Live in the app
+              </Typography>
               <Typography
                 component="h2"
                 sx={{
-                  fontSize: { xs: '1.9rem', md: '2.6rem' },
+                  fontSize: { xs: '2rem', md: '3rem' },
                   fontWeight: 800,
-                  lineHeight: 1.14,
-                  letterSpacing: '-0.03em',
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.035em',
                   color: 'var(--text-heading)',
-                  mb: 2,
+                  mb: 2.5,
                   textWrap: 'balance',
                 }}
               >
-                This is the picker you get.
+                Every one of them, one click away.
               </Typography>
-              <Typography sx={{ fontSize: '1.02rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-                Search by name, narrow by modality, star the ones you keep coming back to. Every
-                model carries what it can do, and the card shows you context and cost before you
-                commit to it.
+              <Typography sx={{ fontSize: { xs: '1rem', md: '1.08rem' }, lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '52ch', mx: 'auto' }}>
+                Search by name, narrow by modality, star the ones you keep coming back to. Each model
+                carries what it can do, and you see context and cost before you commit. No account
+                needed to start.
               </Typography>
             </Box>
           </Reveal>
 
           <Reveal delay={110}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', px: { xs: 0, md: 4 } }}>
-              <ModelPickerWindow />
+            <Box sx={{ maxWidth: 1060, mx: 'auto' }}>
+              <ProductWindow />
+            </Box>
+          </Reveal>
+
+          <Reveal delay={190}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 4, md: 5 } }}>
+              <Box
+                component="a"
+                href="https://ais.openledger.xyz/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 3.5,
+                  py: 1.6,
+                  borderRadius: '9999px',
+                  backgroundColor: ORANGE,
+                  color: '#FFFFFF',
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  boxShadow: '0 10px 30px -8px rgba(255, 102, 0, 0.5)',
+                  transition: 'transform 0.2s ease, background-color 0.2s ease',
+                  '&:hover': { backgroundColor: '#E65C00', transform: 'translateY(-2px)' },
+                }}
+              >
+                Open the app
+                <Box component="span" aria-hidden="true">→</Box>
+              </Box>
             </Box>
           </Reveal>
         </Box>
