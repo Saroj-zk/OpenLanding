@@ -2,11 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useThemeMode } from '@/context/ThemeContext';
@@ -24,40 +21,9 @@ const NAV_LINKS = [
    offset into their own padding, so the background runs up behind the
    header instead of leaving a bar of page colour above it. */
 export default function PageHeader({ spacer = true }) {
-  const { isDark, toggleTheme } = useThemeMode();
+  const { isDark } = useThemeMode();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const lastScrollY = React.useRef(0);
-
-  React.useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-
-          const heroHeight = window.innerHeight * 0.7;
-          if (currentScrollY < heroHeight) {
-            setIsVisible(false);
-          } else if (currentScrollY > lastScrollY.current) {
-            setIsVisible(false);
-          } else if (currentScrollY < lastScrollY.current) {
-            setIsVisible(true);
-          }
-
-          lastScrollY.current = currentScrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <>
@@ -94,10 +60,7 @@ export default function PageHeader({ spacer = true }) {
             alignItems: 'center',
             justifyContent: 'space-between',
             px: { xs: 1.5, md: 2 },
-            pointerEvents: isVisible ? 'auto' : 'none',
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(-150%)',
-            transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'auto',
           }}
         >
           {/* Left — Logo */}
@@ -105,7 +68,7 @@ export default function PageHeader({ spacer = true }) {
             <Link href="/" passHref style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', marginLeft: 8 }}>
               <img
                 src="/Open%20Ledegr%20Full%20Black.svg"
-                alt="OpenLedger"
+                alt="Hey Open"
                 style={{
                   height: 20,
                   width: 'auto',
@@ -251,30 +214,6 @@ export default function PageHeader({ spacer = true }) {
             >
               Start a chat
             </Button>
-
-            {/* Theme toggle */}
-            <Tooltip title={isDark ? 'Switch to light theme' : 'Switch to dark theme'} arrow>
-              <IconButton
-                aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-                onClick={toggleTheme}
-                sx={{
-                  display: { xs: 'none', sm: 'flex' },
-                  width: 36,
-                  height: 36,
-                  color: isDark ? '#FFFFFF' : '#0F172A',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: isDark
-                      ? 'rgba(255,255,255,0.1)'
-                      : 'rgba(0,0,0,0.05)',
-                  },
-                }}
-              >
-                {isDark
-                  ? <LightModeOutlinedIcon sx={{ fontSize: 18 }} />
-                  : <DarkModeOutlinedIcon sx={{ fontSize: 18 }} />}
-              </IconButton>
-            </Tooltip>
 
             {/* Mobile hamburger */}
             <IconButton

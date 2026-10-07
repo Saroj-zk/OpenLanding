@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { alpha } from '@mui/material/styles';
 import { useThemeMode } from '@/context/ThemeContext';
+import useInView from '@/utils/useInView';
+import { useReveal, revealSx } from '@/utils/reveal';
 import ProductDemo from '@/components/ProductDemo';
 
 // Icons
@@ -92,7 +94,7 @@ const GlassCard = ({ children, sx = {}, borderRadius = 24, ...props }) => {
   );
 };
 
-const TabVideo = ({ src, isActive, onEnded, fastUntil = 0, fastRate = 1 }) => {
+const TabVideo = ({ src, isActive, primed, canPlay, onEnded, fastUntil = 0, fastRate = 1 }) => {
   const videoRef = React.useRef(null);
 
   /* timeupdate fires often enough to switch at the boundary, and reading
@@ -106,21 +108,33 @@ const TabVideo = ({ src, isActive, onEnded, fastUntil = 0, fastRate = 1 }) => {
     [fastUntil, fastRate]
   );
 
+  /* Restart from the top each time the tab is selected, as before. */
   React.useEffect(() => {
-    if (isActive && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(e => console.log('Video play error:', e));
-    } else if (!isActive && videoRef.current) {
-      videoRef.current.pause();
-    }
+    if (isActive && videoRef.current) videoRef.current.currentTime = 0;
   }, [isActive]);
+
+  /* Decode only the clip that is both selected and on screen. The tabs cycle on
+     a timer, so without the second condition this keeps running while the
+     reader is somewhere else on the page. */
+  React.useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !primed) return;
+    if (isActive && canPlay) {
+      v.play().catch((e) => console.log('Video play error:', e));
+    } else {
+      v.pause();
+    }
+  }, [isActive, canPlay, primed]);
 
   return (
     <Box
       component="video"
       ref={videoRef}
-      src={src}
+      /* No src until this tab is next in line. Attaching all five on mount
+         starts ~58MB of parallel download during the first scroll. */
+      src={primed ? src : undefined}
       muted
+      preload="none"
       onEnded={onEnded}
       onTimeUpdate={pace}
       onLoadedMetadata={pace}
@@ -135,6 +149,25 @@ export default function ProductMatrixSection() {
   const [activeIdx, setActiveIdx] = React.useState(0);
   const activeTab = OPTIONS[activeIdx];
 
+  /* The margin gives the clips a screen and a half of runway, so the one on
+     show has already buffered by the time the section arrives. */
+  const [sectionRef, sectionInView] = useInView('1400px');
+
+  const [headRef, headShown] = useReveal();
+  const [gridRef, gridShown] = useReveal();
+
+  /* Fetch the clip on show plus the one the cycle moves to next, and keep
+     anything already fetched. */
+  const [primed, setPrimed] = React.useState({});
+  React.useEffect(() => {
+    if (!sectionInView) return;
+    setPrimed((prev) => {
+      const next = (activeIdx + 1) % OPTIONS.length;
+      if (prev[activeIdx] && prev[next]) return prev;
+      return { ...prev, [activeIdx]: true, [next]: true };
+    });
+  }, [sectionInView, activeIdx]);
+
   const handleNext = () => {
     setActiveIdx((prev) => (prev + 1) % OPTIONS.length);
   };
@@ -147,6 +180,7 @@ export default function ProductMatrixSection() {
     <Box
       component="section"
       id="ecosystem"
+      ref={sectionRef}
       sx={{
         backgroundColor: 'var(--bg-section)',
         color: 'var(--text-primary)',
@@ -162,7 +196,7 @@ export default function ProductMatrixSection() {
 
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2.5, sm: 3, md: 4 } }}>
         {/* Top Header */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'flex-end' }, mb: { xs: 4, md: 6 } }}>
+        <Box ref={headRef} sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'flex-end' }, mb: { xs: 4, md: 6 }, ...revealSx(headShown) }}>
           <Box>
             <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#CD7A4C' }} />
@@ -220,7 +254,7 @@ export default function ProductMatrixSection() {
         </Grid>
 
         {/* Main Content Grid */}
-        <Grid container spacing={3} alignItems="stretch" sx={{ flexGrow: 1 }}>
+        <Grid ref={gridRef} container spacing={3} alignItems="stretch" sx={{ flexGrow: 1, ...revealSx(gridShown, 120) }}>
 
           {/* Left Sidebar */}
           <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
@@ -346,7 +380,15 @@ export default function ProductMatrixSection() {
                   {opt.demo ? (
                     <ProductDemo flow={opt.demo} active={activeIdx === idx} />
                   ) : (
-                    <TabVideo src={opt.video} isActive={activeIdx === idx} onEnded={handleNext} fastUntil={opt.fastUntil} fastRate={opt.fastRate} />
+                    <TabVideo
+                      src={opt.video}
+                      isActive={activeIdx === idx}
+                      primed={!!primed[idx]}
+                      canPlay={sectionInView}
+                      onEnded={handleNext}
+                      fastUntil={opt.fastUntil}
+                      fastRate={opt.fastRate}
+                    />
                   )}
                 </Box>
               ))}

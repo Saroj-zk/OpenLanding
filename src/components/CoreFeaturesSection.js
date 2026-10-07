@@ -25,17 +25,14 @@ const TABS = [
   {
     id: 'multimodel',
     label: 'Multi-Model',
-    fullLabel: 'Multi-Model & Tokens',
-    shortLabel: 'Multi-Model',
     icon: AutoAwesomeIcon,
-    tagline: 'More models to choose from. Fewer tokens wasted.',
-    description: 'Use leading AI models from one place. Choose your own, or let Auto match each request with the right model.',
+    tagline: '200+ models, optimized for every request.',
+    description: 'Choose any model yourself, or let Auto match each request to the right model and optimize token usage, so every task uses only what it needs.',
     hasExplore: true,
     exploreLink: '/models',
     video: '/Videos/Why Openledger/Multimodel & Token.webm',
     demo: 'multimodel',
-    tagLeft: 'MULTI-MODEL',
-    tagRight: 'TOKEN OPTIMIZED',
+    tags: ['200+ Models', 'Auto Routing', 'Token Optimized'],
   },
   {
     id: 'memory',
@@ -49,8 +46,7 @@ const TABS = [
     exploreLink: '/memory',
     video: '/Videos/Why Openledger/Unified Memory.webm',
     demo: 'memory',
-    tagLeft: 'ONE MEMORY',
-    tagRight: 'FULL CONTROL',
+    tags: ['One Memory', 'Full Control'],
   },
   {
     id: 'private',
@@ -63,8 +59,7 @@ const TABS = [
     hasExplore: true,
     exploreLink: '/private',
     video: '/Videos/Why Openledger/Private AI.webm',
-    tagLeft: 'ZERO RETENTION',
-    tagRight: 'UNCENSORED',
+    tags: ['Zero Retention', 'Uncensored'],
   },
   {
     id: 'agents',
@@ -77,10 +72,41 @@ const TABS = [
     hasExplore: true,
     exploreLink: '/token',
     video: '/Videos/Why Openledger/Built For Agents.webm',
-    tagLeft: 'X402 ENABLED',
-    tagRight: 'AGENT READY',
+    tags: ['x402 Enabled', 'Agent Ready'],
   },
 ];
+
+/* All four clips sit in this section at once and crossfade. On plain autoPlay
+   every one of them loops for the whole visit, off screen included, which is
+   four decodes competing with the scroll. Only the visible one runs. */
+const TabClip = ({ src, play }) => {
+  const ref = React.useRef(null);
+  const [primed, setPrimed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (play) setPrimed(true);
+  }, [play]);
+
+  React.useEffect(() => {
+    const v = ref.current;
+    if (!v || !primed) return;
+    if (play) v.play().catch(() => {});
+    else v.pause();
+  }, [play, primed]);
+
+  return (
+    <Box
+      component="video"
+      ref={ref}
+      src={primed ? src : undefined}
+      loop
+      muted
+      playsInline
+      preload="none"
+      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    />
+  );
+};
 
 export default function CoreFeaturesSection() {
   const { isDark } = useThemeMode();
@@ -143,6 +169,21 @@ export default function CoreFeaturesSection() {
     window.addEventListener('pointerup', release);
     window.addEventListener('pointercancel', release);
   };
+
+  /* Nothing in here needs to be playing until the section is close. */
+  const [clipsLive, setClipsLive] = React.useState(false);
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setClipsLive(true);
+      return undefined;
+    }
+    const io = new IntersectionObserver(([e]) => setClipsLive(e.isIntersecting), {
+      rootMargin: '1400px',
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Initialize GSAP ScrollTrigger for pinning and scroll-based tab navigation
   React.useEffect(() => {
@@ -294,7 +335,7 @@ export default function CoreFeaturesSection() {
         }}
       >
         <Container maxWidth="lg" sx={{ px: { xs: 2.5, sm: 3, md: 4 } }}>
-          {/* Top Pill Badge: • WHY OPENLEDGER */}
+          {/* Top Pill Badge: • WHY HEY OPEN */}
           <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 1.6 }}>
             <Box
               sx={{
@@ -319,7 +360,7 @@ export default function CoreFeaturesSection() {
                   textTransform: 'uppercase',
                 }}
               >
-                Why OpenLedger
+                Why Hey Open
               </Typography>
             </Box>
           </Box>
@@ -365,7 +406,7 @@ export default function CoreFeaturesSection() {
                 pt: { md: 0.8 },
               }}
             >
-              Choose from 100+ models, keep your conversations private, explore without unnecessary restrictions, and carry your context wherever you go.
+              Choose from 200+ models, keep your conversations private, explore without unnecessary restrictions, and carry your context wherever you go.
             </Typography>
           </Box>
 
@@ -591,15 +632,7 @@ export default function CoreFeaturesSection() {
                   {tab.demo ? (
                     <ProductDemo flow={tab.demo} active={activeTab === idx} />
                   ) : (
-                    <Box
-                      component="video"
-                      src={tab.video}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                    <TabClip src={tab.video} play={activeTab === idx && clipsLive} />
                   )}
                 </Box>
 
@@ -668,35 +701,29 @@ export default function CoreFeaturesSection() {
                     sx={{
                       display: 'flex',
                       justifyContent: 'flex-start',
-                      gap: 3,
+                      flexWrap: 'wrap',
+                      columnGap: 3,
+                      rowGap: 0.75,
                       alignItems: 'center',
                       pt: 2,
                       borderTop: '1px solid var(--border-subtle)',
                       mt: 'auto'
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.12em',
-                        color: 'var(--text-secondary)',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {tab.tagLeft}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.12em',
-                        color: 'var(--text-secondary)',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {tab.tagRight}
-                    </Typography>
+                    {tab.tags.map((tag) => (
+                      <Typography
+                        key={tag}
+                        sx={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          letterSpacing: '0.12em',
+                          color: 'var(--text-secondary)',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {tag}
+                      </Typography>
+                    ))}
                   </Box>
                 </Box>
               </Box>

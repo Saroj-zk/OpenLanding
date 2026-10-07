@@ -130,7 +130,7 @@ const MECHANICS = [
     step: '01',
     term: 'Remember',
     line: 'Context worth keeping.',
-    detail: 'OpenLedger remembers useful preferences, projects, decisions, and details.',
+    detail: 'Hey Open remembers useful preferences, projects, decisions, and details.',
   },
   {
     step: '02',
@@ -142,7 +142,7 @@ const MECHANICS = [
     step: '03',
     term: 'Retrieve',
     line: 'The right context, when you need it.',
-    detail: 'OpenLedger brings back what matters for the conversation you’re having now.',
+    detail: 'Hey Open brings back what matters for the conversation you’re having now.',
   },
   {
     step: '04',
@@ -446,7 +446,7 @@ export default function MemoryPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>Universal Memory — One Context Across Every AI Model | OpenLedger</title>
+        <title>Universal Memory — One Context Across Every AI Model | Hey Open</title>
         <meta
           name="description"
           content="Say it once, every model knows. Your preferences, active projects, and decisions live in one private memory layer, independent of which model you chat with."
@@ -826,7 +826,7 @@ export default function MemoryPage() {
                     mt: 3,
                   }}
                 >
-                  Tell one model. Pick up with another. OpenLedger brings the right context with you, so you don’t have to explain everything again.
+                  Tell one model. Pick up with another. Hey Open brings the right context with you, so you don’t have to explain everything again.
                 </Typography>
               </Box>
             </Reveal>
@@ -882,7 +882,7 @@ export default function MemoryPage() {
                     pb: { md: 0.75 },
                   }}
                 >
-                  OpenLedger remembers the context that’s useful beyond a single conversation, so you don’t have to keep repeating yourself.
+                  Hey Open remembers the context that’s useful beyond a single conversation, so you don’t have to keep repeating yourself.
                 </Typography>
               </Box>
             </Reveal>

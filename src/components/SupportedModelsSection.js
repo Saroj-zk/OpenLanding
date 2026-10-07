@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useThemeMode } from '@/context/ThemeContext';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 // Complete catalog of premier models based on reference
 const ALL_MODELS = [
@@ -424,6 +425,12 @@ function getProviderStyle(providerKey, isDark) {
 }
 
 export default function SupportedModelsSection() {
+  /* Header, then the controls, then the table, each a beat behind the one
+     before it. */
+  const [headRef, headShown] = useReveal();
+  const [barRef, barShown] = useReveal();
+  const [tableRef, tableShown] = useReveal();
+
   const { isDark } = useThemeMode();
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState('All');
@@ -478,7 +485,7 @@ export default function SupportedModelsSection() {
     >
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2.5, sm: 3, md: 4 } }}>
         {/* Header: Badge + Big Title + Subtitle */}
-        <Box sx={{ mb: { xs: 4, md: 5 }, maxWidth: { xs: '100%', md: 680 } }}>
+        <Box ref={headRef} sx={{ mb: { xs: 4, md: 5 }, maxWidth: { xs: '100%', md: 680 }, ...revealSx(headShown) }}>
           {/* Pill Badge: • MODELS */}
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.85, mb: 1.8 }}>
             {/* Removed dot */}
@@ -519,12 +526,13 @@ export default function SupportedModelsSection() {
               maxWidth: 540,
             }}
           >
-            Reason with one. Code with another. Create with a third. Choose from 100+ models and use the right one for whatever you're working on.
+            Reason with one. Code with another. Create with a third. Choose from 200+ models and use the right one for whatever you're working on.
           </Typography>
         </Box>
 
         {/* Search & Filter Bar Controls */}
         <Box
+          ref={barRef}
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', lg: 'row' },
@@ -532,6 +540,7 @@ export default function SupportedModelsSection() {
             justifyContent: 'space-between',
             gap: 1.8,
             mb: 3,
+            ...revealSx(barShown, 110),
           }}
         >
           {/* Search Pill Input */}
@@ -760,7 +769,9 @@ export default function SupportedModelsSection() {
 
         {/* Main Models Table Container (The Big Apple Liquid Glass Surface Card) */}
         <Box
+          ref={tableRef}
           sx={{
+            ...revealSx(tableShown, 200),
             width: '100%',
             borderRadius: { xs: '20px', md: '26px' },
             backgroundColor: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(255, 255, 255, 0.72)',
@@ -977,7 +988,7 @@ export default function SupportedModelsSection() {
             </Box>
           )}
 
-          {/* Table Footer: "34+ more, added as they ship" & "See every model →" */}
+          {/* Table footer: how many are left, and the two ways to see them */}
           <Box
             sx={{
               display: 'flex',
@@ -998,50 +1009,87 @@ export default function SupportedModelsSection() {
                 fontWeight: 500,
               }}
             >
-              34+ more, added as they ship
+              200+ models, with more added as they ship
             </Typography>
 
-            <Box
-              onClick={() => setShowAll(!showAll)}
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 0.6,
-                px: 2,
-                py: 0.7,
-                borderRadius: '9999px',
-                cursor: 'pointer',
-                userSelect: 'none',
-                backdropFilter: 'blur(8px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                backgroundColor: isDark ? 'rgba(20, 24, 30, 0.45)' : 'rgba(255, 255, 255, 0.55)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.72)',
-                color: 'var(--text-heading)',
-                fontSize: '0.84rem',
-                fontWeight: 600,
-                boxShadow: isDark
-                  ? '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12)'
-                  : '0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.9)',
-                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                '&:hover': {
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)'
-                    : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.8) 100%)',
-                  borderColor: isDark ? 'rgba(255, 102, 0, 0.4)' : 'rgba(255, 102, 0, 0.35)',
-                  color: '#ff6600',
-                  backdropFilter: 'blur(16px) saturate(200%)',
-                  WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+            {/* The toggle opens the rest of the list here; this goes to the
+                catalog page, where they can be searched and filtered. */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
+              <Box
+                onClick={() => setShowAll(!showAll)}
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.6,
+                  px: 2,
+                  py: 0.7,
+                  borderRadius: '9999px',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  backdropFilter: 'blur(8px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                  backgroundColor: isDark ? 'rgba(20, 24, 30, 0.45)' : 'rgba(255, 255, 255, 0.55)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.72)',
+                  color: 'var(--text-heading)',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
                   boxShadow: isDark
-                    ? '0 3px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.3)'
-                    : '0 3px 10px rgba(15, 23, 42, 0.08), inset 0 1.5px 2px rgba(255, 255, 255, 1)',
-                  transform: 'translateY(-1px)',
-                },
-                '&:active': {
-                  transform: 'scale(0.94)',
-                },
-              }}
-            >
-              {showAll ? 'Show fewer models ↑' : 'See every model →'}
+                    ? '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12)'
+                    : '0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.9)',
+                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                  '&:hover': {
+                    background: isDark
+                      ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)'
+                      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.8) 100%)',
+                    borderColor: isDark ? 'rgba(255, 102, 0, 0.4)' : 'rgba(255, 102, 0, 0.35)',
+                    color: '#ff6600',
+                    backdropFilter: 'blur(16px) saturate(200%)',
+                    WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+                    boxShadow: isDark
+                      ? '0 3px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.3)'
+                      : '0 3px 10px rgba(15, 23, 42, 0.08), inset 0 1.5px 2px rgba(255, 255, 255, 1)',
+                    transform: 'translateY(-1px)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.94)',
+                  },
+                }}
+              >
+                {showAll ? 'Show fewer models ↑' : 'See every model →'}
+              </Box>
+
+              <Box
+                component="a"
+                href="/models"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.6,
+                  px: 2,
+                  py: 0.7,
+                  borderRadius: '9999px',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                  backgroundColor: '#ff6600',
+                  border: '1px solid rgba(255, 102, 0, 0.35)',
+                  color: '#FFFFFF',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                  boxShadow: '0 2px 8px rgba(255, 102, 0, 0.28)',
+                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                  '&:hover': {
+                    backgroundColor: '#e65c00',
+                    boxShadow: '0 4px 14px rgba(255, 102, 0, 0.36)',
+                    transform: 'translateY(-1px)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.94)',
+                  },
+                }}
+              >
+                Open the catalog
+                <ArrowForwardIcon sx={{ fontSize: 15 }} />
+              </Box>
             </Box>
           </Box>
         </Box>

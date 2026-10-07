@@ -329,7 +329,7 @@ export default function HeroChatBox({ prompt, setPrompt }) {
           >
             {/* Left: Automatically Rotating Multi-Model Pill */}
             <Tooltip
-              title="OpenLedger dynamically routes prompts across multiple leading AI models"
+              title="Hey Open dynamically routes prompts across multiple leading AI models"
               placement="top"
             >
               <Box
@@ -497,7 +497,7 @@ export default function HeroChatBox({ prompt, setPrompt }) {
               </Tooltip>
 
               {/* Send Button */}
-              <Tooltip title="Open in HeyOpen" placement="top">
+              <Tooltip title="Open in Hey Open" placement="top">
                 <IconButton
                   onClick={() => handleSend()}
                   aria-label="Send message"

@@ -16,7 +16,7 @@ export default function TokenPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>Tokenomics — $OPEN Revenue Flywheel & Utility | OpenLedger</title>
+        <title>Tokenomics — $OPEN Revenue Flywheel & Utility | Hey Open</title>
         <meta
           name="description"
           content="$OPEN is rewarded for real AI usage, not printed out of thin air. Real protocol revenue buys back tokens, rewards compute providers, and burns the surplus on-chain."
@@ -220,7 +220,7 @@ export default function TokenPage() {
                 <Box
                   component="img"
                   src="/images/optimization.png"
-                  alt="OpenLedger Token Router and Optimization"
+                  alt="Hey Open Token Router and Optimization"
                   sx={{
                     width: '100%',
                     height: 'auto',
@@ -518,7 +518,7 @@ export default function TokenPage() {
               <Box
                 component="img"
                 src="/images/Build for agents.jpg"
-                alt="OpenLedger Build for Autonomous Agents"
+                alt="Hey Open Build for Autonomous Agents"
                 sx={{
                   width: '100%',
                   height: 240,
@@ -774,7 +774,7 @@ export default function TokenPage() {
                   zIndex: 1,
                 }}
               >
-                Join thousands of developers, researchers, and automated agent pipelines routing compute through OpenLedger today.
+                Join thousands of developers, researchers, and automated agent pipelines routing compute through Hey Open today.
               </Typography>
 
               <Box
@@ -814,7 +814,7 @@ export default function TokenPage() {
                     },
                   }}
                 >
-                  Start Using OpenLedger →
+                  Start Using Hey Open →
                 </Box>
                 <Link href="/models" passHref style={{ textDecoration: 'none' }}>
                   <Box

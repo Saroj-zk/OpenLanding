@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { useThemeMode } from '@/context/ThemeContext';
+import useInView from '@/utils/useInView';
+import { useReveal, revealSx } from '@/utils/reveal';
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
@@ -12,6 +14,34 @@ import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
 
 export default function PricingSection() {
   const { isDark } = useThemeMode();
+
+  /* Below lg the wrapper is display:none, but a hidden <video> still downloads
+     and decodes, so the clip waits on the observer either way. An element that
+     is display:none never reports as intersecting, which is what keeps it off
+     small screens entirely. */
+  const [headRef, headShown] = useReveal();
+  /* The two columns reveal on their own. The row that holds them must not,
+     because the clip between them blends with the page and a transform on an
+     ancestor would cut it off from what it blends against. */
+  const [leftRef, leftShown] = useReveal();
+  const [rightRef, rightShown] = useReveal();
+
+  const [clipRef, clipInView] = useInView('1000px');
+  const clipVideoRef = React.useRef(null);
+
+  /* Latched: once fetched, leaving the section pauses the clip instead of
+     dropping the src, which would rewind it and log an empty-src warning. */
+  const [clipLoaded, setClipLoaded] = React.useState(false);
+  React.useEffect(() => {
+    if (clipInView) setClipLoaded(true);
+  }, [clipInView]);
+
+  React.useEffect(() => {
+    const v = clipVideoRef.current;
+    if (!v || !clipLoaded) return;
+    if (clipInView) v.play().catch(() => {});
+    else v.pause();
+  }, [clipInView, clipLoaded]);
 
   // Theme-adaptive colors
   const primaryText = isDark ? '#FFFFFF' : '#111111';
@@ -96,7 +126,7 @@ export default function PricingSection() {
       <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 }, position: 'relative' }}>
 
         {/* HERO HEADER */}
-        <Box sx={{ textAlign: 'center', mb: { xs: 8, md: 10 } }}>
+        <Box ref={headRef} sx={{ textAlign: 'center', mb: { xs: 8, md: 10 }, ...revealSx(headShown) }}>
           <Typography variant="h2" sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '3rem', lg: '3.5rem' }, lineHeight: 1.1, letterSpacing: '-0.02em', color: primaryText, mb: 2 }}>
             One Subscription.<br />All your go-to AI models.
           </Typography>
@@ -117,7 +147,7 @@ export default function PricingSection() {
         }}>
 
           {/* LEFT COLUMN: Separate Subscriptions */}
-          <Box sx={{ width: { xs: '100%', sm: 340 }, flexShrink: 0, position: 'relative' }}>
+          <Box ref={leftRef} sx={{ width: { xs: '100%', sm: 340 }, flexShrink: 0, position: 'relative', ...revealSx(leftShown, 120) }}>
             <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: secondaryText, mb: 3, textAlign: 'center' }}>
               The Cost of Fragmentation
             </Typography>
@@ -202,7 +232,7 @@ export default function PricingSection() {
           </Box>
 
           {/* MIDDLE BRIDGE: Video ONLY */}
-          <Box sx={{
+          <Box ref={clipRef} sx={{
             flexGrow: 1,
             height: 380,
             mt: '38px',
@@ -217,11 +247,12 @@ export default function PricingSection() {
             borderRadius: '24px', // Soft rounded edges for the crop
           }}>
             <video
-              src="/pricing_video.mp4"
-              autoPlay
+              ref={clipVideoRef}
+              src={clipLoaded ? '/pricing_video.mp4' : undefined}
               loop
               muted
               playsInline
+              preload="none"
               style={{
                 width: '100%',
                 height: '100%',
@@ -232,8 +263,8 @@ export default function PricingSection() {
             />
           </Box>
 
-          {/* RIGHT COLUMN: OpenLedger Pro Premium Card */}
-          <Box sx={{ width: { xs: '100%', sm: 380 }, flexShrink: 0, position: 'relative', mt: { xs: 0, lg: '28px' } }}>
+          {/* RIGHT COLUMN: Hey Open Pro Premium Card */}
+          <Box ref={rightRef} sx={{ width: { xs: '100%', sm: 380 }, flexShrink: 0, position: 'relative', mt: { xs: 0, lg: '28px' }, ...revealSx(rightShown, 220) }}>
             <style>{`
               @keyframes floatCard {
                 0%, 100% { transform: translateY(0px); }
@@ -300,7 +331,7 @@ export default function PricingSection() {
                   {/* Top Header Row */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography sx={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
-                      <span style={{ color: primaryText }}>OPENLEDGER</span> <span style={{ color: '#ff6600' }}>PRO</span>
+                      <span style={{ color: primaryText }}>HEY OPEN</span> <span style={{ color: '#ff6600' }}>PRO</span>
                     </Typography>
                     <Box sx={{
                       backgroundColor: 'rgba(255,102,0,0.1)',

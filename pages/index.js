@@ -17,10 +17,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>HeyOpen | AI Assistant</title>
+        <title>Hey Open | AI Assistant</title>
         <meta
           name="description"
-          content="HeyOpen - A private, multi-model AI experience with no account required to start."
+          content="Hey Open - A private, multi-model AI experience with no account required to start."
         />
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>

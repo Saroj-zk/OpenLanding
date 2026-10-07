@@ -632,7 +632,7 @@ export function MemoryChatDemo() {
             color: UI.muted,
           }}
         >
-          HeyOpen can make mistakes. Verify important information.
+          Hey Open can make mistakes. Verify important information.
         </Typography>
       </Box>
 

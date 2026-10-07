@@ -4,24 +4,20 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import Tooltip from '@mui/material/Tooltip';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { useThemeMode } from '@/context/ThemeContext';
 
+/* Each of these resolves to a section on this page. #consensus and #privacy
+   were in here before and matched nothing. */
 const NAV_ITEMS = [
-  { label: 'Models', href: '#models' },
-  { label: 'Consensus', href: '#consensus' },
-  { label: 'Privacy', href: '#privacy' },
+  { label: 'Models', href: '/models' },
+  { label: 'Consensus', href: '#consensus-mode' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'API', href: '#api' },
-  { label: 'Enterprise', href: '#enterprise' },
+  { label: 'Token', href: '#token' },
 ];
 
 export default function Header() {
-  const { isDark, toggleTheme } = useThemeMode();
+  const { isDark } = useThemeMode();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState('');
   const [isVisible, setIsVisible] = React.useState(false);
   const lastScrollY = React.useRef(0);
 
@@ -32,7 +28,10 @@ export default function Header() {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
 
-          const heroHeight = window.innerHeight * 0.7;
+          /* Measured off the hero rather than guessed from the viewport,
+             and if a page has no hero the bar simply stays put. */
+          const heroEl = document.getElementById('hero');
+          const heroHeight = heroEl ? heroEl.offsetHeight * 0.75 : 0;
           if (currentScrollY < heroHeight) {
             setIsVisible(false);
           } else if (currentScrollY > lastScrollY.current) {
@@ -113,7 +112,7 @@ export default function Header() {
             >
               <img
                 src="/Open%20Ledegr%20Full%20Black.svg"
-                alt="OpenLedger"
+                alt="Hey Open"
                 style={{
                   height: 20,
                   width: 'auto',
@@ -123,95 +122,6 @@ export default function Header() {
               />
             </Box>
 
-            {/* Chat Input */}
-            <Box
-              component="form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (inputValue.trim()) {
-                  setInputValue('');
-                }
-              }}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                borderRadius: '999px',
-                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.06)' : '#F5F7F9',
-                height: 44,
-                px: 2,
-                gap: 1.5,
-                width: { xs: '100%', md: 260, lg: 300 },
-                transition: 'all 0.2s ease',
-                '&:focus-within': {
-                  boxShadow: isDark ? '0 0 0 1px rgba(255,255,255,0.2)' : '0 0 0 1px rgba(0,0,0,0.1)',
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.08)' : '#FFFFFF',
-                },
-              }}
-            >
-              <Box
-                component="input"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask anything..."
-                sx={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  background: 'transparent',
-                  fontSize: '0.92rem',
-                  color: 'var(--text-primary)',
-                  fontFamily: '"Inter", -apple-system, sans-serif',
-                  '&::placeholder': {
-                    color: 'var(--text-muted)',
-                  },
-                }}
-              />
-              <Box
-                component="button"
-                type="submit"
-                sx={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: '50%',
-                  backdropFilter: 'blur(8px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                    : 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 243, 235, 0.88) 100%)',
-                  border: isDark ? '1px solid rgba(255, 102, 0, 0.35)' : '1px solid rgba(255, 102, 0, 0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ff6600',
-                  boxShadow: isDark
-                    ? '0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3)'
-                    : '0 2px 6px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 1)',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                  '&:hover': {
-                    transform: 'scale(1.06)',
-                    background: isDark
-                      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.3) 0%, rgba(255, 255, 255, 0.12) 100%)'
-                      : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                    borderColor: isDark ? 'rgba(255, 102, 0, 0.5)' : 'rgba(255, 102, 0, 0.38)',
-                    backdropFilter: 'blur(16px) saturate(200%)',
-                    WebkitBackdropFilter: 'blur(16px) saturate(200%)',
-                    boxShadow: isDark
-                      ? '0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1.5px 2px rgba(255, 255, 255, 0.45)'
-                      : '0 4px 10px rgba(15, 23, 42, 0.14), inset 0 1.5px 2px rgba(255, 255, 255, 1)',
-                  },
-                  '&:active': {
-                    transform: 'scale(0.92)',
-                  },
-                }}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14 }}>
-                  <line x1="12" y1="19" x2="12" y2="5" />
-                  <polyline points="5 12 12 5 19 12" />
-                </svg>
-              </Box>
-            </Box>
           </Box>
 
           {/* Center: Links */}
@@ -319,25 +229,6 @@ export default function Header() {
             >
               Log in
             </Box>
-
-            {/* Theme Toggle Button */}
-            <Tooltip title={isDark ? 'Switch to light theme' : 'Switch to dark theme'} arrow>
-              <IconButton
-                onClick={toggleTheme}
-                sx={{
-                  width: 38,
-                  height: 38,
-                  ml: { sm: 1 },
-                  color: isDark ? '#FFFFFF' : '#0F172A',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                  },
-                }}
-              >
-                {isDark ? <LightModeOutlinedIcon sx={{ fontSize: 20 }} /> : <DarkModeOutlinedIcon sx={{ fontSize: 20 }} />}
-              </IconButton>
-            </Tooltip>
 
             {/* Mobile Hamburger Toggle */}
             <IconButton

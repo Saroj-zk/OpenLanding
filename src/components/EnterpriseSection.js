@@ -25,6 +25,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 const leftFeatures = [
   {
@@ -81,6 +82,9 @@ const rightFeatures = [
 ];
 
 export default function EnterpriseSection() {
+  const [headRef, headShown] = useReveal();
+  const [cardRef, cardShown] = useReveal();
+
   const { isDark } = useThemeMode();
 
   // Contact Sales Modal State
@@ -215,7 +219,7 @@ export default function EnterpriseSection() {
         <Box sx={{ maxWidth: 1280, mx: 'auto' }}>
           
           {/* TOP HEADER */}
-          <Box sx={{ mb: { xs: 6, md: 8 } }}>
+          <Box ref={headRef} sx={{ mb: { xs: 6, md: 8 }, ...revealSx(headShown) }}>
             {/* Eyebrow Pill */}
             <Box
               sx={{
@@ -299,7 +303,9 @@ export default function EnterpriseSection() {
 
           {/* MASTER GLASS FEATURE CARD */}
           <Box
+            ref={cardRef}
             sx={{
+              ...revealSx(cardShown, 140),
               backgroundColor: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.75)',
               backdropFilter: 'blur(24px) saturate(180%)',
               WebkitBackdropFilter: 'blur(24px) saturate(180%)',
@@ -536,7 +542,7 @@ export default function EnterpriseSection() {
                 </Typography>
               </Box>
               <Typography variant="h5" sx={{ fontWeight: 800, color: 'var(--text-heading)', letterSpacing: '-0.02em' }}>
-                Deploy OpenLedger across your org
+                Deploy Hey Open across your org
               </Typography>
               <Typography sx={{ fontSize: '0.9rem', color: 'var(--text-secondary)', mt: 0.5 }}>
                 Custom pricing, SLA guarantees, SSO/SCIM integration, and dedicated VPC options.
@@ -759,7 +765,7 @@ export default function EnterpriseSection() {
                 Zero Data Training
               </Typography>
               <Typography sx={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                Neither OpenLedger nor downstream model providers (OpenAI, Anthropic, Google) ever use your enterprise prompts or attachments for model training.
+                Neither Hey Open nor downstream model providers (OpenAI, Anthropic, Google) ever use your enterprise prompts or attachments for model training.
               </Typography>
             </Box>
 

@@ -1,73 +1,10 @@
 /* ===================================================================
-   OpenLedger Design System — Theme CSS Variables
-   Applied via: html[data-theme="dark"]  (default)
-               html[data-theme="light"]
+   Hey Open Design System — Theme CSS Variables
+   One palette. The site is light, and there is nothing to switch to.
    =================================================================== */
 
-/* ---- DARK THEME (default) ---- */
-:root,
-html[data-theme="dark"] {
-  --bg-page: #0A0C10;
-  --bg-section: #0A0C10;
-  --bg-section-alt: #0E1015;
-  --bg-card: #0E1015;
-  --bg-card-hover: #141820;
-  --bg-card-active: #1A1F2B;
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-glass-hover: rgba(255, 255, 255, 0.09);
-  --bg-pill: rgba(255, 255, 255, 0.06);
-
-  --text-primary: #F1F5F9;
-  --text-secondary: rgba(255, 255, 255, 0.65);
-  --text-muted: rgba(255, 255, 255, 0.42);
-  --text-heading: #FFFFFF;
-
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-normal: rgba(255, 255, 255, 0.13);
-  --border-strong: rgba(255, 255, 255, 0.24);
-
-  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.65);
-  --shadow-popup: 0 24px 60px rgba(0, 0, 0, 0.85);
-
-  --scrollbar-track: #0A0C10;
-  --scrollbar-thumb: rgba(255, 255, 255, 0.18);
-
-  --hero-bg: #EEF0F0;
-  --hero-headline: #0F172A;
-  --hero-subtitle: #475569;
-  --hero-curve-fill: #0A0C10;
-
-  --nav-bg: rgba(18, 22, 30, 0.94);
-  --nav-border: rgba(255, 255, 255, 0.12);
-  --nav-text: rgba(255, 255, 255, 0.85);
-  --nav-text-hover: #FFFFFF;
-
-  --hub-orb-bg: #11141A;
-  --hub-orb-border: rgba(255, 255, 255, 0.2);
-  --hub-orb-shadow: 0 0 35px rgba(0, 0, 0, 0.9);
-  --hub-logo-filter: none;
-
-  --node-bubble-bg: #11141A;
-  --node-bubble-bg-active: #181C24;
-  --node-bubble-border: rgba(255, 255, 255, 0.14);
-  --node-bubble-border-active: rgba(255, 255, 255, 0.45);
-  --node-bubble-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-
-  --svg-orbit-stroke: rgba(255, 255, 255, 0.12);
-  --svg-orbit-inner-stroke: rgba(255, 255, 255, 0.08);
-  --svg-bead-core: #FFFFFF;
-  --svg-bead-glow: rgba(255, 255, 255, 0.55);
-
-  --chat-user-bg: rgba(255, 255, 255, 0.08);
-  --chat-user-border: rgba(255, 255, 255, 0.08);
-  --chat-bot-bg: rgba(255, 255, 255, 0.035);
-  --chat-bot-border: rgba(255, 255, 255, 0.05);
-
-  color-scheme: dark;
-}
-
-/* ---- LIGHT THEME ---- */
-html[data-theme="light"] {
+/* ---- The palette ---- */
+:root {
   --bg-page: #F8F9FA;
   --bg-section: #F3F5F8;
   --bg-section-alt: #EBF0F5;
@@ -161,26 +98,18 @@ body {
 }
 
 /* Ambient gradient layer adaptation in light mode */
-html[data-theme="light"] [data-ambient-blur] {
+[data-ambient-blur] {
   opacity: 0.25 !important;
 }
 
 /* Invert icons behavior */
-html[data-theme="light"] .theme-invert-dark-only {
+.theme-invert-dark-only {
   filter: none !important;
 }
 
-html[data-theme="dark"] .theme-invert-dark-only {
-  filter: brightness(0) invert(1) !important;
-}
-
 /* Central Hub logo in SupportedModels */
-html[data-theme="light"] #center-hub-logo {
+#center-hub-logo {
   filter: invert(1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15)) !important;
-}
-
-html[data-theme="dark"] #center-hub-logo {
-  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.25)) !important;
 }
 
 /* Smooth color transitions on all interactive UI */
@@ -228,7 +157,11 @@ svg {
 }
 
 /* ── Smooth anchor scroll with offset for sticky header ────────── */
-html {
+/* Lenis writes scrollTop every frame. With native smooth on top, the
+   browser animates toward each of those writes as well, so every wheel
+   tick gets eased twice and the page feels rubbery. Keep native smooth
+   only for the case where Lenis is not mounted (it adds .lenis to html). */
+html:not(.lenis) {
   scroll-behavior: smooth;
 }
 

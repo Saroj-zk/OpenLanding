@@ -41,8 +41,8 @@ const FOOTER_COLUMNS = [
     title: 'Product',
     links: [
       { label: 'Chat', href: 'https://ais.openledger.xyz/chat', external: true },
-      { label: 'Models', href: '#models' },
-      { label: 'Council Mode', href: '#council' },
+      { label: 'Models', href: '/models' },
+      { label: 'Consensus Mode', href: '#consensus-mode' },
       { label: 'iOS app', href: '#' },
       { label: 'Android app', href: '#' },
       { label: 'Pricing', href: '#pricing' },
@@ -53,7 +53,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: 'API reference', href: '#api' },
       { label: 'Quickstart', href: '#api' },
-      { label: 'Model IDs', href: '#models' },
+      { label: 'Model IDs', href: '/models' },
       { label: 'Status', href: '#' },
       { label: 'Documentation', href: '#' },
     ],
@@ -117,7 +117,7 @@ export default function Footer({ showCta = false }) {
               py: { xs: 8, sm: 10, md: 12 },
               textAlign: 'center',
               mb: { xs: 8, sm: 10, md: 12 },
-              // Ambient deep warm orange and amber light streaks matching OpenLedger brand
+              // Ambient deep warm orange and amber light streaks matching Hey Open brand
               backgroundColor: '#120802',
               backgroundImage: `
                 radial-gradient(ellipse 85% 65% at 50% 30%, rgba(255, 102, 0, 0.46) 0%, rgba(204, 75, 0, 0.22) 50%, rgba(18, 8, 2, 0.96) 85%),
@@ -342,7 +342,7 @@ export default function Footer({ showCta = false }) {
             >
               <img
                 src="/Open%20Ledegr%20Full%20Black.svg"
-                alt="OpenLedger"
+                alt="Hey Open"
                 style={{
                   height: 26,
                   width: 'auto',
@@ -630,7 +630,7 @@ export default function Footer({ showCta = false }) {
               textAlign: { xs: 'center', md: 'left' },
             }}
           >
-            © {new Date().getFullYear()} OpenLedger. All rights reserved.
+            © {new Date().getFullYear()} Hey Open. All rights reserved.
           </Typography>
 
           {/* System routing status dot */}

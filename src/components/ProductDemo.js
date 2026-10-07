@@ -717,7 +717,7 @@ export default function ProductDemo({ flow = 'multimodel', active = true }) {
         )}
 
         <Typography sx={{ mt: F.compact ? 0.5 : 0.8, textAlign: 'center', fontSize: '0.62rem', color: C.muted }}>
-          HeyOpen can make mistakes. Verify important information.
+          Hey Open can make mistakes. Verify important information.
         </Typography>
       </Box>
 

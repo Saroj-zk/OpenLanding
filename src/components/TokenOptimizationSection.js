@@ -4,6 +4,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useThemeMode } from '@/context/ThemeContext';
+import { useReveal, revealSx } from '@/utils/reveal';
 
 const requests = [
   "Make a first call deck",
@@ -31,16 +32,21 @@ const attributes = [
 ];
 
 export default function TokenOptimizationSection() {
+  /* Two columns side by side, so the copy lands first and the chart
+     follows it in. */
+  const [leftRef, leftShown] = useReveal();
+  const [rightRef, rightShown] = useReveal();
+
   const { isDark } = useThemeMode();
 
   return (
-    <Container maxWidth="xl" sx={{ pb: { xs: 8, md: 10 }, overflow: 'hidden' }}>
+    <Container id="token" maxWidth="xl" sx={{ pb: { xs: 8, md: 10 }, overflow: 'hidden', scrollMarginTop: '96px' }}>
       {/* NEW TOKEN OPTIMIZATION LAYOUT */}
       <Box sx={{ maxWidth: 1400, mx: 'auto', mt: 4 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 4, alignItems: 'stretch' }}>
           
           {/* Left Column (Text & Blue Card) */}
-          <Box sx={{ width: { xs: '100%', lg: '33.333%' }, display: 'flex', flexDirection: 'column' }}>
+          <Box ref={leftRef} sx={{ width: { xs: '100%', lg: '33.333%' }, display: 'flex', flexDirection: 'column', ...revealSx(leftShown) }}>
             <Box sx={{ mb: { xs: 4, md: 8 } }}>
               <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em', color: '#ff6600', textTransform: 'uppercase', mb: 2 }}>
                 Token Optimisation
@@ -80,7 +86,8 @@ export default function TokenOptimizationSection() {
           </Box>
 
           {/* Right Column (Big Interactive Infographic matching Image 1) */}
-          <Box sx={{ 
+          <Box ref={rightRef} sx={{ 
+            ...revealSx(rightShown, 140),
             width: { xs: '100%', lg: '66.666%' },
             display: 'flex',
             alignItems: 'center',
