@@ -412,7 +412,7 @@ export default function CoreFeaturesSection() {
                 pt: { md: 0.8 },
               }}
             >
-              Choose from 100+ models, keep your conversations private, explore without unnecessary restrictions, and carry your context wherever you go.
+              Choose from 200+ models, keep your conversations private, explore without unnecessary restrictions, and carry your context wherever you go.
             </Typography>
           </Box>
 

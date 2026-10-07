@@ -526,7 +526,7 @@ export default function SupportedModelsSection() {
               maxWidth: 540,
             }}
           >
-            Reason with one. Code with another. Create with a third. Choose from 100+ models and use the right one for whatever you're working on.
+            Reason with one. Code with another. Create with a third. Choose from 200+ models and use the right one for whatever you're working on.
           </Typography>
         </Box>
 
@@ -1009,7 +1009,7 @@ export default function SupportedModelsSection() {
                 fontWeight: 500,
               }}
             >
-              34+ more, added as they ship
+              200+ models, with more added as they ship
             </Typography>
 
             {/* The toggle opens the rest of the list here; this goes to the

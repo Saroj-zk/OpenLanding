@@ -231,7 +231,7 @@ export default function CapabilitiesPage() {
             {/* Stat badges row */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3.5, pt: 2.5, borderTop: '1px solid var(--border-subtle)' }}>
               {[
-                { value: '50+', label: 'Frontier Models' },
+                { value: '200+', label: 'Frontier Models' },
                 { value: '1', label: 'Subscription' },
                 { value: '0s', label: 'Data Retention' },
                 { value: '∞', label: 'Modalities' },
@@ -1094,7 +1094,7 @@ export default function CapabilitiesPage() {
                       },
                     }}
                   >
-                    View All 50+ Models
+                    View All 200+ Models
                   </Box>
                 </Link>
               </Box>
