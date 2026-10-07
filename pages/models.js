@@ -9,6 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, ProviderTile } from '@/components/ui/LedgerUI';
+import ModelPickerWindow from '@/components/ModelPickerWindow';
 import { MODELS, KINDS, PROVIDERS } from '@/data/catalog';
 
 /* How many models the product serves. The list further down carries the
@@ -584,7 +585,41 @@ export default function ModelsPage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: The catalog ────────────────────────────── */}
+        {/* ── Section 4: The picker, as it ships ─────────────────── */}
+        <Rule />
+        <Box sx={{ py: SECTION_PY }}>
+          <Reveal>
+            <Box sx={{ maxWidth: '44ch', mb: { xs: 5, md: 7 } }}>
+              <Typography
+                component="h2"
+                sx={{
+                  fontSize: { xs: '1.9rem', md: '2.6rem' },
+                  fontWeight: 800,
+                  lineHeight: 1.14,
+                  letterSpacing: '-0.03em',
+                  color: 'var(--text-heading)',
+                  mb: 2,
+                  textWrap: 'balance',
+                }}
+              >
+                This is the picker you get.
+              </Typography>
+              <Typography sx={{ fontSize: '1.02rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+                Search by name, narrow by modality, star the ones you keep coming back to. Every
+                model carries what it can do, and the card shows you context and cost before you
+                commit to it.
+              </Typography>
+            </Box>
+          </Reveal>
+
+          <Reveal delay={110}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', px: { xs: 0, md: 4 } }}>
+              <ModelPickerWindow />
+            </Box>
+          </Reveal>
+        </Box>
+
+        {/* ── Section 5: The catalog ────────────────────────────── */}
         <Rule />
         <Box id="catalog-list" sx={{ py: SECTION_PY, scrollMarginTop: '96px' }}>
           <Reveal>
@@ -880,7 +915,7 @@ export default function ModelsPage() {
           </Reveal>
         </Box>
 
-        {/* ── Section 5: Closing ──────────────────────────────────── */}
+        {/* ── Section 6: Closing ──────────────────────────────────── */}
         <Rule />
         <Box sx={{ py: { xs: 9, md: 14 } }}>
           <Reveal>
