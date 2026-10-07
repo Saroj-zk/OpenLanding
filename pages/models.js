@@ -872,7 +872,7 @@ export default function ModelsPage() {
                       '&:hover': { borderColor: ORANGE, color: ORANGE },
                     }}
                   >
-                    Show the remaining {filteredModels.length - PAGE_SIZE}
+                    Show more
                   </Box>
                 </Box>
               )}
