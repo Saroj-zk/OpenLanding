@@ -28,14 +28,13 @@ const TABS = [
     fullLabel: 'Multi-Model & Tokens',
     shortLabel: 'Multi-Model',
     icon: AutoAwesomeIcon,
-    tagline: 'More models to choose from. Fewer tokens wasted.',
-    description: 'Use leading AI models from one place. Choose your own, or let Auto match each request with the right model.',
+    tagline: '200+ models, optimized for every request.',
+    description: 'Choose any model yourself, or let Auto match each request to the right model and optimize token usage, so every task uses only what it needs.',
     hasExplore: true,
     exploreLink: '/models',
     video: '/Videos/Why Openledger/Multimodel & Token.webm',
     demo: 'multimodel',
-    tagLeft: 'MULTI-MODEL',
-    tagRight: 'TOKEN OPTIMIZED',
+    tags: ['200+ Models', 'Auto Routing', 'Token Optimized'],
   },
   {
     id: 'memory',
@@ -49,8 +48,7 @@ const TABS = [
     exploreLink: '/memory',
     video: '/Videos/Why Openledger/Unified Memory.webm',
     demo: 'memory',
-    tagLeft: 'ONE MEMORY',
-    tagRight: 'FULL CONTROL',
+    tags: ['One Memory', 'Full Control'],
   },
   {
     id: 'private',
@@ -63,8 +61,7 @@ const TABS = [
     hasExplore: true,
     exploreLink: '/private',
     video: '/Videos/Why Openledger/Private AI.webm',
-    tagLeft: 'ZERO RETENTION',
-    tagRight: 'UNCENSORED',
+    tags: ['Zero Retention', 'Uncensored'],
   },
   {
     id: 'agents',
@@ -77,8 +74,7 @@ const TABS = [
     hasExplore: true,
     exploreLink: '/token',
     video: '/Videos/Why Openledger/Built For Agents.webm',
-    tagLeft: 'X402 ENABLED',
-    tagRight: 'AGENT READY',
+    tags: ['x402 Enabled', 'Agent Ready'],
   },
 ];
 
@@ -707,35 +703,29 @@ export default function CoreFeaturesSection() {
                     sx={{
                       display: 'flex',
                       justifyContent: 'flex-start',
-                      gap: 3,
+                      flexWrap: 'wrap',
+                      columnGap: 3,
+                      rowGap: 0.75,
                       alignItems: 'center',
                       pt: 2,
                       borderTop: '1px solid var(--border-subtle)',
                       mt: 'auto'
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.12em',
-                        color: 'var(--text-secondary)',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {tab.tagLeft}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.12em',
-                        color: 'var(--text-secondary)',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {tab.tagRight}
-                    </Typography>
+                    {tab.tags.map((tag) => (
+                      <Typography
+                        key={tag}
+                        sx={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          letterSpacing: '0.12em',
+                          color: 'var(--text-secondary)',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {tag}
+                      </Typography>
+                    ))}
                   </Box>
                 </Box>
               </Box>
