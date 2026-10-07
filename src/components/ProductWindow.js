@@ -106,7 +106,19 @@ export default function ProductWindow() {
   const ref = React.useRef(null);
   const [live, setLive] = React.useState(false);
   const [still, setStill] = React.useState(false);
-  const [t, setT] = React.useState(0);
+
+  /* Everything that moves every frame is written straight to these nodes. A
+     state update per frame means React reconciles the whole window sixty times
+     a second, and the list judders under it. */
+  const listRef = React.useRef(null);
+  const pickerRef = React.useRef(null);
+  const cardRef = React.useRef(null);
+  const headRef = React.useRef(null);
+  const chipsRef = React.useRef(null);
+
+  /* Only the two things that change in steps go through state. */
+  const [cursorRow, setCursorRow] = React.useState(0);
+  const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined' && window.matchMedia) {
@@ -121,23 +133,49 @@ export default function ProductWindow() {
 
   React.useEffect(() => {
     if (!live || still) return undefined;
-    const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
-    const id = setInterval(() => {
-      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-      setT((now - started) % T.loop);
-    }, 45);
-    return () => clearInterval(id);
+
+    const started = performance.now();
+    let frame = 0;
+    let lastRow = -1;
+    let lastOpen = null;
+
+    const tick = (now) => {
+      const t = (now - started) % T.loop;
+
+      /* Picker: out of the composer on the way in, back into it on the way out. */
+      const shown = easeOut(clamp01((t - T.open) / T.openSpan)) *
+        (1 - easeOut(clamp01((t - T.close) / T.closeSpan)));
+      const scrolled = easeInOut(clamp01((t - T.scrollStart) / T.scrollSpan)) * MAX_SCROLL;
+      const cardShown = clamp01((t - T.cardIn) / 260) *
+        (1 - easeOut(clamp01((t - T.close) / T.closeSpan)));
+      const row = Math.min(ROWS.length - 1, Math.floor((scrolled + CURSOR_Y) / ROW_H));
+
+      if (listRef.current) {
+        listRef.current.style.transform = `translate3d(0, ${-scrolled}px, 0)`;
+      }
+      if (pickerRef.current) {
+        pickerRef.current.style.opacity = shown;
+        pickerRef.current.style.transform =
+          `translateX(-50%) translateY(${(1 - shown) * 16}px) scale(${0.97 + shown * 0.03})`;
+      }
+      if (cardRef.current) cardRef.current.style.opacity = cardShown;
+      const dim = 1 - shown * 0.82;
+      if (headRef.current) headRef.current.style.opacity = dim;
+      if (chipsRef.current) chipsRef.current.style.opacity = dim;
+
+      /* These two change in steps, so they are worth a render. */
+      if (row !== lastRow) { lastRow = row; setCursorRow(row); }
+      const isOpen = shown > 0.5;
+      if (isOpen !== lastOpen) { lastOpen = isOpen; setOpen(isOpen); }
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
   }, [live, still]);
 
-  /* Picker: out of the composer on the way in, back into it on the way out. */
-  const openP = clamp01((t - T.open) / T.openSpan);
-  const closeP = clamp01((t - T.close) / T.closeSpan);
-  const shown = easeOut(openP) * (1 - easeOut(closeP));
-
-  const scrolled = easeInOut(clamp01((t - T.scrollStart) / T.scrollSpan)) * MAX_SCROLL;
-  const cursorRow = Math.min(ROWS.length - 1, Math.floor((scrolled + CURSOR_Y) / ROW_H));
   const active = ROWS[cursorRow];
-  const cardShown = clamp01((t - T.cardIn) / 260) * (1 - easeOut(closeP));
 
   return (
     <Box
@@ -195,7 +233,7 @@ export default function ProductWindow() {
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', px: { xs: 2, md: 4 }, pb: { xs: 3, md: 5 } }}>
             {/* The headline steps back while the picker is up, as it does in
                 the app, rather than showing through it. */}
-            <Box sx={{ opacity: 1 - shown * 0.82, transition: 'opacity 0.12s linear', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box ref={headRef} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Typography sx={{ fontFamily: '"Fraunces", Georgia, serif', fontWeight: 500, fontSize: { xs: '1.5rem', sm: '2rem', md: '2.6rem' }, lineHeight: 1.18, color: D.ink, textAlign: 'center' }}>
                 Ask anything.
                 <Box component="span" sx={{ display: 'block', fontStyle: 'italic' }}>Think in the open.</Box>
@@ -218,10 +256,10 @@ export default function ProductWindow() {
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: { xs: 2, md: 2.6 } }}>
                 {/* The chip the picker belongs to, lit while it is up. */}
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 0.8, py: 0.4, ml: -0.8, borderRadius: '14px', backgroundColor: shown > 0.5 ? D.line : 'transparent', transition: 'background-color 0.2s ease' }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 0.8, py: 0.4, ml: -0.8, borderRadius: '14px', backgroundColor: open ? D.line : 'transparent', transition: 'background-color 0.2s ease' }}>
                   <BrandTile code="OA" size={16} round />
                   <Typography sx={{ fontSize: { xs: 11.5, md: 13 }, color: D.ink, whiteSpace: 'nowrap' }}>GPT 3.5 Turbo</Typography>
-                  <Box sx={{ display: 'flex', transform: shown > 0.5 ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease' }}>
+                  <Box sx={{ display: 'flex', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease' }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={D.inkMuted} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="6 9 12 15 18 9" />
                     </svg>
@@ -239,7 +277,7 @@ export default function ProductWindow() {
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 0.9, mt: { xs: 1.6, md: 2.2 }, opacity: 1 - shown * 0.82, transition: 'opacity 0.12s linear' }}>
+            <Box ref={chipsRef} sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 0.9, mt: { xs: 1.6, md: 2.2 } }}>
               {CHIPS.map((c) => (
                 <Box key={c} sx={{ px: { xs: 1.2, md: 1.75 }, py: { xs: 0.5, md: 0.8 }, borderRadius: '9999px', backgroundColor: D.panel, border: `1px solid ${D.line}` }}>
                   <Typography sx={{ fontSize: { xs: 10, md: 12 }, color: D.ink, whiteSpace: 'nowrap' }}>{c}</Typography>
@@ -251,6 +289,7 @@ export default function ProductWindow() {
           {/* The picker, lifting out of the composer. Held back on small
               screens, where it would bury the window it is sitting in. */}
           <Box
+            ref={pickerRef}
             aria-hidden="true"
             sx={{
               display: { xs: 'none', md: 'block' },
@@ -264,8 +303,9 @@ export default function ProductWindow() {
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
               p: 1.5,
               transformOrigin: 'bottom center',
-              opacity: shown,
-              transform: `translateX(-50%) translateY(${(1 - shown) * 16}px) scale(${0.97 + shown * 0.03})`,
+              /* Resting state. The loop takes over from here. */
+              opacity: 0,
+              transform: 'translateX(-50%) translateY(16px) scale(0.97)',
               pointerEvents: 'none',
             }}
           >
@@ -297,7 +337,7 @@ export default function ProductWindow() {
 
             {/* The list, moving under a cursor that does not. */}
             <Box sx={{ position: 'relative', height: LIST_H, overflow: 'hidden' }}>
-              <Box sx={{ transform: `translate3d(0, ${-scrolled}px, 0)` }}>
+              <Box ref={listRef} sx={{ transform: 'translate3d(0, 0, 0)' }}>
                 {ROWS.map((m, i) => (
                   <Box
                     key={m.name}
@@ -347,6 +387,7 @@ export default function ProductWindow() {
 
             {/* The second popup: whatever the cursor is resting on. */}
             <Box
+              ref={cardRef}
               sx={{
                 display: { md: 'none', lg: 'block' },
                 position: 'absolute',
@@ -359,7 +400,8 @@ export default function ProductWindow() {
                 borderRadius: '18px',
                 p: 1.4,
                 boxShadow: '0 18px 40px -16px rgba(0, 0, 0, 0.6)',
-                opacity: cardShown,
+                willChange: 'opacity',
+                opacity: 0,
                 pointerEvents: 'none',
               }}
             >

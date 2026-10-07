@@ -201,7 +201,7 @@ export default function ModelsPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>{`AI Models Catalog, ${CATALOG_SIZE} Frontier Models in One Subscription | Hey Open`}</title>
+        <title>{`${CATALOG_SIZE} AI Models in One Subscription | Hey Open`}</title>
         <meta
           name="description"
           content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${CATALOG_SIZE} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
@@ -257,7 +257,7 @@ export default function ModelsPage() {
                 }}
               >
                 <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE, boxShadow: `0 0 10px ${ORANGE}` }} />
-                Unified AI Catalog
+                Every frontier lab
               </Box>
 
               <Typography
@@ -445,7 +445,7 @@ export default function ModelsPage() {
                 {PROVIDERS.length} labs. One account.
               </Typography>
               <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-                Every provider below is live today. Pick one to filter the catalog, or scroll past
+                Every provider below is live today. Pick one to filter the list, or scroll past
                 and browse the whole list.
               </Typography>
             </Box>
@@ -690,7 +690,7 @@ export default function ModelsPage() {
                     color: 'var(--text-heading)',
                   }}
                 >
-                  Browse the catalog
+                  Browse every model
                 </Typography>
                 <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.8 }}>
                   {filteredModels.length === MODELS.length
