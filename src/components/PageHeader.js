@@ -24,37 +24,6 @@ export default function PageHeader({ spacer = true }) {
   const { isDark } = useThemeMode();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const lastScrollY = React.useRef(0);
-
-  React.useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-
-          const heroHeight = window.innerHeight * 0.7;
-          if (currentScrollY < heroHeight) {
-            setIsVisible(false);
-          } else if (currentScrollY > lastScrollY.current) {
-            setIsVisible(false);
-          } else if (currentScrollY < lastScrollY.current) {
-            setIsVisible(true);
-          }
-
-          lastScrollY.current = currentScrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <>
@@ -91,10 +60,7 @@ export default function PageHeader({ spacer = true }) {
             alignItems: 'center',
             justifyContent: 'space-between',
             px: { xs: 1.5, md: 2 },
-            pointerEvents: isVisible ? 'auto' : 'none',
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(-150%)',
-            transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'auto',
           }}
         >
           {/* Left — Logo */}
