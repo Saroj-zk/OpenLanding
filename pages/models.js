@@ -20,6 +20,12 @@ const CATALOG_SIZE = '200+';
 const ORANGE = '#FF6600';
 const SECTION_PY = { xs: 8, md: 12 };
 
+/* Headings even out their lines rather than filling one and leaving a word
+   on the next. Body copy only avoids the single word last line, because
+   balancing a long paragraph makes the measure wander. */
+const BALANCE = { textWrap: 'balance' };
+const PRETTY = { textWrap: 'pretty' };
+
 /* The hero sits on a permanently light background image, so it keeps literal
    light colours. Everything below it reads from the theme tokens. */
 const HERO_INK = 'rgb(71, 85, 105)';
@@ -273,7 +279,9 @@ export default function ModelsPage() {
                 }}
               >
                 Every model.{' '}
-                <Box component="span" sx={{ color: ORANGE }}>
+                {/* Its own line: the sentence breaks on the full stop, and
+                    balancing would put "One" at the end of the first line. */}
+                <Box component="span" sx={{ color: ORANGE, display: 'block' }}>
                   One subscription.
                 </Box>
               </Typography>
@@ -281,11 +289,12 @@ export default function ModelsPage() {
               <Typography
                 sx={{
                   mx: 'auto',
-                  maxWidth: '54ch',
+                  maxWidth: '52ch',
                   fontSize: { xs: '1.05rem', md: '1.15rem' },
                   lineHeight: 1.65,
                   color: HERO_INK_2,
                   mb: 4.5,
+                  ...BALANCE,
                 }}
               >
                 Text, code, images, video, audio and music from every frontier lab. Pick a model by
@@ -440,11 +449,12 @@ export default function ModelsPage() {
                   lineHeight: 1.22,
                   letterSpacing: '-0.03em',
                   color: 'var(--text-heading)',
+                  ...BALANCE,
                 }}
               >
                 {PROVIDERS.length} labs. One account.
               </Typography>
-              <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+              <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '50ch', ...PRETTY }}>
                 Every provider below is live today. Pick one to filter the list, or scroll past
                 and browse the whole list.
               </Typography>
@@ -542,13 +552,14 @@ export default function ModelsPage() {
                     lineHeight: 1.18,
                     letterSpacing: '-0.03em',
                     color: 'var(--text-heading)',
-                    maxWidth: '20ch',
+                    maxWidth: '24ch',
                     mb: 2.5,
+                    ...BALANCE,
                   }}
                 >
                   No model wins at everything.
                 </Typography>
-                <Typography sx={{ maxWidth: '54ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', mb: 4.5 }}>
+                <Typography sx={{ maxWidth: '52ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', mb: 4.5, ...PRETTY }}>
                   Claude holds a long refactor together. DeepSeek shows its working on a proof.
                   Gemini swallows a whole repository. Knowing which one to reach for is most of the
                   skill, so you can hand that part over.
@@ -615,12 +626,12 @@ export default function ModelsPage() {
                   letterSpacing: '-0.035em',
                   color: 'var(--text-heading)',
                   mb: 2.5,
-                  textWrap: 'balance',
+                  ...BALANCE,
                 }}
               >
                 Every one of them, one click away.
               </Typography>
-              <Typography sx={{ fontSize: { xs: '1rem', md: '1.08rem' }, lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '52ch', mx: 'auto' }}>
+              <Typography sx={{ fontSize: { xs: '1rem', md: '1.08rem' }, lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '52ch', mx: 'auto', ...BALANCE }}>
                 Search by name, narrow by modality, star the ones you keep coming back to. Each model
                 carries what it can do, and you see context and cost before you commit. No account
                 needed to start.
@@ -688,6 +699,7 @@ export default function ModelsPage() {
                     lineHeight: 1.2,
                     letterSpacing: '-0.03em',
                     color: 'var(--text-heading)',
+                    ...BALANCE,
                   }}
                 >
                   Browse every model
@@ -975,6 +987,7 @@ export default function ModelsPage() {
                   letterSpacing: '-0.03em',
                   color: 'var(--text-heading)',
                   mb: 2.5,
+                  ...BALANCE,
                 }}
               >
                 All {CATALOG_SIZE} of them, behind one login.
@@ -987,6 +1000,7 @@ export default function ModelsPage() {
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
                   mb: 5,
+                  ...BALANCE,
                 }}
               >
                 No separate accounts, no API keys to rotate, and no per provider subscription to
