@@ -9,7 +9,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, ProviderTile } from '@/components/ui/LedgerUI';
-import { MODELS, KINDS, PROVIDERS, MODEL_TOTAL } from '@/data/catalog';
+import { MODELS, KINDS, PROVIDERS } from '@/data/catalog';
+
+/* How many models the product serves. The list further down carries the
+   ones written up so far, which is fewer, so the two are kept apart: this
+   is what the page claims, MODELS.length is what it is showing. */
+const CATALOG_SIZE = '200+';
 
 const ORANGE = '#FF6600';
 const SECTION_PY = { xs: 8, md: 12 };
@@ -207,10 +212,10 @@ export default function ModelsPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>{`AI Models Catalog, ${MODEL_TOTAL} Frontier Models in One Subscription | Hey Open`}</title>
+        <title>{`AI Models Catalog, ${CATALOG_SIZE} Frontier Models in One Subscription | Hey Open`}</title>
         <meta
           name="description"
-          content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${MODEL_TOTAL} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
+          content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${CATALOG_SIZE} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
         />
       </Head>
 
@@ -348,7 +353,7 @@ export default function ModelsPage() {
                     '&:hover': { borderColor: ORANGE, color: ORANGE, transform: 'translateY(-2px)' },
                   }}
                 >
-                  See all {MODEL_TOTAL} ↓
+                  See all {CATALOG_SIZE} ↓
                 </Box>
               </Box>
             </Box>
@@ -365,7 +370,7 @@ export default function ModelsPage() {
               }}
             >
               {[
-                [`${MODEL_TOTAL}`, 'Models', 'Reasoning, vision and media'],
+                [CATALOG_SIZE, 'Models', 'Reasoning, vision and media'],
                 [`${PROVIDERS.length}`, 'Providers', 'Every major lab, one bill'],
                 ['10M', 'Longest context', 'Tokens in a single prompt'],
                 [`${KINDS.length}`, 'Modalities', 'Text, image, video, audio, music'],
@@ -623,7 +628,7 @@ export default function ModelsPage() {
                 </Typography>
                 <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.8 }}>
                   {filteredModels.length === MODELS.length
-                    ? `All ${MODELS.length} models`
+                    ? `${MODELS.length} models written up so far`
                     : `${filteredModels.length} of ${MODELS.length} models`}
                 </Typography>
               </Box>
@@ -909,7 +914,7 @@ export default function ModelsPage() {
                   mb: 2.5,
                 }}
               >
-                All {MODEL_TOTAL} of them, behind one login.
+                All {CATALOG_SIZE} of them, behind one login.
               </Typography>
               <Typography
                 sx={{
