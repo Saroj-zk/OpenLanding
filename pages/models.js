@@ -165,14 +165,8 @@ export default function ModelsPage() {
   const [providerFilter, setProviderFilter] = React.useState(null);
   const [expanded, setExpanded] = React.useState(false);
 
-  const providerCounts = React.useMemo(() => {
-    const c = {};
-    MODELS.forEach((m) => { c[m.code] = (c[m.code] || 0) + 1; });
-    return c;
-  }, []);
-
-  /* Everything except the modality filter. The tab counts read from this, so a
-     tab never promises more rows than picking it would actually show. */
+  /* Everything except the modality filter, so picking a modality narrows this
+     rather than starting again from the full list. */
   const baseModels = React.useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return MODELS.filter((m) => {
@@ -183,12 +177,6 @@ export default function ModelsPage() {
         .some((v) => v.toLowerCase().includes(q));
     });
   }, [searchQuery, providerFilter]);
-
-  const kindCounts = React.useMemo(() => {
-    const c = {};
-    baseModels.forEach((m) => { c[m.kind] = (c[m.kind] || 0) + 1; });
-    return c;
-  }, [baseModels]);
 
   const filteredModels = React.useMemo(
     () => (selectedKind === 'all' ? baseModels : baseModels.filter((m) => m.kind === selectedKind)),
@@ -510,9 +498,6 @@ export default function ModelsPage() {
                   >
                     {p.name}
                   </Typography>
-                  <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)', flexShrink: 0 }}>
-                    {providerCounts[p.code] || 0}
-                  </Typography>
                 </Box>
               ))}
             </Box>
@@ -624,12 +609,12 @@ export default function ModelsPage() {
                     color: 'var(--text-heading)',
                   }}
                 >
-                  The whole catalog
+                  Browse the catalog
                 </Typography>
                 <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.8 }}>
                   {filteredModels.length === MODELS.length
-                    ? `${MODELS.length} models written up so far`
-                    : `${filteredModels.length} of ${MODELS.length} models`}
+                    ? 'Filter by modality, or search for a model by name.'
+                    : `Showing ${filteredModels.length}`}
                 </Typography>
               </Box>
 
@@ -671,8 +656,8 @@ export default function ModelsPage() {
                 mb: providerFilter ? 2.5 : 0,
               }}
             >
-              {[{ id: 'all', label: 'All', count: baseModels.length }]
-                .concat(KINDS.map((k) => ({ id: k.id, label: k.label, count: kindCounts[k.id] || 0 })))
+              {[{ id: 'all', label: 'All' }]
+                .concat(KINDS.map((k) => ({ id: k.id, label: k.label })))
                 .map((tab) => {
                   const on = selectedKind === tab.id;
                   return (
@@ -701,9 +686,6 @@ export default function ModelsPage() {
                       }}
                     >
                       {tab.label}
-                      <Box component="span" sx={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                        {tab.count}
-                      </Box>
                     </Box>
                   );
                 })}
