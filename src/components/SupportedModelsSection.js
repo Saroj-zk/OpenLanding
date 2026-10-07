@@ -988,7 +988,7 @@ export default function SupportedModelsSection() {
             </Box>
           )}
 
-          {/* Table Footer: "34+ more, added as they ship" & "See every model →" */}
+          {/* Table footer: how many are left, and the two ways to see them */}
           <Box
             sx={{
               display: 'flex',
@@ -1012,47 +1012,84 @@ export default function SupportedModelsSection() {
               34+ more, added as they ship
             </Typography>
 
-            <Box
-              onClick={() => setShowAll(!showAll)}
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 0.6,
-                px: 2,
-                py: 0.7,
-                borderRadius: '9999px',
-                cursor: 'pointer',
-                userSelect: 'none',
-                backdropFilter: 'blur(8px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                backgroundColor: isDark ? 'rgba(20, 24, 30, 0.45)' : 'rgba(255, 255, 255, 0.55)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.72)',
-                color: 'var(--text-heading)',
-                fontSize: '0.84rem',
-                fontWeight: 600,
-                boxShadow: isDark
-                  ? '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12)'
-                  : '0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.9)',
-                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                '&:hover': {
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)'
-                    : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.8) 100%)',
-                  borderColor: isDark ? 'rgba(255, 102, 0, 0.4)' : 'rgba(255, 102, 0, 0.35)',
-                  color: '#ff6600',
-                  backdropFilter: 'blur(16px) saturate(200%)',
-                  WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+            {/* The toggle opens the rest of the list here; this goes to the
+                catalog page, where they can be searched and filtered. */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
+              <Box
+                onClick={() => setShowAll(!showAll)}
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.6,
+                  px: 2,
+                  py: 0.7,
+                  borderRadius: '9999px',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  backdropFilter: 'blur(8px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                  backgroundColor: isDark ? 'rgba(20, 24, 30, 0.45)' : 'rgba(255, 255, 255, 0.55)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.72)',
+                  color: 'var(--text-heading)',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
                   boxShadow: isDark
-                    ? '0 3px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.3)'
-                    : '0 3px 10px rgba(15, 23, 42, 0.08), inset 0 1.5px 2px rgba(255, 255, 255, 1)',
-                  transform: 'translateY(-1px)',
-                },
-                '&:active': {
-                  transform: 'scale(0.94)',
-                },
-              }}
-            >
-              {showAll ? 'Show fewer models ↑' : 'See every model →'}
+                    ? '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12)'
+                    : '0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.9)',
+                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                  '&:hover': {
+                    background: isDark
+                      ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)'
+                      : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.8) 100%)',
+                    borderColor: isDark ? 'rgba(255, 102, 0, 0.4)' : 'rgba(255, 102, 0, 0.35)',
+                    color: '#ff6600',
+                    backdropFilter: 'blur(16px) saturate(200%)',
+                    WebkitBackdropFilter: 'blur(16px) saturate(200%)',
+                    boxShadow: isDark
+                      ? '0 3px 10px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.3)'
+                      : '0 3px 10px rgba(15, 23, 42, 0.08), inset 0 1.5px 2px rgba(255, 255, 255, 1)',
+                    transform: 'translateY(-1px)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.94)',
+                  },
+                }}
+              >
+                {showAll ? 'Show fewer models ↑' : 'See every model →'}
+              </Box>
+
+              <Box
+                component="a"
+                href="/models"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.6,
+                  px: 2,
+                  py: 0.7,
+                  borderRadius: '9999px',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                  backgroundColor: '#ff6600',
+                  border: '1px solid rgba(255, 102, 0, 0.35)',
+                  color: '#FFFFFF',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                  boxShadow: '0 2px 8px rgba(255, 102, 0, 0.28)',
+                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                  '&:hover': {
+                    backgroundColor: '#e65c00',
+                    boxShadow: '0 4px 14px rgba(255, 102, 0, 0.36)',
+                    transform: 'translateY(-1px)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.94)',
+                  },
+                }}
+              >
+                Open the catalog
+                <ArrowForwardIcon sx={{ fontSize: 15 }} />
+              </Box>
             </Box>
           </Box>
         </Box>
