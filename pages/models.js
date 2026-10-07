@@ -9,10 +9,22 @@ import SearchIcon from '@mui/icons-material/Search';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, ProviderTile } from '@/components/ui/LedgerUI';
-import { MODELS, KINDS, PROVIDERS, MODEL_TOTAL } from '@/data/catalog';
+import ProductWindow from '@/components/ProductWindow';
+import { MODELS, KINDS, PROVIDERS } from '@/data/catalog';
+
+/* How many models the product serves. The list further down carries the
+   ones written up so far, which is fewer, so the two are kept apart: this
+   is what the page claims, MODELS.length is what it is showing. */
+const CATALOG_SIZE = '200+';
 
 const ORANGE = '#FF6600';
 const SECTION_PY = { xs: 8, md: 12 };
+
+/* Headings even out their lines rather than filling one and leaving a word
+   on the next. Body copy only avoids the single word last line, because
+   balancing a long paragraph makes the measure wander. */
+const BALANCE = { textWrap: 'balance' };
+const PRETTY = { textWrap: 'pretty' };
 
 /* The hero sits on a permanently light background image, so it keeps literal
    light colours. Everything below it reads from the theme tokens. */
@@ -160,14 +172,8 @@ export default function ModelsPage() {
   const [providerFilter, setProviderFilter] = React.useState(null);
   const [expanded, setExpanded] = React.useState(false);
 
-  const providerCounts = React.useMemo(() => {
-    const c = {};
-    MODELS.forEach((m) => { c[m.code] = (c[m.code] || 0) + 1; });
-    return c;
-  }, []);
-
-  /* Everything except the modality filter. The tab counts read from this, so a
-     tab never promises more rows than picking it would actually show. */
+  /* Everything except the modality filter, so picking a modality narrows this
+     rather than starting again from the full list. */
   const baseModels = React.useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return MODELS.filter((m) => {
@@ -178,12 +184,6 @@ export default function ModelsPage() {
         .some((v) => v.toLowerCase().includes(q));
     });
   }, [searchQuery, providerFilter]);
-
-  const kindCounts = React.useMemo(() => {
-    const c = {};
-    baseModels.forEach((m) => { c[m.kind] = (c[m.kind] || 0) + 1; });
-    return c;
-  }, [baseModels]);
 
   const filteredModels = React.useMemo(
     () => (selectedKind === 'all' ? baseModels : baseModels.filter((m) => m.kind === selectedKind)),
@@ -207,10 +207,10 @@ export default function ModelsPage() {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', position: 'relative', overflowX: 'hidden' }}>
       <Head>
-        <title>{`AI Models Catalog, ${MODEL_TOTAL} Frontier Models in One Subscription | Hey Open`}</title>
+        <title>{`${CATALOG_SIZE} AI Models in One Subscription | Hey Open`}</title>
         <meta
           name="description"
-          content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${MODEL_TOTAL} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
+          content={`Access GPT-4o, Claude Opus 4, DeepSeek R1, Gemini 2.5 Pro, FLUX and ${CATALOG_SIZE} models from ${PROVIDERS.length} providers in one subscription, with no tracking.`}
         />
       </Head>
 
@@ -263,7 +263,7 @@ export default function ModelsPage() {
                 }}
               >
                 <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE, boxShadow: `0 0 10px ${ORANGE}` }} />
-                Unified AI Catalog
+                Every frontier lab
               </Box>
 
               <Typography
@@ -279,7 +279,9 @@ export default function ModelsPage() {
                 }}
               >
                 Every model.{' '}
-                <Box component="span" sx={{ color: ORANGE }}>
+                {/* Its own line: the sentence breaks on the full stop, and
+                    balancing would put "One" at the end of the first line. */}
+                <Box component="span" sx={{ color: ORANGE, display: 'block' }}>
                   One subscription.
                 </Box>
               </Typography>
@@ -287,11 +289,12 @@ export default function ModelsPage() {
               <Typography
                 sx={{
                   mx: 'auto',
-                  maxWidth: '54ch',
+                  maxWidth: '52ch',
                   fontSize: { xs: '1.05rem', md: '1.15rem' },
                   lineHeight: 1.65,
                   color: HERO_INK_2,
                   mb: 4.5,
+                  ...BALANCE,
                 }}
               >
                 Text, code, images, video, audio and music from every frontier lab. Pick a model by
@@ -348,7 +351,7 @@ export default function ModelsPage() {
                     '&:hover': { borderColor: ORANGE, color: ORANGE, transform: 'translateY(-2px)' },
                   }}
                 >
-                  See all {MODEL_TOTAL} ↓
+                  See all {CATALOG_SIZE} ↓
                 </Box>
               </Box>
             </Box>
@@ -365,7 +368,7 @@ export default function ModelsPage() {
               }}
             >
               {[
-                [`${MODEL_TOTAL}`, 'Models', 'Reasoning, vision and media'],
+                [CATALOG_SIZE, 'Models', 'Reasoning, vision and media'],
                 [`${PROVIDERS.length}`, 'Providers', 'Every major lab, one bill'],
                 ['10M', 'Longest context', 'Tokens in a single prompt'],
                 [`${KINDS.length}`, 'Modalities', 'Text, image, video, audio, music'],
@@ -446,12 +449,13 @@ export default function ModelsPage() {
                   lineHeight: 1.22,
                   letterSpacing: '-0.03em',
                   color: 'var(--text-heading)',
+                  ...BALANCE,
                 }}
               >
                 {PROVIDERS.length} labs. One account.
               </Typography>
-              <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-                Every provider below is live today. Pick one to filter the catalog, or scroll past
+              <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '50ch', ...PRETTY }}>
+                Every provider below is live today. Pick one to filter the list, or scroll past
                 and browse the whole list.
               </Typography>
             </Box>
@@ -505,9 +509,6 @@ export default function ModelsPage() {
                   >
                     {p.name}
                   </Typography>
-                  <Typography sx={{ fontSize: '0.78rem', color: 'var(--text-muted)', flexShrink: 0 }}>
-                    {providerCounts[p.code] || 0}
-                  </Typography>
                 </Box>
               ))}
             </Box>
@@ -551,13 +552,14 @@ export default function ModelsPage() {
                     lineHeight: 1.18,
                     letterSpacing: '-0.03em',
                     color: 'var(--text-heading)',
-                    maxWidth: '20ch',
+                    maxWidth: '24ch',
                     mb: 2.5,
+                    ...BALANCE,
                   }}
                 >
                   No model wins at everything.
                 </Typography>
-                <Typography sx={{ maxWidth: '54ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', mb: 4.5 }}>
+                <Typography sx={{ maxWidth: '52ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', mb: 4.5, ...PRETTY }}>
                   Claude holds a long refactor together. DeepSeek shows its working on a proof.
                   Gemini swallows a whole repository. Knowing which one to reach for is most of the
                   skill, so you can hand that part over.
@@ -594,7 +596,87 @@ export default function ModelsPage() {
           </Box>
         </Box>
 
-        {/* ── Section 4: The catalog ────────────────────────────── */}
+        {/* ── Section 4: The app itself ──────────────────────────── */}
+        <Rule />
+        <Box sx={{ py: SECTION_PY }}>
+          <Reveal>
+            <Box sx={{ textAlign: 'center', maxWidth: '58ch', mx: 'auto', mb: { xs: 5, md: 7 } }}>
+              <Typography
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: ORANGE,
+                  mb: 2.5,
+                }}
+              >
+                <Box component="span" sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: ORANGE }} />
+                Live in the app
+              </Typography>
+              <Typography
+                component="h2"
+                sx={{
+                  fontSize: { xs: '2rem', md: '3rem' },
+                  fontWeight: 800,
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.035em',
+                  color: 'var(--text-heading)',
+                  mb: 2.5,
+                  ...BALANCE,
+                }}
+              >
+                Every one of them, one click away.
+              </Typography>
+              <Typography sx={{ fontSize: { xs: '1rem', md: '1.08rem' }, lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '52ch', mx: 'auto', ...BALANCE }}>
+                Search by name, narrow by modality, star the ones you keep coming back to. Each model
+                carries what it can do, and you see context and cost before you commit. No account
+                needed to start.
+              </Typography>
+            </Box>
+          </Reveal>
+
+          <Reveal delay={110}>
+            <Box sx={{ maxWidth: 1060, mx: 'auto' }}>
+              <ProductWindow />
+            </Box>
+          </Reveal>
+
+          <Reveal delay={190}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 4, md: 5 } }}>
+              <Box
+                component="a"
+                href="https://ais.openledger.xyz/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 3.5,
+                  py: 1.6,
+                  borderRadius: '9999px',
+                  backgroundColor: ORANGE,
+                  color: '#FFFFFF',
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  boxShadow: '0 10px 30px -8px rgba(255, 102, 0, 0.5)',
+                  transition: 'transform 0.2s ease, background-color 0.2s ease',
+                  '&:hover': { backgroundColor: '#E65C00', transform: 'translateY(-2px)' },
+                }}
+              >
+                Open the app
+                <Box component="span" aria-hidden="true">→</Box>
+              </Box>
+            </Box>
+          </Reveal>
+        </Box>
+
+        {/* ── Section 5: The catalog ────────────────────────────── */}
         <Rule />
         <Box id="catalog-list" sx={{ py: SECTION_PY, scrollMarginTop: '96px' }}>
           <Reveal>
@@ -617,14 +699,15 @@ export default function ModelsPage() {
                     lineHeight: 1.2,
                     letterSpacing: '-0.03em',
                     color: 'var(--text-heading)',
+                    ...BALANCE,
                   }}
                 >
-                  The whole catalog
+                  Browse every model
                 </Typography>
                 <Typography sx={{ fontSize: '0.92rem', color: 'var(--text-secondary)', mt: 0.8 }}>
                   {filteredModels.length === MODELS.length
-                    ? `All ${MODELS.length} models`
-                    : `${filteredModels.length} of ${MODELS.length} models`}
+                    ? 'Filter by modality, or search for a model by name.'
+                    : `Showing ${filteredModels.length}`}
                 </Typography>
               </Box>
 
@@ -666,8 +749,8 @@ export default function ModelsPage() {
                 mb: providerFilter ? 2.5 : 0,
               }}
             >
-              {[{ id: 'all', label: 'All', count: baseModels.length }]
-                .concat(KINDS.map((k) => ({ id: k.id, label: k.label, count: kindCounts[k.id] || 0 })))
+              {[{ id: 'all', label: 'All' }]
+                .concat(KINDS.map((k) => ({ id: k.id, label: k.label })))
                 .map((tab) => {
                   const on = selectedKind === tab.id;
                   return (
@@ -696,9 +779,6 @@ export default function ModelsPage() {
                       }}
                     >
                       {tab.label}
-                      <Box component="span" sx={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                        {tab.count}
-                      </Box>
                     </Box>
                   );
                 })}
@@ -885,7 +965,7 @@ export default function ModelsPage() {
                       '&:hover': { borderColor: ORANGE, color: ORANGE },
                     }}
                   >
-                    Show the remaining {filteredModels.length - PAGE_SIZE}
+                    Show more
                   </Box>
                 </Box>
               )}
@@ -893,7 +973,7 @@ export default function ModelsPage() {
           </Reveal>
         </Box>
 
-        {/* ── Section 5: Closing ──────────────────────────────────── */}
+        {/* ── Section 6: Closing ──────────────────────────────────── */}
         <Rule />
         <Box sx={{ py: { xs: 9, md: 14 } }}>
           <Reveal>
@@ -907,9 +987,10 @@ export default function ModelsPage() {
                   letterSpacing: '-0.03em',
                   color: 'var(--text-heading)',
                   mb: 2.5,
+                  ...BALANCE,
                 }}
               >
-                All {MODEL_TOTAL} of them, behind one login.
+                All {CATALOG_SIZE} of them, behind one login.
               </Typography>
               <Typography
                 sx={{
@@ -919,6 +1000,7 @@ export default function ModelsPage() {
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
                   mb: 5,
+                  ...BALANCE,
                 }}
               >
                 No separate accounts, no API keys to rotate, and no per provider subscription to

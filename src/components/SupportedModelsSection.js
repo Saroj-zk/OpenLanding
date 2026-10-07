@@ -1013,7 +1013,7 @@ export default function SupportedModelsSection() {
             </Typography>
 
             {/* The toggle opens the rest of the list here; this goes to the
-                catalog page, where they can be searched and filtered. */}
+                models page, where they can be searched and filtered. */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
               <Box
                 onClick={() => setShowAll(!showAll)}
@@ -1087,7 +1087,7 @@ export default function SupportedModelsSection() {
                   },
                 }}
               >
-                Open the catalog
+                Open the models page
                 <ArrowForwardIcon sx={{ fontSize: 15 }} />
               </Box>
             </Box>
