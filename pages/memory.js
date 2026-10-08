@@ -951,7 +951,7 @@ export default function MemoryPage() {
               {/* Centred, because the window it introduces is centred under it. */}
               <Box
                 sx={{
-                  maxWidth: '54ch',
+                  maxWidth: 820,
                   mx: 'auto',
                   mb: { xs: 4, md: 6 },
                   textAlign: 'center',
@@ -970,15 +970,15 @@ export default function MemoryPage() {
                     letterSpacing: '-0.02em',
                     color: 'var(--text-heading)',
                     mb: 2,
-                    textWrap: 'balance',
+                    /* One line on a wide screen; it still wraps on a narrow one. */
+                    whiteSpace: { md: 'nowrap' },
                   }}
                 >
                   You decide what it keeps.
                 </Typography>
-                <Typography sx={{ fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'balance' }}>
-                  Nothing is remembered behind your back. Every entry is one you can read, add to
-                  or delete, memory stays in your browser rather than on our servers, and it is held
-                  back from outside providers until you decide otherwise.
+                <Typography sx={{ maxWidth: '76ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'balance' }}>
+                  Nothing is remembered behind your back. Every entry is yours to read, add to or
+                  delete, and memory never leaves your browser unless you allow it.
                 </Typography>
               </Box>
             </Reveal>
