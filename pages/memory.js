@@ -900,40 +900,33 @@ export default function MemoryPage() {
               </Typography>
             </Reveal>
 
-            {/* Four columns on a hairline rail rather than four cards. The
-                point is the four kinds of thing it keeps, and cards with
-                glowing borders were saying it much louder than it needs. */}
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-                borderTop: '1px solid var(--border-normal)',
-              }}
-            >
+            {/* Rows rather than columns. Four of these across the page was the
+                same shape as the controls further down, and the entries read
+                better on a line with the kind they belong to than stacked under
+                it in a narrow column. */}
+            <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
               {REMEMBERS.map((cat, i) => (
-                <Reveal key={cat.term} delay={i * 70}>
+                <Reveal key={cat.term} delay={i * 60}>
                   <Box
                     sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      pt: { xs: 3, md: 3.5 },
-                      pb: { xs: 3, md: 1 },
-                      pr: { lg: 4 },
-                      pl: { lg: i === 0 ? 0 : 4 },
-                      borderLeft: { lg: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
-                      borderTop: { xs: i === 0 ? 'none' : '1px solid var(--border-subtle)', lg: 'none' },
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', md: '13rem minmax(0, 1fr) minmax(0, 18rem)' },
+                      alignItems: { md: 'baseline' },
+                      columnGap: { md: 4 },
+                      rowGap: 1,
+                      py: { xs: 2.5, md: 2.75 },
+                      borderBottom: '1px solid var(--border-subtle)',
                     }}
                   >
-                    <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
+                    <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)' }}>
                       {cat.term}
                     </Typography>
 
-                    <Typography sx={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--text-secondary)', mb: 2, textWrap: 'pretty' }}>
+                    <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
                       {cat.detail}
                     </Typography>
 
-                    <Box sx={{ mt: 'auto', display: 'flex', flexWrap: 'wrap', gap: 0.7 }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.7, justifyContent: { md: 'flex-end' } }}>
                       {cat.entries.map((entry) => (
                         <Typography
                           key={entry}
@@ -990,31 +983,27 @@ export default function MemoryPage() {
             <Reveal delay={190}>
               <Box
                 sx={{
-                  mt: { xs: 5, md: 7 },
+                  mt: { xs: 4.5, md: 6 },
+                  maxWidth: 1000,
+                  mx: 'auto',
                   display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-                  borderTop: '1px solid var(--border-normal)',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                  columnGap: { sm: 6 },
+                  rowGap: { xs: 2, sm: 2.5 },
                 }}
               >
-                {CONTROLS.map((c, i) => (
-                  <Box
+                {/* Short enough to read as sentences, so they are set as
+                    sentences. Ruled columns here would repeat the block above. */}
+                {CONTROLS.map((c) => (
+                  <Typography
                     key={c.term}
-                    sx={{
-                      pt: { xs: 3, md: 3.5 },
-                      pb: { xs: 3, md: 1 },
-                      pr: { lg: 4 },
-                      pl: { lg: i === 0 ? 0 : 4 },
-                      borderLeft: { lg: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
-                      borderTop: { xs: i === 0 ? 'none' : '1px solid var(--border-subtle)', lg: 'none' },
-                    }}
+                    sx={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}
                   >
-                    <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
-                      {c.term}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
-                      {c.detail}
-                    </Typography>
-                  </Box>
+                    <Box component="span" sx={{ fontWeight: 700, color: 'var(--text-heading)' }}>
+                      {c.term}.
+                    </Box>{' '}
+                    {c.detail}
+                  </Typography>
                 ))}
               </Box>
             </Reveal>
@@ -1246,55 +1235,38 @@ export default function MemoryPage() {
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>
+            {/* A band rather than a lit card. The 48px corners, the glow and
+                the shadow were doing the work the words should do, and the
+                page has no other card on it to be consistent with. */}
             <Box
               sx={{
-                position: 'relative',
-                borderRadius: { xs: 4, md: 6 },
-                p: { xs: 4, sm: 6, md: 8 },
-                overflow: 'hidden',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                boxShadow: isDark
-                  ? '0 25px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,102,0,0.15)'
-                  : '0 20px 45px rgba(15,23,42,0.1)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 textAlign: 'center',
+                py: { xs: 1, md: 2 },
               }}
             >
-              <Box
+              <Typography
                 sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255, 102, 0, 0.16) 0%, rgba(255, 102, 0, 0.02) 70%, transparent 100%)',
-                  pointerEvents: 'none',
-                }}
-              />
-
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  px: 2,
-                  py: 0.6,
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 102, 0, 0.1)',
-                  border: '1px solid rgba(255, 102, 0, 0.3)',
-                  color: '#FF6600',
-                  fontSize: '0.8rem',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: 1.5,
+                  color: 'var(--text-muted)',
+                  fontSize: '0.78rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
+                  letterSpacing: '0.14em',
                   mb: 3,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                UNIVERSAL MEMORY · PRIVATE BY DEFAULT · WORKS ACROSS MODELS
-              </Box>
+                <Box component="span">Universal Memory</Box>
+                <Box component="span" aria-hidden="true">·</Box>
+                <Box component="span">Private by default</Box>
+                <Box component="span" aria-hidden="true">·</Box>
+                <Box component="span">Works across models</Box>
+              </Typography>
 
               <Typography
                 component="h2"
@@ -1306,8 +1278,6 @@ export default function MemoryPage() {
                   color: 'var(--text-heading)',
                   maxWidth: '22ch',
                   mb: 2.5,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
                 Stop starting over with AI.
@@ -1320,8 +1290,6 @@ export default function MemoryPage() {
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
                   mb: 4.5,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
                 Keep your projects, preferences, and context with you, no matter which model you use next.
@@ -1333,8 +1301,6 @@ export default function MemoryPage() {
                   flexWrap: 'wrap',
                   gap: 2.5,
                   justifyContent: 'center',
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
                 <Box
