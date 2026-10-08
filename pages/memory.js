@@ -161,18 +161,22 @@ const REMEMBERS = [
    and no public profile to be excluded from, so neither is claimed. */
 const CONTROLS = [
   {
+    glyph: 'plus',
     term: 'Add it yourself',
     detail: 'Type a fact straight in. No waiting for it to come up in a conversation first.',
   },
   {
+    glyph: 'spark',
     term: 'Let it collect',
     detail: 'Durable facts are saved as you chat. Switch that off and nothing new is written.',
   },
   {
+    glyph: 'shield',
     term: 'Hold it back',
     detail: 'Memory is not sent to models routed to outside providers unless you turn that on.',
   },
   {
+    glyph: 'trash',
     term: 'Remove anything',
     detail: 'Delete any entry. It lives in this browser, so clearing site data clears all of it.',
   },
@@ -295,6 +299,29 @@ function CatGlyph({ name }) {
           <path d="M4 2.5h8.5L16 6v11.5H4V2.5z" {...s} />
           <path d="M12.5 2.5V6H16" {...s} />
           <path d="M6.5 9.5h7M6.5 12.5h5" {...s} />
+        </>
+      )}
+      {name === 'plus' && (
+        <>
+          <path d="M10 4v12M4 10h12" {...s} />
+        </>
+      )}
+      {name === 'spark' && (
+        <>
+          <path d="M10 2.5l1.6 4.4 4.4 1.6-4.4 1.6L10 14.5 8.4 10.1 4 8.5l4.4-1.6L10 2.5z" {...s} />
+          <path d="M15.5 13.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z" {...s} />
+        </>
+      )}
+      {name === 'shield' && (
+        <>
+          <path d="M10 2.5l6 2.2v5.1c0 3.4-2.4 6.4-6 7.7-3.6-1.3-6-4.3-6-7.7V4.7l6-2.2z" {...s} />
+          <path d="M7.6 10l1.7 1.7 3.1-3.3" {...s} />
+        </>
+      )}
+      {name === 'trash' && (
+        <>
+          <path d="M3.5 5.5h13M8 5.5V3.5h4v2M5.5 5.5l.8 11h7.4l.8-11" {...s} />
+          <path d="M8.5 8.5v5M11.5 8.5v5" {...s} />
         </>
       )}
       {name === 'check' && (
@@ -900,44 +927,66 @@ export default function MemoryPage() {
               </Typography>
             </Reveal>
 
-            {/* Rows rather than columns. Four of these across the page was the
-                same shape as the controls further down, and the entries read
-                better on a line with the kind they belong to than stacked under
-                it in a narrow column. */}
-            <Box sx={{ borderTop: '1px solid var(--border-normal)' }}>
+            {/* Records, not a table and not cards. The index gives the block
+                scale and a rhythm to read down; the entries are filled rather
+                than outlined so the real memories carry the weight. */}
+            <Box>
               {REMEMBERS.map((cat, i) => (
                 <Reveal key={cat.term} delay={i * 60}>
                   <Box
                     sx={{
                       display: 'grid',
-                      gridTemplateColumns: { xs: '1fr', md: '13rem minmax(0, 1fr) minmax(0, 18rem)' },
-                      alignItems: { md: 'baseline' },
-                      columnGap: { md: 4 },
-                      rowGap: 1,
-                      py: { xs: 2.5, md: 2.75 },
-                      borderBottom: '1px solid var(--border-subtle)',
+                      gridTemplateColumns: { xs: 'auto 1fr', md: 'auto minmax(0, 1fr) minmax(0, 20rem)' },
+                      alignItems: { md: 'center' },
+                      columnGap: { xs: 2.5, md: 4 },
+                      rowGap: 1.5,
+                      py: { xs: 3, md: 3.5 },
+                      borderTop: '1px solid var(--border-normal)',
                     }}
                   >
-                    <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)' }}>
-                      {cat.term}
+                    <Typography
+                      sx={{
+                        gridRow: { xs: 'span 2', md: 'auto' },
+                        fontSize: { xs: '1.5rem', md: '2rem' },
+                        fontWeight: 700,
+                        lineHeight: 1,
+                        letterSpacing: '-0.03em',
+                        color: 'var(--border-strong)',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
                     </Typography>
 
-                    <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
-                      {cat.detail}
-                    </Typography>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography sx={{ fontSize: { xs: '1.05rem', md: '1.2rem' }, fontWeight: 700, color: 'var(--text-heading)', mb: 0.6 }}>
+                        {cat.term}
+                      </Typography>
+                      <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                        {cat.detail}
+                      </Typography>
+                    </Box>
 
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.7, justifyContent: { md: 'flex-end' } }}>
+                    <Box
+                      sx={{
+                        gridColumn: { xs: '2', md: 'auto' },
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 0.8,
+                        justifyContent: { md: 'flex-end' },
+                      }}
+                    >
                       {cat.entries.map((entry) => (
                         <Typography
                           key={entry}
                           sx={{
-                            fontSize: '0.78rem',
-                            fontWeight: 500,
-                            color: 'var(--text-secondary)',
-                            px: 1.1,
-                            py: 0.4,
-                            borderRadius: '9999px',
-                            border: '1px solid var(--border-subtle)',
+                            fontSize: '0.82rem',
+                            fontWeight: 600,
+                            color: 'var(--text-primary)',
+                            backgroundColor: 'var(--bg-section-alt)',
+                            px: 1.4,
+                            py: 0.6,
+                            borderRadius: '10px',
                             whiteSpace: 'nowrap',
                           }}
                         >
@@ -983,27 +1032,39 @@ export default function MemoryPage() {
             <Reveal delay={190}>
               <Box
                 sx={{
-                  mt: { xs: 4.5, md: 6 },
-                  maxWidth: 1000,
-                  mx: 'auto',
+                  mt: { xs: 5, md: 7 },
                   display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-                  columnGap: { sm: 6 },
-                  rowGap: { xs: 2, sm: 2.5 },
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+                  columnGap: { sm: 4, lg: 5 },
+                  rowGap: { xs: 3.5, sm: 4 },
                 }}
               >
-                {/* Short enough to read as sentences, so they are set as
-                    sentences. Ruled columns here would repeat the block above. */}
+                {/* A mark each, matching the switches in the pane above. Quiet
+                    tint rather than a lit tile, and no box around the text. */}
                 {CONTROLS.map((c) => (
-                  <Typography
-                    key={c.term}
-                    sx={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}
-                  >
-                    <Box component="span" sx={{ fontWeight: 700, color: 'var(--text-heading)' }}>
-                      {c.term}.
-                    </Box>{' '}
-                    {c.detail}
-                  </Typography>
+                  <Box key={c.term}>
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        mb: 2,
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'var(--bg-section-alt)',
+                        color: 'var(--text-heading)',
+                      }}
+                    >
+                      <CatGlyph name={c.glyph} />
+                    </Box>
+                    <Typography sx={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-heading)', mb: 0.8 }}>
+                      {c.term}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                      {c.detail}
+                    </Typography>
+                  </Box>
                 ))}
               </Box>
             </Reveal>
@@ -1235,16 +1296,19 @@ export default function MemoryPage() {
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>
-            {/* A band rather than a lit card. The 48px corners, the glow and
-                the shadow were doing the work the words should do, and the
-                page has no other card on it to be consistent with. */}
+            {/* Weight from the fill and the size of it, not from a glow. The
+                corner is 20px, which is the page's own, rather than the 48px
+                it had. */}
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 textAlign: 'center',
-                py: { xs: 1, md: 2 },
+                px: { xs: 3, sm: 6, md: 10 },
+                py: { xs: 6, sm: 8, md: 11 },
+                borderRadius: '20px',
+                backgroundColor: 'var(--bg-section-alt)',
               }}
             >
               <Typography
