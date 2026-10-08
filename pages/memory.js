@@ -863,49 +863,12 @@ export default function MemoryPage() {
                 New model. Same context.
               </Typography>
             </Reveal>
-          </Box>
-        </Box>
 
-        {/* ── Section 3: What it remembers ───────────────────────── */}
-        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
-          <Rule />
-          <Box sx={{ py: { xs: 7, md: 9 } }}>
-            <Reveal>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 0.9fr)' },
-                  gap: { xs: 2.5, md: 6 },
-                  alignItems: 'end',
-                  mb: 6,
-                }}
-              >
-                <Box>
-                  <Eyebrow>MORE THAN CHAT HISTORY</Eyebrow>
-                  <Typography
-                    component="h2"
-                    sx={{
-                      maxWidth: '16ch',
-                      fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                      fontWeight: 700,
-                      lineHeight: 1.28,
-                      letterSpacing: '-0.02em',
-                      color: 'var(--text-heading)',
-                    }}
-                  >
-                    It remembers what matters.
-                  </Typography>
-                </Box>
-                <Typography
-                  sx={{
-                    maxWidth: '46ch',
-                    fontSize: '1.05rem',
-                    lineHeight: 1.6,
-                    color: 'var(--text-secondary)',
-                    pb: { md: 0.75 },
-                  }}
-                >
-                  Hey Open remembers the context that’s useful beyond a single conversation, so you don’t have to keep repeating yourself.
+            <Reveal delay={200}>
+              <Box sx={{ mt: { xs: 6, md: 8 }, maxWidth: '52ch', mx: 'auto', textAlign: 'center' }}>
+                <Typography sx={{ fontSize: '1.02rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                  What carries over is the context that is still useful: how you like things done,
+                  what you are in the middle of, and what you have already settled.
                 </Typography>
               </Box>
             </Reveal>
@@ -970,13 +933,13 @@ export default function MemoryPage() {
         </Box>
 
 
-        {/* ── Section 4: The memory pane, as it ships ─────────────── */}
+        {/* ── Section 3: What you can change ───────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
               <Box sx={{ maxWidth: '62ch', mb: { xs: 4, md: 6 } }}>
-                <Eyebrow>YOU HOLD THE SWITCHES</Eyebrow>
+                <Eyebrow>YOURS TO CHANGE</Eyebrow>
                 <Typography
                   component="h2"
                   sx={{
@@ -989,12 +952,12 @@ export default function MemoryPage() {
                     textWrap: 'balance',
                   }}
                 >
-                  Everything it keeps, in one pane.
+                  You decide what it keeps.
                 </Typography>
                 <Typography sx={{ fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
-                  This is the Memory tab in settings, not a drawing of one. Memory is stored in your
-                  browser, it is off to outside providers until you say otherwise, and every entry
-                  can be added, read or removed by you.
+                  Nothing is remembered behind your back. Every entry is one you can read, add to
+                  or delete, memory stays in your browser rather than on our servers, and it is held
+                  back from outside providers until you decide otherwise.
                 </Typography>
               </Box>
             </Reveal>
@@ -1039,7 +1002,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 5: What makes it different ─────────────────── */}
+        {/* ── Section 4: What makes it different ─────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
@@ -1189,7 +1152,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 6: Architecture & Mechanics ───────────────── */}
+        {/* ── Section 5: Architecture & Mechanics ───────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
@@ -1291,7 +1254,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 7: Bottom Cinematic CTA Banner ─────────────── */}
+        {/* ── Section 6: Bottom Cinematic CTA Banner ─────────────── */}
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>

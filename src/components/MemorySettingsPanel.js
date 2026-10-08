@@ -46,6 +46,16 @@ const TOGGLES = [
   },
 ];
 
+/* Real looking entries rather than an empty state. They line up with the four
+   kinds of thing the section above says it keeps, so the two read together. */
+const SAVED = [
+  'Prefers concise answers, no preamble',
+  'Vegetarian',
+  'Planning a 7 day trip to Japan in October',
+  'Budget for the trip is $2,000',
+  'Kyoto added to the itinerary',
+];
+
 const Glyph = ({ name, size = 13, color = D.inkMid }) => {
   const paths = {
     palette: <><circle cx="12" cy="12" r="9" /><circle cx="8.5" cy="10.5" r="1" /><circle cx="12" cy="8" r="1" /><circle cx="15.5" cy="10.5" r="1" /></>,
@@ -89,21 +99,6 @@ const Toggle = ({ on }) => (
   </Box>
 );
 
-const EmptyBox = ({ children }) => (
-  <Box
-    sx={{
-      mt: 1.4,
-      py: { xs: 3, md: 4.5 },
-      px: 2,
-      borderRadius: '14px',
-      border: `1px dashed ${D.line}`,
-      textAlign: 'center',
-    }}
-  >
-    <Typography sx={{ fontSize: { xs: 11.5, md: 13 }, color: D.inkDim }}>{children}</Typography>
-  </Box>
-);
-
 export default function MemorySettingsPanel() {
   return (
     <Box
@@ -124,7 +119,7 @@ export default function MemorySettingsPanel() {
         '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 40px 90px -24px rgba(15, 23, 42, 0.55)' },
       }}
     >
-      <Box sx={{ display: 'flex', minHeight: { xs: 'auto', md: 560 } }}>
+      <Box sx={{ display: 'flex' }}>
         {/* Rail */}
         <Box
           sx={{
@@ -188,11 +183,11 @@ export default function MemorySettingsPanel() {
         </Box>
 
         {/* Pane */}
-        <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2.4, sm: 3, md: 4 } }}>
-          <Typography sx={{ fontSize: { xs: '1.25rem', md: '1.6rem' }, fontWeight: 600, color: D.ink, mb: 1.6 }}>
+        <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2.2, sm: 2.6, md: 3 } }}>
+          <Typography sx={{ fontSize: { xs: '1.15rem', md: '1.35rem' }, fontWeight: 600, color: D.ink, mb: 1.1 }}>
             Memory
           </Typography>
-          <Typography sx={{ fontSize: { xs: 11.5, md: 13 }, lineHeight: 1.6, color: D.inkMid, mb: 2.6 }}>
+          <Typography sx={{ fontSize: { xs: 11.5, md: 13 }, lineHeight: 1.6, color: D.inkMid, mb: 2 }}>
             Memory is stored only in this browser. It never syncs and is removed if you clear site data.
           </Typography>
 
@@ -203,7 +198,7 @@ export default function MemorySettingsPanel() {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 2,
-                py: { xs: 1.6, md: 2 },
+                py: { xs: 1.2, md: 1.4 },
                 borderTop: i === 0 ? 'none' : `1px solid ${D.lineSoft}`,
               }}
             >
@@ -219,7 +214,7 @@ export default function MemorySettingsPanel() {
             </Box>
           ))}
 
-          <Box sx={{ height: '1px', backgroundColor: D.lineSoft, my: { xs: 2, md: 2.6 } }} />
+          <Box sx={{ height: '1px', backgroundColor: D.lineSoft, my: { xs: 1.8, md: 2.2 } }} />
 
           <Typography sx={{ fontSize: { xs: 13, md: 15 }, fontWeight: 600, color: D.ink, mb: 1.3 }}>
             Add a memory
@@ -238,12 +233,32 @@ export default function MemorySettingsPanel() {
             </Box>
           </Box>
 
-          <Typography sx={{ fontSize: { xs: 13, md: 15 }, fontWeight: 600, color: D.ink, mt: { xs: 2.4, md: 3 } }}>
-            Saved memories <Box component="span" sx={{ color: D.inkDim, fontWeight: 400 }}>(0)</Box>
+          <Typography sx={{ fontSize: { xs: 13, md: 15 }, fontWeight: 600, color: D.ink, mt: { xs: 2, md: 2.4 } }}>
+            Saved memories <Box component="span" sx={{ color: D.inkDim, fontWeight: 400 }}>({SAVED.length})</Box>
           </Typography>
-          <EmptyBox>Nothing yet — memories build up as you chat.</EmptyBox>
+          <Box sx={{ mt: 1.2 }}>
+            {SAVED.map((m, i) => (
+              <Box
+                key={m}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
+                  py: { xs: 0.8, md: 0.9 },
+                  borderTop: i === 0 ? 'none' : `1px solid ${D.lineSoft}`,
+                }}
+              >
+                <Typography sx={{ flex: 1, minWidth: 0, fontSize: { xs: 11.5, md: 13 }, color: D.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {m}
+                </Typography>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={D.inkDim} strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0 }}>
+                  <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+                </svg>
+              </Box>
+            ))}
+          </Box>
 
-          <Box sx={{ height: '1px', backgroundColor: D.lineSoft, my: { xs: 2.2, md: 3 } }} />
+          <Box sx={{ height: '1px', backgroundColor: D.lineSoft, my: { xs: 1.8, md: 2.2 } }} />
 
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
             <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -261,7 +276,6 @@ export default function MemorySettingsPanel() {
               <Typography sx={{ fontSize: { xs: 11.5, md: 13 }, color: D.ink }}>Upload</Typography>
             </Box>
           </Box>
-          <EmptyBox>No documents yet — upload a PDF or text file to add it to memory.</EmptyBox>
         </Box>
       </Box>
     </Box>
