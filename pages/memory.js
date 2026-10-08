@@ -99,6 +99,36 @@ const getPrimaryCtaSx = (isDark) => ({
   },
 });
 
+/* Every section opens the same way. They had drifted to four different
+   measures (36rem, 820, none, 46rem), three body sizes and three sets of gaps,
+   which is what made the page feel like several pages. */
+const LEAD_BLOCK = {
+  maxWidth: 820,
+  mx: 'auto',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+};
+
+const LEAD_H2 = {
+  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+  fontWeight: 700,
+  lineHeight: 1.22,
+  letterSpacing: '-0.02em',
+  color: 'var(--text-heading)',
+  mb: 2,
+  textWrap: 'balance',
+};
+
+const LEAD_COPY = {
+  maxWidth: '72ch',
+  fontSize: '1.05rem',
+  lineHeight: 1.65,
+  color: 'var(--text-secondary)',
+  textWrap: 'balance',
+};
+
 const REMEMBERS = [
   {
     glyph: 'sliders',
@@ -827,28 +857,15 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ textAlign: 'center', maxWidth: '36rem', mx: 'auto', mb: { xs: 5, md: 6.5 } }}>
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>SAME CONTEXT. DIFFERENT MODEL.</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.28,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                  }}
+                  sx={{ ...LEAD_H2, whiteSpace: { md: 'nowrap' } }}
                 >
-                  Switch models.<br />Keep the context.
+                  Switch models. Keep the context.
                 </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '1.05rem',
-                    lineHeight: 1.6,
-                    color: 'var(--text-secondary)',
-                    mt: 3,
-                  }}
-                >
+                <Typography sx={LEAD_COPY}>
                   Tell one model. Pick up with another. Hey Open brings the right context with you, so you don’t have to explain everything again.
                 </Typography>
               </Box>
@@ -949,34 +966,15 @@ export default function MemoryPage() {
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
               {/* Centred, because the window it introduces is centred under it. */}
-              <Box
-                sx={{
-                  maxWidth: 820,
-                  mx: 'auto',
-                  mb: { xs: 4, md: 6 },
-                  textAlign: 'center',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>YOURS TO CHANGE</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.22,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                    mb: 2,
-                    /* One line on a wide screen; it still wraps on a narrow one. */
-                    whiteSpace: { md: 'nowrap' },
-                  }}
+                  sx={{ ...LEAD_H2, whiteSpace: { md: 'nowrap' } }}
                 >
                   You decide what it keeps.
                 </Typography>
-                <Typography sx={{ maxWidth: '76ch', fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'balance' }}>
+                <Typography sx={LEAD_COPY}>
                   Nothing is remembered behind your back. Every entry is yours to read, add to or
                   delete, and memory never leaves your browser unless you allow it.
                 </Typography>
@@ -1028,36 +1026,18 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ textAlign: 'center', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>WHY UNIVERSAL MEMORY</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    maxWidth: '36ch',
-                    mx: 'auto',
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.28,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                    mb: 2,
-                  }}
+                  sx={{ ...LEAD_H2, whiteSpace: { md: 'nowrap' } }}
                 >
                   Most AI memory{' '}
                   <Box component="span" sx={{ color: '#FF6600' }}>
                     stops at the app.
                   </Box>
                 </Typography>
-                <Typography
-                  sx={{
-                    maxWidth: '54ch',
-                    mx: 'auto',
-                    fontSize: '1.15rem',
-                    lineHeight: 1.55,
-                    color: 'var(--text-secondary)',
-                    mb: 6,
-                  }}
-                >
+                <Typography sx={LEAD_COPY}>
                   Switch apps or models, and suddenly you’re explaining yourself all over again.
                 </Typography>
               </Box>
@@ -1178,31 +1158,18 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ textAlign: 'center', maxWidth: '46rem', mx: 'auto', mb: { xs: 5, md: 7 } }}>
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>HOW UNIVERSAL MEMORY WORKS</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.28,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                    mb: 3,
-                  }}
+                  sx={LEAD_H2}
                 >
                   Your memory belongs to you.<br />
                   <Box component="span" sx={{ color: '#FF6600' }}>
                     Not the model.
                   </Box>
                 </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '1.1rem',
-                    lineHeight: 1.65,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
+                <Typography sx={LEAD_COPY}>
                   Your context lives in one private memory that works across models. Switch models, and the right context comes with you.
                 </Typography>
               </Box>
