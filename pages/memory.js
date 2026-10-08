@@ -864,13 +864,23 @@ export default function MemoryPage() {
               </Typography>
             </Reveal>
 
+            {/* A label rather than a sentence. The paragraph that was here
+                listed the same four things the columns name underneath, and
+                sat hard against the rule with nothing between them. */}
             <Reveal delay={200}>
-              <Box sx={{ mt: { xs: 6, md: 8 }, maxWidth: '52ch', mx: 'auto', textAlign: 'center' }}>
-                <Typography sx={{ fontSize: '1.02rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
-                  What carries over is the context that is still useful: how you like things done,
-                  what you are in the middle of, and what you have already settled.
-                </Typography>
-              </Box>
+              <Typography
+                sx={{
+                  mt: { xs: 7, md: 10 },
+                  mb: 2.5,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                What carries over
+              </Typography>
             </Reveal>
 
             {/* Four columns on a hairline rail rather than four cards. The
