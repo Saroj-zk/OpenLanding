@@ -161,22 +161,22 @@ const REMEMBERS = [
    and no public profile to be excluded from, so neither is claimed. */
 const CONTROLS = [
   {
-    glyph: 'plus',
+    kind: 'MANUAL ENTRY',
     term: 'Add it yourself',
     detail: 'Type a fact straight in. No waiting for it to come up in a conversation first.',
   },
   {
-    glyph: 'spark',
+    kind: 'AUTOMATIC',
     term: 'Let it collect',
     detail: 'Durable facts are saved as you chat. Switch that off and nothing new is written.',
   },
   {
-    glyph: 'shield',
+    kind: 'THIRD PARTIES',
     term: 'Hold it back',
     detail: 'Memory is not sent to models routed to outside providers unless you turn that on.',
   },
   {
-    glyph: 'trash',
+    kind: 'DELETION',
     term: 'Remove anything',
     detail: 'Delete any entry. It lives in this browser, so clearing site data clears all of it.',
   },
@@ -299,29 +299,6 @@ function CatGlyph({ name }) {
           <path d="M4 2.5h8.5L16 6v11.5H4V2.5z" {...s} />
           <path d="M12.5 2.5V6H16" {...s} />
           <path d="M6.5 9.5h7M6.5 12.5h5" {...s} />
-        </>
-      )}
-      {name === 'plus' && (
-        <>
-          <path d="M10 4v12M4 10h12" {...s} />
-        </>
-      )}
-      {name === 'spark' && (
-        <>
-          <path d="M10 2.5l1.6 4.4 4.4 1.6-4.4 1.6L10 14.5 8.4 10.1 4 8.5l4.4-1.6L10 2.5z" {...s} />
-          <path d="M15.5 13.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z" {...s} />
-        </>
-      )}
-      {name === 'shield' && (
-        <>
-          <path d="M10 2.5l6 2.2v5.1c0 3.4-2.4 6.4-6 7.7-3.6-1.3-6-4.3-6-7.7V4.7l6-2.2z" {...s} />
-          <path d="M7.6 10l1.7 1.7 3.1-3.3" {...s} />
-        </>
-      )}
-      {name === 'trash' && (
-        <>
-          <path d="M3.5 5.5h13M8 5.5V3.5h4v2M5.5 5.5l.8 11h7.4l.8-11" {...s} />
-          <path d="M8.5 8.5v5M11.5 8.5v5" {...s} />
         </>
       )}
       {name === 'check' && (
@@ -1030,38 +1007,70 @@ export default function MemoryPage() {
             </Reveal>
 
             <Reveal delay={190}>
+              {/* A ruled grid rather than four things floating next to each
+                  other: the lines are the structure, so the cells need no
+                  borders of their own. Mono for the label and the index,
+                  because they are machine marks and should not read as copy. */}
               <Box
                 sx={{
                   mt: { xs: 5, md: 7 },
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-                  columnGap: { sm: 4, lg: 5 },
-                  rowGap: { xs: 3.5, sm: 4 },
+                  border: '1px solid var(--border-normal)',
+                  borderRadius: '14px',
+                  overflow: 'hidden',
                 }}
               >
-                {/* A mark each, matching the switches in the pane above. Quiet
-                    tint rather than a lit tile, and no box around the text. */}
-                {CONTROLS.map((c) => (
-                  <Box key={c.term}>
-                    <Box
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        mb: 2,
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'var(--bg-section-alt)',
-                        color: 'var(--text-heading)',
-                      }}
-                    >
-                      <CatGlyph name={c.glyph} />
+                {CONTROLS.map((c, i) => (
+                  <Box
+                    key={c.term}
+                    sx={{
+                      p: { xs: 2.75, md: 3.25 },
+                      display: 'flex',
+                      flexDirection: 'column',
+                      borderTop: {
+                        xs: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                        sm: i < 2 ? 'none' : '1px solid var(--border-subtle)',
+                        lg: 'none',
+                      },
+                      borderLeft: {
+                        xs: 'none',
+                        sm: i % 2 === 0 ? 'none' : '1px solid var(--border-subtle)',
+                        lg: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: '"Roboto Mono", ui-monospace, monospace',
+                          fontSize: '0.68rem',
+                          fontWeight: 600,
+                          letterSpacing: '0.14em',
+                          color: '#FF6600',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {c.kind}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: '"Roboto Mono", ui-monospace, monospace',
+                          fontSize: '0.68rem',
+                          letterSpacing: '0.12em',
+                          color: 'var(--text-muted)',
+                          opacity: 0.7,
+                        }}
+                      >
+                        {String(i + 1).padStart(3, '0')}
+                      </Typography>
                     </Box>
-                    <Typography sx={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-heading)', mb: 0.8 }}>
+
+                    <Typography sx={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1.2, textWrap: 'balance' }}>
                       {c.term}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+
+                    <Typography sx={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
                       {c.detail}
                     </Typography>
                   </Box>
