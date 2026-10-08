@@ -948,7 +948,18 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ maxWidth: '62ch', mb: { xs: 4, md: 6 } }}>
+              {/* Centred, because the window it introduces is centred under it. */}
+              <Box
+                sx={{
+                  maxWidth: '54ch',
+                  mx: 'auto',
+                  mb: { xs: 4, md: 6 },
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
                 <Eyebrow>YOURS TO CHANGE</Eyebrow>
                 <Typography
                   component="h2"
@@ -964,7 +975,7 @@ export default function MemoryPage() {
                 >
                   You decide what it keeps.
                 </Typography>
-                <Typography sx={{ fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                <Typography sx={{ fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'balance' }}>
                   Nothing is remembered behind your back. Every entry is one you can read, add to
                   or delete, memory stays in your browser rather than on our servers, and it is held
                   back from outside providers until you decide otherwise.
