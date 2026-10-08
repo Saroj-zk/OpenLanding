@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import PageHeader from '@/components/PageHeader';
+import MemorySettingsPanel from '@/components/MemorySettingsPanel';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, BrandTile } from '@/components/ui/LedgerUI';
 import { useThemeMode } from '@/context/ThemeContext';
@@ -122,6 +123,28 @@ const REMEMBERS = [
     term: 'Decisions',
     detail: 'The decisions you’ve already made, so you don’t have to make them twice.',
     entries: ['Kyoto added', 'Hotel selected'],
+  },
+];
+
+/* What the pane actually lets you do. Written off the app's own switches
+   rather than from a generic privacy list: there is no server copy to erase
+   and no public profile to be excluded from, so neither is claimed. */
+const CONTROLS = [
+  {
+    term: 'Add it yourself',
+    detail: 'Type a fact straight in. No waiting for it to come up in a conversation first.',
+  },
+  {
+    term: 'Let it collect',
+    detail: 'Durable facts are saved as you chat. Switch that off and nothing new is written.',
+  },
+  {
+    term: 'Hold it back',
+    detail: 'Memory is not sent to models routed to outside providers unless you turn that on.',
+  },
+  {
+    term: 'Remove anything',
+    detail: 'Delete any entry. It lives in this browser, so clearing site data clears all of it.',
   },
 ];
 
@@ -843,7 +866,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 3: What It Remembers Bento ─────────────────── */}
+        {/* ── Section 3: What it remembers ───────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
@@ -887,88 +910,136 @@ export default function MemoryPage() {
               </Box>
             </Reveal>
 
-            <Grid container spacing={2.5}>
+            {/* Four columns on a hairline rail rather than four cards. The
+                point is the four kinds of thing it keeps, and cards with
+                glowing borders were saying it much louder than it needs. */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+                borderTop: '1px solid var(--border-normal)',
+              }}
+            >
               {REMEMBERS.map((cat, i) => (
-                <Grid item xs={12} sm={6} lg={3} key={cat.term}>
-                  <Reveal delay={i * 70} sx={{ height: '100%' }}>
-                    <Box
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        p: 3.5,
-                        borderRadius: '20px',
-                        backgroundColor: 'var(--bg-card)',
-                        border: '1px solid var(--border-normal)',
-                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                        '&:hover': {
-                          transform: 'translateY(-4px)',
-                          borderColor: '#FF6600',
-                          boxShadow: '0 12px 30px rgba(255, 102, 0, 0.15)',
-                        },
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 42,
-                          height: 42,
-                          borderRadius: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'rgba(255, 102, 0, 0.12)',
-                          border: '1px solid rgba(255, 102, 0, 0.35)',
-                          color: '#FF6600',
-                          mb: 2.5,
-                        }}
-                      >
-                        <CatGlyph name={cat.glyph} />
-                      </Box>
+                <Reveal key={cat.term} delay={i * 70}>
+                  <Box
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      pt: { xs: 3, md: 3.5 },
+                      pb: { xs: 3, md: 1 },
+                      pr: { lg: 4 },
+                      pl: { lg: i === 0 ? 0 : 4 },
+                      borderLeft: { lg: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
+                      borderTop: { xs: i === 0 ? 'none' : '1px solid var(--border-subtle)', lg: 'none' },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
+                      {cat.term}
+                    </Typography>
 
-                      <Typography sx={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
-                        {cat.term}
-                      </Typography>
+                    <Typography sx={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--text-secondary)', mb: 2, textWrap: 'pretty' }}>
+                      {cat.detail}
+                    </Typography>
 
-                      <Typography
-                        sx={{
-                          fontSize: '0.86rem',
-                          lineHeight: 1.55,
-                          color: 'var(--text-secondary)',
-                          minHeight: 64,
-                          mb: 2.5,
-                        }}
-                      >
-                        {cat.detail}
-                      </Typography>
-
-                      <Box sx={{ mt: 'auto', pt: 2, borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        {cat.entries.map((entry) => (
-                          <Box key={entry} sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                            <Box
-                              sx={{
-                                width: 5,
-                                height: 5,
-                                borderRadius: '50%',
-                                backgroundColor: '#FF6600',
-                                boxShadow: '0 0 6px rgba(255, 102, 0, 0.6)',
-                                flexShrink: 0,
-                              }}
-                            />
-                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-primary)' }}>
-                              {entry}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
+                    <Box sx={{ mt: 'auto', display: 'flex', flexWrap: 'wrap', gap: 0.7 }}>
+                      {cat.entries.map((entry) => (
+                        <Typography
+                          key={entry}
+                          sx={{
+                            fontSize: '0.78rem',
+                            fontWeight: 500,
+                            color: 'var(--text-secondary)',
+                            px: 1.1,
+                            py: 0.4,
+                            borderRadius: '9999px',
+                            border: '1px solid var(--border-subtle)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {entry}
+                        </Typography>
+                      ))}
                     </Box>
-                  </Reveal>
-                </Grid>
+                  </Box>
+                </Reveal>
               ))}
-            </Grid>
+            </Box>
           </Box>
         </Box>
 
-        {/* ── Section 4: What makes it different ─────────────────── */}
+
+        {/* ── Section 4: The memory pane, as it ships ─────────────── */}
+        <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
+          <Rule />
+          <Box sx={{ py: { xs: 7, md: 9 } }}>
+            <Reveal>
+              <Box sx={{ maxWidth: '62ch', mb: { xs: 4, md: 6 } }}>
+                <Eyebrow>YOU HOLD THE SWITCHES</Eyebrow>
+                <Typography
+                  component="h2"
+                  sx={{
+                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.22,
+                    letterSpacing: '-0.02em',
+                    color: 'var(--text-heading)',
+                    mb: 2,
+                    textWrap: 'balance',
+                  }}
+                >
+                  Everything it keeps, in one pane.
+                </Typography>
+                <Typography sx={{ fontSize: '1.05rem', lineHeight: 1.65, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                  This is the Memory tab in settings, not a drawing of one. Memory is stored in your
+                  browser, it is off to outside providers until you say otherwise, and every entry
+                  can be added, read or removed by you.
+                </Typography>
+              </Box>
+            </Reveal>
+
+            <Reveal delay={110}>
+              <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
+                <MemorySettingsPanel />
+              </Box>
+            </Reveal>
+
+            <Reveal delay={190}>
+              <Box
+                sx={{
+                  mt: { xs: 5, md: 7 },
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+                  borderTop: '1px solid var(--border-normal)',
+                }}
+              >
+                {CONTROLS.map((c, i) => (
+                  <Box
+                    key={c.term}
+                    sx={{
+                      pt: { xs: 3, md: 3.5 },
+                      pb: { xs: 3, md: 1 },
+                      pr: { lg: 4 },
+                      pl: { lg: i === 0 ? 0 : 4 },
+                      borderLeft: { lg: i === 0 ? 'none' : '1px solid var(--border-subtle)' },
+                      borderTop: { xs: i === 0 ? 'none' : '1px solid var(--border-subtle)', lg: 'none' },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
+                      {c.term}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                      {c.detail}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Reveal>
+          </Box>
+        </Box>
+
+        {/* ── Section 5: What makes it different ─────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
@@ -1118,7 +1189,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 5: Architecture & Mechanics ───────────────── */}
+        {/* ── Section 6: Architecture & Mechanics ───────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
@@ -1220,7 +1291,7 @@ export default function MemoryPage() {
           </Box>
         </Box>
 
-        {/* ── Section 6: Bottom Cinematic CTA Banner ─────────────── */}
+        {/* ── Section 7: Bottom Cinematic CTA Banner ─────────────── */}
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>
