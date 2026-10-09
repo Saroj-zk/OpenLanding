@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import PageHeader from '@/components/PageHeader';
+import MemorySettingsPanel from '@/components/MemorySettingsPanel';
 import Footer from '@/components/Footer';
 import { Reveal, Rule, BrandTile } from '@/components/ui/LedgerUI';
 import { useThemeMode } from '@/context/ThemeContext';
@@ -98,6 +99,36 @@ const getPrimaryCtaSx = (isDark) => ({
   },
 });
 
+/* Every section opens the same way. They had drifted to four different
+   measures (36rem, 820, none, 46rem), three body sizes and three sets of gaps,
+   which is what made the page feel like several pages. */
+const LEAD_BLOCK = {
+  maxWidth: 820,
+  mx: 'auto',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+};
+
+const LEAD_H2 = {
+  fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
+  fontWeight: 700,
+  lineHeight: 1.22,
+  letterSpacing: '-0.02em',
+  color: 'var(--text-heading)',
+  mb: 2,
+  textWrap: 'balance',
+};
+
+const LEAD_COPY = {
+  maxWidth: '72ch',
+  fontSize: '1.05rem',
+  lineHeight: 1.65,
+  color: 'var(--text-secondary)',
+  textWrap: 'balance',
+};
+
 const REMEMBERS = [
   {
     glyph: 'sliders',
@@ -122,6 +153,32 @@ const REMEMBERS = [
     term: 'Decisions',
     detail: 'The decisions you’ve already made, so you don’t have to make them twice.',
     entries: ['Kyoto added', 'Hotel selected'],
+  },
+];
+
+/* What the pane actually lets you do. Written off the app's own switches
+   rather than from a generic privacy list: there is no server copy to erase
+   and no public profile to be excluded from, so neither is claimed. */
+const CONTROLS = [
+  {
+    kind: 'MANUAL ENTRY',
+    term: 'Add it yourself',
+    detail: 'Type a fact straight in. No waiting for it to come up in a conversation first.',
+  },
+  {
+    kind: 'AUTOMATIC',
+    term: 'Let it collect',
+    detail: 'Durable facts are saved as you chat. Switch that off and nothing new is written.',
+  },
+  {
+    kind: 'THIRD PARTIES',
+    term: 'Hold it back',
+    detail: 'Memory is not sent to models routed to outside providers unless you turn that on.',
+  },
+  {
+    kind: 'DELETION',
+    term: 'Remove anything',
+    detail: 'Delete any entry. It lives in this browser, so clearing site data clears all of it.',
   },
 ];
 
@@ -804,28 +861,15 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ textAlign: 'center', maxWidth: '36rem', mx: 'auto', mb: { xs: 5, md: 6.5 } }}>
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>SAME CONTEXT. DIFFERENT MODEL.</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.28,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                  }}
+                  sx={{ ...LEAD_H2, whiteSpace: { md: 'nowrap' } }}
                 >
-                  Switch models.<br />Keep the context.
+                  Switch models. Keep the context.
                 </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '1.05rem',
-                    lineHeight: 1.6,
-                    color: 'var(--text-secondary)',
-                    mt: 3,
-                  }}
-                >
+                <Typography sx={LEAD_COPY}>
                   Tell one model. Pick up with another. Hey Open brings the right context with you, so you don’t have to explain everything again.
                 </Typography>
               </Box>
@@ -840,131 +884,199 @@ export default function MemoryPage() {
                 New model. Same context.
               </Typography>
             </Reveal>
+
+            {/* A label rather than a sentence. The paragraph that was here
+                listed the same four things the columns name underneath, and
+                sat hard against the rule with nothing between them. */}
+            <Reveal delay={200}>
+              <Typography
+                sx={{
+                  mt: { xs: 7, md: 10 },
+                  mb: 2.5,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                What carries over
+              </Typography>
+            </Reveal>
+
+            {/* Records, not a table and not cards. The index gives the block
+                scale and a rhythm to read down; the entries are filled rather
+                than outlined so the real memories carry the weight. */}
+            <Box>
+              {REMEMBERS.map((cat, i) => (
+                <Reveal key={cat.term} delay={i * 60}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: 'auto 1fr', md: 'auto minmax(0, 1fr) minmax(0, 20rem)' },
+                      alignItems: { md: 'center' },
+                      columnGap: { xs: 2.5, md: 4 },
+                      rowGap: 1.5,
+                      py: { xs: 3, md: 3.5 },
+                      borderTop: '1px solid var(--border-normal)',
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        gridRow: { xs: 'span 2', md: 'auto' },
+                        fontSize: { xs: '1.5rem', md: '2rem' },
+                        fontWeight: 700,
+                        lineHeight: 1,
+                        letterSpacing: '-0.03em',
+                        color: 'var(--border-strong)',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </Typography>
+
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography sx={{ fontSize: { xs: '1.05rem', md: '1.2rem' }, fontWeight: 700, color: 'var(--text-heading)', mb: 0.6 }}>
+                        {cat.term}
+                      </Typography>
+                      <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                        {cat.detail}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        gridColumn: { xs: '2', md: 'auto' },
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 0.8,
+                        justifyContent: { md: 'flex-end' },
+                      }}
+                    >
+                      {cat.entries.map((entry) => (
+                        <Typography
+                          key={entry}
+                          sx={{
+                            fontSize: '0.82rem',
+                            fontWeight: 600,
+                            color: 'var(--text-primary)',
+                            backgroundColor: 'var(--bg-section-alt)',
+                            px: 1.4,
+                            py: 0.6,
+                            borderRadius: '10px',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {entry}
+                        </Typography>
+                      ))}
+                    </Box>
+                  </Box>
+                </Reveal>
+              ))}
+            </Box>
           </Box>
         </Box>
 
-        {/* ── Section 3: What It Remembers Bento ─────────────────── */}
+
+        {/* ── Section 3: What you can change ───────────────────────── */}
         <Box component="section" sx={{ scrollMarginTop: '96px', pb: { xs: 8, md: 12 } }}>
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 0.9fr)' },
-                  gap: { xs: 2.5, md: 6 },
-                  alignItems: 'end',
-                  mb: 6,
-                }}
-              >
-                <Box>
-                  <Eyebrow>MORE THAN CHAT HISTORY</Eyebrow>
-                  <Typography
-                    component="h2"
-                    sx={{
-                      maxWidth: '16ch',
-                      fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                      fontWeight: 700,
-                      lineHeight: 1.28,
-                      letterSpacing: '-0.02em',
-                      color: 'var(--text-heading)',
-                    }}
-                  >
-                    It remembers what matters.
-                  </Typography>
-                </Box>
+              {/* Centred, because the window it introduces is centred under it. */}
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
+                <Eyebrow>YOURS TO CHANGE</Eyebrow>
                 <Typography
-                  sx={{
-                    maxWidth: '46ch',
-                    fontSize: '1.05rem',
-                    lineHeight: 1.6,
-                    color: 'var(--text-secondary)',
-                    pb: { md: 0.75 },
-                  }}
+                  component="h2"
+                  sx={{ ...LEAD_H2, whiteSpace: { md: 'nowrap' } }}
                 >
-                  Hey Open remembers the context that’s useful beyond a single conversation, so you don’t have to keep repeating yourself.
+                  You decide what it keeps.
+                </Typography>
+                <Typography sx={LEAD_COPY}>
+                  Nothing is remembered behind your back. Every entry is yours to read, add to or
+                  delete, and memory never leaves your browser unless you allow it.
                 </Typography>
               </Box>
             </Reveal>
 
-            <Grid container spacing={2.5}>
-              {REMEMBERS.map((cat, i) => (
-                <Grid item xs={12} sm={6} lg={3} key={cat.term}>
-                  <Reveal delay={i * 70} sx={{ height: '100%' }}>
-                    <Box
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        p: 3.5,
-                        borderRadius: '20px',
-                        backgroundColor: 'var(--bg-card)',
-                        border: '1px solid var(--border-normal)',
-                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                        '&:hover': {
-                          transform: 'translateY(-4px)',
-                          borderColor: '#FF6600',
-                          boxShadow: '0 12px 30px rgba(255, 102, 0, 0.15)',
-                        },
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 42,
-                          height: 42,
-                          borderRadius: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'rgba(255, 102, 0, 0.12)',
-                          border: '1px solid rgba(255, 102, 0, 0.35)',
-                          color: '#FF6600',
-                          mb: 2.5,
-                        }}
-                      >
-                        <CatGlyph name={cat.glyph} />
-                      </Box>
+            <Reveal delay={110}>
+              <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
+                <MemorySettingsPanel />
+              </Box>
+            </Reveal>
 
-                      <Typography sx={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1 }}>
-                        {cat.term}
-                      </Typography>
-
+            <Reveal delay={190}>
+              {/* A ruled grid rather than four things floating next to each
+                  other: the lines are the structure, so the cells need no
+                  borders of their own. Mono for the label and the index,
+                  because they are machine marks and should not read as copy. */}
+              <Box
+                sx={{
+                  mt: { xs: 5, md: 7 },
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+                  border: '1px solid var(--border-normal)',
+                  borderRadius: '14px',
+                  overflow: 'hidden',
+                }}
+              >
+                {CONTROLS.map((c, i) => (
+                  <Box
+                    key={c.term}
+                    sx={{
+                      p: { xs: 2.75, md: 3.25 },
+                      display: 'flex',
+                      flexDirection: 'column',
+                      borderTop: {
+                        xs: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                        sm: i < 2 ? 'none' : '1px solid var(--border-subtle)',
+                        lg: 'none',
+                      },
+                      borderLeft: {
+                        xs: 'none',
+                        sm: i % 2 === 0 ? 'none' : '1px solid var(--border-subtle)',
+                        lg: i === 0 ? 'none' : '1px solid var(--border-subtle)',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 2, mb: 2.5 }}>
                       <Typography
                         sx={{
-                          fontSize: '0.86rem',
-                          lineHeight: 1.55,
-                          color: 'var(--text-secondary)',
-                          minHeight: 64,
-                          mb: 2.5,
+                          fontFamily: '"Roboto Mono", ui-monospace, monospace',
+                          fontSize: '0.68rem',
+                          fontWeight: 600,
+                          letterSpacing: '0.14em',
+                          color: '#FF6600',
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        {cat.detail}
+                        {c.kind}
                       </Typography>
-
-                      <Box sx={{ mt: 'auto', pt: 2, borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        {cat.entries.map((entry) => (
-                          <Box key={entry} sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                            <Box
-                              sx={{
-                                width: 5,
-                                height: 5,
-                                borderRadius: '50%',
-                                backgroundColor: '#FF6600',
-                                boxShadow: '0 0 6px rgba(255, 102, 0, 0.6)',
-                                flexShrink: 0,
-                              }}
-                            />
-                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-primary)' }}>
-                              {entry}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
+                      <Typography
+                        sx={{
+                          fontFamily: '"Roboto Mono", ui-monospace, monospace',
+                          fontSize: '0.68rem',
+                          letterSpacing: '0.12em',
+                          color: 'var(--text-muted)',
+                          opacity: 0.7,
+                        }}
+                      >
+                        {String(i + 1).padStart(3, '0')}
+                      </Typography>
                     </Box>
-                  </Reveal>
-                </Grid>
-              ))}
-            </Grid>
+
+                    <Typography sx={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-heading)', mb: 1.2, textWrap: 'balance' }}>
+                      {c.term}
+                    </Typography>
+
+                    <Typography sx={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)', textWrap: 'pretty' }}>
+                      {c.detail}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Reveal>
           </Box>
         </Box>
 
@@ -973,36 +1085,18 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ textAlign: 'center', mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>WHY UNIVERSAL MEMORY</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    maxWidth: '36ch',
-                    mx: 'auto',
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.28,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                    mb: 2,
-                  }}
+                  sx={{ ...LEAD_H2, whiteSpace: { md: 'nowrap' } }}
                 >
                   Most AI memory{' '}
                   <Box component="span" sx={{ color: '#FF6600' }}>
                     stops at the app.
                   </Box>
                 </Typography>
-                <Typography
-                  sx={{
-                    maxWidth: '54ch',
-                    mx: 'auto',
-                    fontSize: '1.15rem',
-                    lineHeight: 1.55,
-                    color: 'var(--text-secondary)',
-                    mb: 6,
-                  }}
-                >
+                <Typography sx={LEAD_COPY}>
                   Switch apps or models, and suddenly you’re explaining yourself all over again.
                 </Typography>
               </Box>
@@ -1123,31 +1217,18 @@ export default function MemoryPage() {
           <Rule />
           <Box sx={{ py: { xs: 7, md: 9 } }}>
             <Reveal>
-              <Box sx={{ textAlign: 'center', maxWidth: '46rem', mx: 'auto', mb: { xs: 5, md: 7 } }}>
+              <Box sx={{ ...LEAD_BLOCK, mb: { xs: 5, md: 7 } }}>
                 <Eyebrow>HOW UNIVERSAL MEMORY WORKS</Eyebrow>
                 <Typography
                   component="h2"
-                  sx={{
-                    fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
-                    fontWeight: 700,
-                    lineHeight: 1.28,
-                    letterSpacing: '-0.02em',
-                    color: 'var(--text-heading)',
-                    mb: 3,
-                  }}
+                  sx={LEAD_H2}
                 >
                   Your memory belongs to you.<br />
                   <Box component="span" sx={{ color: '#FF6600' }}>
                     Not the model.
                   </Box>
                 </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '1.1rem',
-                    lineHeight: 1.65,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
+                <Typography sx={LEAD_COPY}>
                   Your context lives in one private memory that works across models. Switch models, and the right context comes with you.
                 </Typography>
               </Box>
@@ -1224,55 +1305,41 @@ export default function MemoryPage() {
         <Rule />
         <Box sx={{ py: { xs: 8, md: 14 } }}>
           <Reveal>
+            {/* Weight from the fill and the size of it, not from a glow. The
+                corner is 20px, which is the page's own, rather than the 48px
+                it had. */}
             <Box
               sx={{
-                position: 'relative',
-                borderRadius: { xs: 4, md: 6 },
-                p: { xs: 4, sm: 6, md: 8 },
-                overflow: 'hidden',
-                backgroundColor: 'var(--bg-card)',
-                border: '1px solid var(--border-normal)',
-                boxShadow: isDark
-                  ? '0 25px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,102,0,0.15)'
-                  : '0 20px 45px rgba(15,23,42,0.1)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 textAlign: 'center',
+                px: { xs: 3, sm: 6, md: 10 },
+                py: { xs: 6, sm: 8, md: 11 },
+                borderRadius: '20px',
+                backgroundColor: 'var(--bg-section-alt)',
               }}
             >
-              <Box
+              <Typography
                 sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255, 102, 0, 0.16) 0%, rgba(255, 102, 0, 0.02) 70%, transparent 100%)',
-                  pointerEvents: 'none',
-                }}
-              />
-
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1.2,
-                  px: 2,
-                  py: 0.6,
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 102, 0, 0.1)',
-                  border: '1px solid rgba(255, 102, 0, 0.3)',
-                  color: '#FF6600',
-                  fontSize: '0.8rem',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: 1.5,
+                  color: 'var(--text-muted)',
+                  fontSize: '0.78rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
+                  letterSpacing: '0.14em',
                   mb: 3,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF6600', boxShadow: '0 0 10px #FF6600' }} />
-                UNIVERSAL MEMORY · PRIVATE BY DEFAULT · WORKS ACROSS MODELS
-              </Box>
+                <Box component="span">Universal Memory</Box>
+                <Box component="span" aria-hidden="true">·</Box>
+                <Box component="span">Private by default</Box>
+                <Box component="span" aria-hidden="true">·</Box>
+                <Box component="span">Works across models</Box>
+              </Typography>
 
               <Typography
                 component="h2"
@@ -1284,8 +1351,6 @@ export default function MemoryPage() {
                   color: 'var(--text-heading)',
                   maxWidth: '22ch',
                   mb: 2.5,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
                 Stop starting over with AI.
@@ -1298,8 +1363,6 @@ export default function MemoryPage() {
                   lineHeight: 1.65,
                   color: 'var(--text-secondary)',
                   mb: 4.5,
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
                 Keep your projects, preferences, and context with you, no matter which model you use next.
@@ -1311,8 +1374,6 @@ export default function MemoryPage() {
                   flexWrap: 'wrap',
                   gap: 2.5,
                   justifyContent: 'center',
-                  position: 'relative',
-                  zIndex: 1,
                 }}
               >
                 <Box
