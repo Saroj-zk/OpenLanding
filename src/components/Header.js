@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: 'Models', href: '/models' },
   { label: 'Consensus', href: '#consensus-mode' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'Token', href: '#token' },
+  { label: 'Token', href: null, isComingSoon: true },
 ];
 
 export default function Header() {
@@ -138,21 +138,42 @@ export default function Header() {
             {NAV_ITEMS.map((item) => (
               <Box
                 key={item.label}
-                component="a"
-                href={item.href}
+                component={item.href ? 'a' : 'div'}
+                href={item.href || undefined}
                 sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.8,
                   color: isDark ? 'rgba(255, 255, 255, 0.75)' : '#475569',
                   fontSize: '0.94rem',
                   fontWeight: 600,
                   textDecoration: 'none',
+                  cursor: item.href ? 'pointer' : 'default',
                   fontFamily: '"Inter", -apple-system, sans-serif',
                   transition: 'color 0.2s ease',
                   '&:hover': {
-                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    color: item.href ? (isDark ? '#FFFFFF' : '#0F172A') : (isDark ? 'rgba(255, 255, 255, 0.75)' : '#475569'),
                   },
                 }}
               >
                 {item.label}
+                {item.isComingSoon && (
+                  <Box
+                    component="span"
+                    sx={{
+                      fontSize: '0.65rem',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      px: 0.8,
+                      py: 0.2,
+                      borderRadius: '999px',
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+                      color: isDark ? 'rgba(255,255,255,0.6)' : '#64748B',
+                    }}
+                  >
+                    Coming Soon
+                  </Box>
+                )}
               </Box>
             ))}
           </Box>
@@ -167,47 +188,7 @@ export default function Header() {
               gap: { xs: 1, sm: 2 },
             }}
           >
-            {/* $OPEN Button */}
-            <Button
-              sx={{
-                display: { xs: 'none', sm: 'inline-flex' },
-                borderRadius: '9999px',
-                py: 0.6,
-                px: 2.2,
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                textTransform: 'none',
-                color: '#ff6600',
-                backdropFilter: 'blur(8px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                background: isDark
-                  ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                  : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)',
-                border: isDark ? '1px solid rgba(255, 102, 0, 0.32)' : '1px solid rgba(255, 102, 0, 0.24)',
-                boxShadow: isDark
-                  ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 0 0.5px rgba(255, 102, 0, 0.28)'
-                  : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.18)',
-                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                fontFamily: '"Inter", -apple-system, sans-serif',
-                '&:hover': {
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.26) 0%, rgba(255, 255, 255, 0.12) 100%)'
-                    : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                  borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                  backdropFilter: 'blur(16px) saturate(200%)',
-                  WebkitBackdropFilter: 'blur(16px) saturate(200%)',
-                  boxShadow: isDark
-                    ? '0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45), inset 0 0 0 0.5px rgba(255, 102, 0, 0.35)'
-                    : '0 4px 12px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1), inset 0 0 0 0.5px rgba(255, 102, 0, 0.25)',
-                  transform: 'translateY(-1px)',
-                },
-                '&:active': {
-                  transform: 'scale(0.92)',
-                },
-              }}
-            >
-              Token
-            </Button>
+            {/* $OPEN Button removed as requested */}
 
             {/* Log in Link */}
             <Box
@@ -266,10 +247,13 @@ export default function Header() {
             {NAV_ITEMS.map((item) => (
               <Box
                 key={item.label}
-                component="a"
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
+                component={item.href ? 'a' : 'div'}
+                href={item.href || undefined}
+                onClick={() => { if (item.href) setMobileOpen(false); }}
                 sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
                   color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#0F172A',
                   fontSize: '1.1rem',
                   fontWeight: 600,
@@ -278,50 +262,30 @@ export default function Header() {
                 }}
               >
                 {item.label}
+                {item.isComingSoon && (
+                  <Box
+                    component="span"
+                    sx={{
+                      fontSize: '0.65rem',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      px: 0.8,
+                      py: 0.2,
+                      borderRadius: '999px',
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+                      color: isDark ? 'rgba(255,255,255,0.6)' : '#64748B',
+                    }}
+                  >
+                    Coming Soon
+                  </Box>
+                )}
               </Box>
             ))}
 
             <Box sx={{ height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', my: 1 }} />
             
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Button
-                sx={{
-                  borderRadius: '9999px',
-                  py: 0.8,
-                  px: 2.5,
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  textTransform: 'none',
-                  color: '#ff6600',
-                  backdropFilter: 'blur(8px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%)'
-                    : 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 243, 235, 0.84) 100%)',
-                  border: isDark ? '1px solid rgba(255, 102, 0, 0.32)' : '1px solid rgba(255, 102, 0, 0.24)',
-                  boxShadow: isDark
-                    ? '0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.3)'
-                    : '0 2px 6px rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px rgba(255, 255, 255, 1)',
-                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                  '&:hover': {
-                    background: isDark
-                      ? 'linear-gradient(180deg, rgba(255, 102, 0, 0.26) 0%, rgba(255, 255, 255, 0.12) 100%)'
-                      : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 238, 226, 0.95) 100%)',
-                    borderColor: isDark ? 'rgba(255, 102, 0, 0.45)' : 'rgba(255, 102, 0, 0.35)',
-                    backdropFilter: 'blur(16px) saturate(200%)',
-                    WebkitBackdropFilter: 'blur(16px) saturate(200%)',
-                    boxShadow: isDark
-                      ? '0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.45)'
-                      : '0 4px 12px rgba(15, 23, 42, 0.1), inset 0 1.5px 2px rgba(255, 255, 255, 1)',
-                    transform: 'translateY(-1px)',
-                  },
-                  '&:active': {
-                    transform: 'scale(0.92)',
-                  },
-                }}
-              >
-                $OPEN
-              </Button>
+              {/* $OPEN button removed as requested */}
               
               <Box
                 component="a"

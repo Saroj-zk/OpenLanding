@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { label: 'Models', href: '/models' },
   { label: 'Memory', href: '/memory' },
   { label: 'Private AI', href: '/private' },
-  { label: 'Token', href: '/token' },
+  { label: 'Token', href: null, isComingSoon: true },
 ];
 
 /* `spacer` pushes page content clear of the fixed header. Pages whose first
@@ -93,17 +93,16 @@ export default function PageHeader({ spacer = true }) {
           >
             {NAV_LINKS.map((link) => {
               const isActive = router.pathname === link.href;
-              return (
-                <Link key={link.href} href={link.href} passHref style={{ textDecoration: 'none' }}>
+              const content = (
                   <Box
-                    component="a"
+                    component={link.href ? 'a' : 'div'}
                     sx={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 0.6,
                       fontSize: '0.94rem',
                       fontWeight: 600,
-                      cursor: 'pointer',
+                      cursor: link.href ? 'pointer' : 'default',
                       color: isActive
                         ? '#FF6600'
                         : isDark ? 'rgba(255,255,255,0.75)' : '#475569',
@@ -111,9 +110,9 @@ export default function PageHeader({ spacer = true }) {
                       fontFamily: '"Inter", -apple-system, sans-serif',
                       transition: 'color 0.2s ease',
                       '&:hover': {
-                        color: isActive
-                          ? '#FF6600'
-                          : isDark ? '#FFFFFF' : '#0F172A',
+                        color: link.href
+                          ? (isActive ? '#FF6600' : isDark ? '#FFFFFF' : '#0F172A')
+                          : undefined,
                       },
                     }}
                   >
@@ -130,8 +129,35 @@ export default function PageHeader({ spacer = true }) {
                       />
                     )}
                     {link.label}
+                    {link.isComingSoon && (
+                      <Box
+                        component="span"
+                        sx={{
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          px: 0.8,
+                          py: 0.2,
+                          borderRadius: '999px',
+                          backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+                          color: isDark ? 'rgba(255,255,255,0.6)' : '#64748B',
+                          ml: 0.5,
+                        }}
+                      >
+                        Coming Soon
+                      </Box>
+                    )}
                   </Box>
+              );
+
+              return link.href ? (
+                <Link key={link.label} href={link.href} passHref style={{ textDecoration: 'none' }}>
+                  {content}
                 </Link>
+              ) : (
+                <React.Fragment key={link.label}>
+                  {content}
+                </React.Fragment>
               );
             })}
           </Box>
@@ -145,42 +171,7 @@ export default function PageHeader({ spacer = true }) {
               flexShrink: 0,
             }}
           >
-            {/* $OPEN pill button */}
-            <Button
-              sx={{
-                display: { xs: 'none', sm: 'inline-flex' },
-                borderRadius: '9999px',
-                py: 0.6,
-                px: 2.2,
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                textTransform: 'none',
-                color: '#ff6600',
-                backdropFilter: 'blur(8px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-                background: isDark
-                  ? 'linear-gradient(180deg, rgba(255,102,0,0.18) 0%, rgba(255,255,255,0.08) 100%)'
-                  : 'linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,243,235,0.84) 100%)',
-                border: isDark
-                  ? '1px solid rgba(255,102,0,0.32)'
-                  : '1px solid rgba(255,102,0,0.24)',
-                boxShadow: isDark
-                  ? '0 2px 8px rgba(0,0,0,0.35), inset 0 1.5px 1.5px rgba(255,255,255,0.35)'
-                  : '0 2px 6px rgba(15,23,42,0.06), inset 0 1.5px 1.5px rgba(255,255,255,1)',
-                transition: 'all 0.2s cubic-bezier(0.2,0,0,1)',
-                fontFamily: '"Inter", -apple-system, sans-serif',
-                '&:hover': {
-                  background: isDark
-                    ? 'linear-gradient(180deg, rgba(255,102,0,0.26) 0%, rgba(255,255,255,0.12) 100%)'
-                    : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255,238,226,0.95) 100%)',
-                  borderColor: isDark ? 'rgba(255,102,0,0.45)' : 'rgba(255,102,0,0.35)',
-                  transform: 'translateY(-1px)',
-                },
-                '&:active': { transform: 'scale(0.92)' },
-              }}
-            >
-              $OPEN
-            </Button>
+            {/* $OPEN button removed as requested */}
 
             {/* Start a chat */}
             <Button
@@ -257,14 +248,7 @@ export default function PageHeader({ spacer = true }) {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {NAV_LINKS.map((link) => {
               const isActive = router.pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  passHref
-                  style={{ textDecoration: 'none' }}
-                  onClick={() => setMobileOpen(false)}
-                >
+              const content = (
                   <Box
                     component="span"
                     sx={{
@@ -290,8 +274,41 @@ export default function PageHeader({ spacer = true }) {
                       />
                     )}
                     {link.label}
+                    {link.isComingSoon && (
+                      <Box
+                        component="span"
+                        sx={{
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          px: 0.8,
+                          py: 0.2,
+                          borderRadius: '999px',
+                          backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+                          color: isDark ? 'rgba(255,255,255,0.6)' : '#64748B',
+                          ml: 0.5,
+                        }}
+                      >
+                        Coming Soon
+                      </Box>
+                    )}
                   </Box>
+              );
+
+              return link.href ? (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  passHref
+                  style={{ textDecoration: 'none' }}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {content}
                 </Link>
+              ) : (
+                <Box key={link.label} sx={{ textDecoration: 'none' }}>
+                  {content}
+                </Box>
               );
             })}
             <Box
